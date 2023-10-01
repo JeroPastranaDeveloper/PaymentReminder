@@ -23,3 +23,5 @@ fun Float.scaledSp(): TextUnit {
         textSize.sp
     }
 }
+
+fun emptyString(): String = ""

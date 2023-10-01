@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PaymentReminder</string>
+    <string name="invalid_email">Email inválido</string>
+    <string name="invalid_pass">El email ha ser válido</string>
 </resources>
