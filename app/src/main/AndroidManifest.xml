@@ -13,7 +13,7 @@
         android:theme="@style/Theme.PaymentReminder"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.login.LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.PaymentReminder">
