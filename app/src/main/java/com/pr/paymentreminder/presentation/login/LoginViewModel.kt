@@ -14,9 +14,9 @@ class LoginViewModel @Inject constructor(): ViewModel() {
     val emailHelperText: LiveData<String?>
         get() = _emailHelperText
 
-    private val _passHelperText = MutableLiveData<String?>()
+    /*private val _passHelperText = MutableLiveData<String?>()
     val passHelperText: LiveData<String?>
-        get() = _passHelperText
+        get() = _passHelperText*/
 
     fun validateEmail(email: String) : Boolean {
         var isValid = false
