@@ -14,9 +14,9 @@ class LoginViewModel @Inject constructor(): ViewModel() {
     val emailHelperText: LiveData<String?>
         get() = _emailHelperText
 
-    /*private val _passHelperText = MutableLiveData<String?>()
+    private val _passHelperText = MutableLiveData<String?>()
     val passHelperText: LiveData<String?>
-        get() = _passHelperText*/
+        get() = _passHelperText
 
     fun validateEmail(email: String) : Boolean {
         var isValid = false
@@ -30,7 +30,7 @@ class LoginViewModel @Inject constructor(): ViewModel() {
         return isValid
     }
 
-    /*fun validatePassword(password: String) : Boolean {
+    fun validatePassword(password: String) : Boolean {
         var isValid = false
         if (password.length < 8 || !password.matches(".*[0-9].*".toRegex()) || password.isEmpty()) {
             _passHelperText.value = R.string.invalid_pass.toString()
@@ -40,5 +40,5 @@ class LoginViewModel @Inject constructor(): ViewModel() {
             isValid = true
         }
         return isValid
-    }*/
+    }
 }

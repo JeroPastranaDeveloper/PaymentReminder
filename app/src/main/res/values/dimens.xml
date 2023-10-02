@@ -137,4 +137,5 @@
     <dimen name="textSize56">56sp</dimen>
     <dimen name="textSize90">90sp</dimen>
     <dimen name="textSize128">128sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
