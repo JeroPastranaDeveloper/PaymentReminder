@@ -5,11 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(): ViewModel() {
+class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase): ViewModel() {
     private val _emailHelperText = MutableLiveData<String?>()
     val emailHelperText: LiveData<String?>
         get() = _emailHelperText
@@ -17,6 +18,10 @@ class LoginViewModel @Inject constructor(): ViewModel() {
     private val _passHelperText = MutableLiveData<String?>()
     val passHelperText: LiveData<String?>
         get() = _passHelperText
+
+    private val _isLoginSuccessful = MutableLiveData<Boolean>()
+    val isLoginSuccessful: LiveData<Boolean>
+        get() = _isLoginSuccessful
 
     fun validateEmail(email: String) : Boolean {
         var isValid = false
@@ -40,5 +45,11 @@ class LoginViewModel @Inject constructor(): ViewModel() {
             isValid = true
         }
         return isValid
+    }
+
+    suspend fun login(email: String, password: String) {
+        loginUseCase.login(email, password).observeForever {
+            _isLoginSuccessful.value = it
+        }
     }
 }

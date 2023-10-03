@@ -24,30 +24,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing20
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LoginScreen()
+            Content()
         }
     }
 
     @Preview(showBackground = true)
-    @Composable
-    private fun LoginScreen() {
-        Content()
-    }
-
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun Content() {
@@ -106,10 +105,11 @@ class LoginActivity : ComponentActivity() {
                     },
                 label = { Text(text = stringResource(id = R.string.password)) },
                 isError = !passHelper.isNullOrEmpty(),
+                visualTransformation = PasswordVisualTransformation(),
                 singleLine = true
             )
 
-            if (!emailHelper.isNullOrEmpty()) {
+            if (!passHelper.isNullOrEmpty()) {
                 Text(
                     text = stringResource(id = R.string.invalid_pass),
                     modifier = Modifier
@@ -122,7 +122,9 @@ class LoginActivity : ComponentActivity() {
             Button(
                 onClick = {
                     if (viewModel.validateEmail(emailText.value.text) && viewModel.validatePassword(passText.value.text)) {
-                        startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
+                        lifecycleScope.launch {
+                            viewModel.login(emailText.value.text, passText.value.text)
+                        }
                     } else {
                         Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
                     }
@@ -132,6 +134,14 @@ class LoginActivity : ComponentActivity() {
                     .padding(horizontal = spacing16)
             ) {
                 Text(text = stringResource(id = R.string.login))
+            }
+
+            viewModel.isLoginSuccessful.observeAsState().value?.let { isLoginSuccessful ->
+                if (isLoginSuccessful) {
+                    startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
+                } else {
+                    Toast.makeText(this@LoginActivity, R.string.error_login, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
