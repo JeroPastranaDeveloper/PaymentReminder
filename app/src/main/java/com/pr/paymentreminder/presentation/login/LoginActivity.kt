@@ -2,6 +2,7 @@ package com.pr.paymentreminder.presentation.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -22,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,9 +51,12 @@ class LoginActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun Content() {
-        Column (modifier = Modifier.padding(spacing16).fillMaxSize(),
+        Column(
+            modifier = Modifier
+                .padding(spacing16)
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             val emailText = remember { mutableStateOf(TextFieldValue()) }
             val emailHelper by viewModel.emailHelperText.observeAsState()
             val wasEmailFieldFocused = remember { mutableStateOf(false) }
@@ -61,8 +64,6 @@ class LoginActivity : ComponentActivity() {
             val passText = remember { mutableStateOf(TextFieldValue()) }
             val passHelper by viewModel.passHelperText.observeAsState()
             val wasPassFieldFocused = remember { mutableStateOf(false) }
-
-            val canLogin = viewModel.emailHelperText.value.isNullOrEmpty() && viewModel.passHelperText.value.isNullOrEmpty()
 
             OutlinedTextField(
                 value = emailText.value,
@@ -120,14 +121,11 @@ class LoginActivity : ComponentActivity() {
 
             Button(
                 onClick = {
-                    if (canLogin) {
-                        val context = Context.
-                        val intent = Intent(context, PaymentReminderActivity::class.java)
-                        context.startActivity(intent)
+                    if (viewModel.validateEmail(emailText.value.text) && viewModel.validatePassword(passText.value.text)) {
+                        startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
                     } else {
-                        // TODO: Snacknar
+                        Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
                     }
-
                 },
                 modifier = Modifier
                     .fillMaxWidth()
