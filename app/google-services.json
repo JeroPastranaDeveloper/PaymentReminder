@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "95234931480",
+    "firebase_url": "https://paymentreminder-d1ea1-default-rtdb.firebaseio.com",
+    "project_id": "paymentreminder-d1ea1",
+    "storage_bucket": "paymentreminder-d1ea1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95234931480:android:101dc8b6a3ac9e864ebc6d",
+        "android_client_info": {
+          "package_name": "com.example.tfg_paymentreminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "95234931480-dgqglcdstsm7at4fvslvc35v7jku58c2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrp0v3aSqMpCsMzYek23LmNy_TWgqx764"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "95234931480-4itr42lv9a37gu77m2vaa4pidoplk2b4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95234931480:android:23927a91af2a310e4ebc6d",
+        "android_client_info": {
+          "package_name": "com.pr.paymentreminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "95234931480-dgqglcdstsm7at4fvslvc35v7jku58c2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrp0v3aSqMpCsMzYek23LmNy_TWgqx764"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "95234931480-4itr42lv9a37gu77m2vaa4pidoplk2b4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
