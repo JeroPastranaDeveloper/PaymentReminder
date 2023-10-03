@@ -9,4 +9,8 @@
     <string name="title_activity_payment_reminder">PaymentReminderActivity</string>
     <string name="invalid_data">Datos inválidos</string>
     <string name="error_login">Error al iniciar sesión</string>
+    <string name="exit_question">¿Salir de la aplicación?</string>
+    <string name="exit_confirmation">¿Estás seguro de que quieres salir de la aplicación?</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
 </resources>
