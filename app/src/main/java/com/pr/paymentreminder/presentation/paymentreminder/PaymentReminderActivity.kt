@@ -38,7 +38,6 @@ class PaymentReminderActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        super.onBackPressed()
         val dialog = AlertDialog.Builder(this)
             .setTitle(R.string.exit_question)
             .setMessage(R.string.exit_confirmation)
@@ -109,9 +108,4 @@ class PaymentReminderActivity : AppCompatActivity() {
         object Graphic : CurrentScreen("favorites", Icons.Filled.Info)
         object Settings : CurrentScreen("settings", Icons.Filled.Settings)
     }
-
-
-
-
-
 }
