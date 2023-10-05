@@ -5,5 +5,5 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun GraphicFragment() {
-    Text(text = "Favs")
+    Text(text = "Gráfico")
 }
