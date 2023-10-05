@@ -23,7 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.ui.theme.dimen100
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen56
@@ -41,24 +44,29 @@ fun HomeFragment() {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        ServiceCard()
-        ServiceCard()
-        ServiceCard()
-        ServiceCard()
-        ServiceCard()
-        ServiceCard()
-        ServiceCard()
-        ServiceCard()
-        ServiceCard()
-        ServiceCard()
-        ServiceCard()
-        ServiceCard()
+        services.forEach { service ->
+            ServiceCard(service)
+        }
         Spacer(modifier = Modifier.height(dimen56))
     }
 }
 
+val database = Firebase.database
+val myRef = database.getReference("user-id") // reemplaza "user-id" con el id del usuario
+
+myRef.child("servicios").get().addOnSuccessListener {
+    val services = it.children.map { snapshot ->
+        snapshot.getValue(Service::class.java)!!
+    }
+    // Ahora tienes una lista de servicios que puedes pasar a tu composable
+}.addOnFailureListener{
+    // Trata aquí cualquier error que pueda ocurrir al obtener los datos
+}
+
+
+
 @Composable
-private fun ServiceCard() {
+private fun ServiceCard(service: Service) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,19 +91,19 @@ private fun ServiceCard() {
 
             Column(modifier = Modifier.padding(start = spacing4).align(Alignment.CenterVertically)) {
                 Text(
-                    text = "Título",
+                    text = service.name,
                     modifier = Modifier.padding(spacing4),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(modifier = Modifier.height(spacing12))
                 Text(
-                    text = "Fecha",
+                    text = service.date,
                     modifier = Modifier.padding(spacing4),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(modifier = Modifier.height(spacing12))
                 Text(
-                    text = "Precio",
+                    text = service.date,
                     modifier = Modifier.padding(spacing4),
                     style = MaterialTheme.typography.bodyMedium,
                 )

@@ -1,10 +1,13 @@
 package com.pr.paymentreminder.data.model
 
-data class User(
+data class Service(
     val name: String,
-    val services: List<Service>
+    val price: String,
+    val date: String,
+    //val services: List<Service>
 )
 
+/*
 data class Service(
     val category: String,
     val color: String,
@@ -13,4 +16,4 @@ data class Service(
     val price: String,
     val remember: String,
     val type: String
-)
+)*/
