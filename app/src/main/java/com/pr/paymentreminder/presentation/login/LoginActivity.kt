@@ -56,11 +56,11 @@ class LoginActivity : ComponentActivity() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val emailText = remember { mutableStateOf(TextFieldValue()) }
+            val emailText = remember { mutableStateOf(TextFieldValue("jeropastrana@gmail.com")) }
             val emailHelper by viewModel.emailHelperText.observeAsState()
             val wasEmailFieldFocused = remember { mutableStateOf(false) }
 
-            val passText = remember { mutableStateOf(TextFieldValue()) }
+            val passText = remember { mutableStateOf(TextFieldValue("DorianGray2402")) }
             val passHelper by viewModel.passHelperText.observeAsState()
             val wasPassFieldFocused = remember { mutableStateOf(false) }
 
@@ -139,6 +139,7 @@ class LoginActivity : ComponentActivity() {
             viewModel.isLoginSuccessful.observeAsState().value?.let { isLoginSuccessful ->
                 if (isLoginSuccessful) {
                     startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
+                    finish()
                 } else {
                     Toast.makeText(this@LoginActivity, R.string.error_login, Toast.LENGTH_SHORT).show()
                 }
