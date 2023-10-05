@@ -3,11 +3,9 @@ package com.pr.paymentreminder.presentation.paymentreminder
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
+import androidx.compose.material.BottomNavigation
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -26,7 +24,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.pr.paymentreminder.R
-import com.pr.paymentreminder.presentation.paymentreminder.compose.BottomNavigationBar
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment
@@ -39,14 +36,9 @@ class PaymentReminderActivity : AppCompatActivity() {
         }
     }
 
-    sealed class Screen(val route: String, val icon: ImageVector) {
-        object Home : Screen("home", Icons.Filled.Home)
-        object Settings : Screen("settings", Icons.Filled.Settings)
-        object Graphic : Screen("graphic", Icons.Filled.Info)
-    }
-
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        super.onBackPressed()
         val dialog = AlertDialog.Builder(this)
             .setTitle(R.string.exit_question)
             .setMessage(R.string.exit_confirmation)
@@ -63,47 +55,63 @@ class PaymentReminderActivity : AppCompatActivity() {
     @Composable
     private fun Content() {
         val navController = rememberNavController()
-        val items = listOf(Screen.Home, Screen.Settings, Screen.Graphic)
+
+        val screens = listOf(
+            CurrentScreen.Home,
+            CurrentScreen.Graphic,
+            CurrentScreen.Settings
+        )
 
         Scaffold(
-            bottomBar = { BottomNavigationBar(navController, items) }
+            bottomBar = {
+                BottomNavigationBar(navController, screens)
+            }
         ) {
-            NavHost(navController, startDestination = Screen.Home.route) {
-                composable(Screen.Home.route) { HomeFragment() }
-                composable(Screen.Settings.route) { SettingsFragment() }
-                composable(Screen.Graphic.route) { GraphicFragment() }
+            NavHost(
+                navController = navController,
+                startDestination = CurrentScreen.Home.route
+            ) {
+                composable(CurrentScreen.Home.route) { HomeFragment() }
+                composable(CurrentScreen.Graphic.route) { GraphicFragment() }
+                composable(CurrentScreen.Settings.route) { SettingsFragment() }
             }
         }
     }
 
     @Composable
-    fun BottomNavigationBar(
+    private fun BottomNavigationBar(
         navController: NavHostController,
-        items: List<PaymentReminderActivity.Screen>
+        screens: List<CurrentScreen>
     ) {
-        BottomNavigation(
-            backgroundColor = Color.White,
-            //backgroundColor = Color(0xea, 0xdd, 0xff),
-            contentColor = Color.Black
-        ) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
+        BottomNavigation (backgroundColor = Color.White) {
+            val currentBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = currentBackStackEntry?.destination?.route
 
-            items.forEach { screen ->
+            screens.forEach { screen ->
                 BottomNavigationItem(
                     icon = { Icon(screen.icon, contentDescription = null) },
                     selected = currentRoute == screen.route,
                     onClick = {
-                        Log.d("PaymentReminderActivity", "Navigating to ${screen.route}")
-                        if (currentRoute != screen.route) {
-                            navController.navigate(Screen.Home.route, Screen.Home.) {
-                                popUpTo(navController.graph.startDestinationId)
-                                launchSingleTop = true
+                        navController.navigate(screen.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
                             }
+                            launchSingleTop = true
                         }
                     }
                 )
             }
         }
     }
+
+    sealed class CurrentScreen(val route: String, val icon: ImageVector) {
+        object Home : CurrentScreen("home", Icons.Filled.Home)
+        object Graphic : CurrentScreen("favorites", Icons.Filled.Info)
+        object Settings : CurrentScreen("settings", Icons.Filled.Settings)
+    }
+
+
+
+
+
 }
