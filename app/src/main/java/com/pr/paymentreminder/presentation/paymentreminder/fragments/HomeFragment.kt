@@ -39,7 +39,6 @@ import com.pr.paymentreminder.ui.theme.dimen100
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.emptyString
-import com.pr.paymentreminder.ui.theme.spacing12
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
 import kotlin.coroutines.resume
@@ -63,39 +62,6 @@ fun HomeFragment() {
         }
         Spacer(modifier = Modifier.height(dimen56))
     }
-}
-
-suspend fun getServices(): List<Service> {
-    val database = Firebase.database
-    val services = mutableListOf<Service>()
-    val userId = FirebaseAuth.getInstance().currentUser?.uid
-
-    val servicesRef = database.getReference("$userId/servicios")
-    Log.d("Hola", userId.toString())
-
-    suspendCoroutine { continuation ->
-        servicesRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (serviceSnapshot in snapshot.children) {
-                    val service = Service(
-                        serviceSnapshot.child("categoria").value as String,
-                        serviceSnapshot.child("color").value as String,
-                        serviceSnapshot.child("fecha").value as String,
-                        serviceSnapshot.child("nombre").value as String,
-                        serviceSnapshot.child("precio").value as String,
-                        serviceSnapshot.child("recordar").value as String,
-                        serviceSnapshot.child("tipo").value as String
-                    )
-
-                    services.add(service)
-                }
-                continuation.resume(Unit)
-            }
-            override fun onCancelled(databaseError: DatabaseError) {}
-        })
-    }
-
-    return services
 }
 
 @Composable
@@ -126,15 +92,15 @@ private fun ServiceCard(service: Service) {
                 Text(
                     text = service.name,
                     modifier = Modifier.padding(spacing4),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.titleMedium,
                 )
-                Spacer(modifier = Modifier.height(spacing12))
+                Spacer(modifier = Modifier.height(spacing8))
                 Text(
                     text = service.date,
                     modifier = Modifier.padding(spacing4),
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                Spacer(modifier = Modifier.height(spacing12))
+                Spacer(modifier = Modifier.height(spacing8))
                 Text(
                     text = "${service.price}€",
                     modifier = Modifier.padding(spacing4),
