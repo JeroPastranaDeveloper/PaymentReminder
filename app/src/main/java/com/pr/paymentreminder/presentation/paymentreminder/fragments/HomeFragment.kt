@@ -1,5 +1,6 @@
 package com.pr.paymentreminder.presentation.paymentreminder.fragments
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,12 +18,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.R
@@ -34,36 +42,61 @@ import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing12
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @Preview(showBackground = false)
 @Composable
 fun HomeFragment() {
+    val services = remember { mutableStateOf(listOf<Service>()) }
+    LaunchedEffect(Unit) {
+        services.value = getServices()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        services.forEach { service ->
+        for (service in services.value) {
             ServiceCard(service)
         }
         Spacer(modifier = Modifier.height(dimen56))
     }
 }
 
-val database = Firebase.database
-val myRef = database.getReference("user-id") // reemplaza "user-id" con el id del usuario
+suspend fun getServices(): List<Service> {
+    val database = Firebase.database
+    val services = mutableListOf<Service>()
+    val userId = FirebaseAuth.getInstance().currentUser?.uid
 
-myRef.child("servicios").get().addOnSuccessListener {
-    val services = it.children.map { snapshot ->
-        snapshot.getValue(Service::class.java)!!
+    val servicesRef = database.getReference("$userId/servicios")
+    Log.d("Hola", userId.toString())
+
+    suspendCoroutine { continuation ->
+        servicesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (serviceSnapshot in snapshot.children) {
+                    val service = Service(
+                        serviceSnapshot.child("categoria").value as String,
+                        serviceSnapshot.child("color").value as String,
+                        serviceSnapshot.child("fecha").value as String,
+                        serviceSnapshot.child("nombre").value as String,
+                        serviceSnapshot.child("precio").value as String,
+                        serviceSnapshot.child("recordar").value as String,
+                        serviceSnapshot.child("tipo").value as String
+                    )
+
+                    services.add(service)
+                }
+                continuation.resume(Unit)
+            }
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
     }
-    // Ahora tienes una lista de servicios que puedes pasar a tu composable
-}.addOnFailureListener{
-    // Trata aquí cualquier error que pueda ocurrir al obtener los datos
+
+    return services
 }
-
-
 
 @Composable
 private fun ServiceCard(service: Service) {
@@ -103,7 +136,7 @@ private fun ServiceCard(service: Service) {
                 )
                 Spacer(modifier = Modifier.height(spacing12))
                 Text(
-                    text = service.date,
+                    text = "${service.price}€",
                     modifier = Modifier.padding(spacing4),
                     style = MaterialTheme.typography.bodyMedium,
                 )
