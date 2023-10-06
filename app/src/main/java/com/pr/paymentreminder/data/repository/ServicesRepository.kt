@@ -1,7 +1,7 @@
-package com.pr.paymentreminder.domain.usecase
+package com.pr.paymentreminder.data.repository
 
 import com.pr.paymentreminder.data.model.Service
 
-interface ServiceUseCase {
+interface ServicesRepository {
     suspend fun getServices(): List<Service>
 }
