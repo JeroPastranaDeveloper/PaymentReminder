@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import androidx.compose.material.BottomNavigation
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
@@ -27,7 +28,10 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PaymentReminderActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +74,8 @@ class PaymentReminderActivity : AppCompatActivity() {
                 navController = navController,
                 startDestination = CurrentScreen.Home.route
             ) {
-                composable(CurrentScreen.Home.route) { HomeFragment() }
+                val viewModel: HomeViewModel by viewModels()
+                composable(CurrentScreen.Home.route) { HomeFragment(viewModel) }
                 composable(CurrentScreen.Graphic.route) { GraphicFragment() }
                 composable(CurrentScreen.Settings.route) { SettingsFragment() }
             }

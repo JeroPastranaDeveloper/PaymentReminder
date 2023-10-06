@@ -19,7 +19,6 @@ class ServiceDataSource @Inject constructor() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
         val servicesRef = database.getReference("$userId/servicios")
-        Log.d("Hola", userId.toString())
 
         suspendCoroutine { continuation ->
             servicesRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -34,7 +33,6 @@ class ServiceDataSource @Inject constructor() {
                             serviceSnapshot.child("recordar").value as String,
                             serviceSnapshot.child("tipo").value as String
                         )
-
                         services.add(service)
                     }
                     continuation.resume(Unit)
