@@ -1,9 +1,9 @@
 package com.pr.paymentreminder.di
 
 import com.pr.paymentreminder.data.useCaseImplementations.LoginUseCaseImpl
-import com.pr.paymentreminder.data.useCaseImplementations.ServiceUseCaseImpl
+import com.pr.paymentreminder.data.useCaseImplementations.ServicesUseCaseImpl
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
-import com.pr.paymentreminder.domain.usecase.ServiceUseCase
+import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -16,5 +16,5 @@ abstract class UseCaseModule {
     abstract fun bindsLoginUseCase(useCaseImpl: LoginUseCaseImpl) : LoginUseCase
 
     @Binds
-    abstract fun bindsServiceUseCase(useCaseImpl: ServiceUseCaseImpl) : ServiceUseCase
+    abstract fun bindsServicesUseCase(useCaseImpl: ServicesUseCaseImpl) : ServicesUseCase
 }

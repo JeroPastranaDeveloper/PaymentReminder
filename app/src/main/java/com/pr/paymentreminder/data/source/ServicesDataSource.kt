@@ -1,6 +1,5 @@
 package com.pr.paymentreminder.data.source
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -12,7 +11,7 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class ServiceDataSource @Inject constructor() {
+class ServicesDataSource @Inject constructor() {
     suspend fun getServices(): List<Service> {
         val database = Firebase.database
         val services = mutableListOf<Service>()
