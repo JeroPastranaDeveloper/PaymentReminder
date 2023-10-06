@@ -25,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment
@@ -40,7 +41,7 @@ class PaymentReminderActivity : AppCompatActivity() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
+    @Deprecated(Constants.JAVA_DEPRECATED)
     override fun onBackPressed() {
         val dialog = AlertDialog.Builder(this)
             .setTitle(R.string.exit_question)
@@ -53,7 +54,7 @@ class PaymentReminderActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint(Constants.UNUSED_MATERIAL)
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun Content() {
@@ -109,8 +110,8 @@ class PaymentReminderActivity : AppCompatActivity() {
     }
 
     sealed class CurrentScreen(val route: String, val icon: ImageVector) {
-        object Home : CurrentScreen("home", Icons.Filled.Home)
-        object Graphic : CurrentScreen("favorites", Icons.Filled.Info)
-        object Settings : CurrentScreen("settings", Icons.Filled.Settings)
+        object Home : CurrentScreen(Constants.HOME, Icons.Filled.Home)
+        object Graphic : CurrentScreen(Constants.GRAPHIC, Icons.Filled.Info)
+        object Settings : CurrentScreen(Constants.SETTINGS, Icons.Filled.Settings)
     }
 }

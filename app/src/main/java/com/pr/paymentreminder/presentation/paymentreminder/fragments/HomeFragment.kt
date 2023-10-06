@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.ui.theme.dimen100
@@ -87,7 +88,7 @@ private fun ServiceCard(service: Service) {
                 )
                 Spacer(modifier = Modifier.height(spacing8))
                 Text(
-                    text = "${service.price}€",
+                    text = "${service.price}${Constants.EURO}",
                     modifier = Modifier.padding(spacing4),
                     style = MaterialTheme.typography.bodyMedium,
                 )
