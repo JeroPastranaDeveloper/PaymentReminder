@@ -54,7 +54,7 @@ class PaymentReminderActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    @SuppressLint(Constants.UNUSED_MATERIAL)
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun Content() {

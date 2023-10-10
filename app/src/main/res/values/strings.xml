@@ -20,4 +20,6 @@
     <string name="title_home">home</string>
     <string name="title_settings">settings</string>
     <string name="title_graphic">graphic</string>
+    <string name="category">Categoría: %1$s</string>
+    <string name="service_name">Nombre del servicio</string>
 </resources>

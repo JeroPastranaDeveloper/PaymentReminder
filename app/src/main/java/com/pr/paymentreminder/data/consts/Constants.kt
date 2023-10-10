@@ -12,10 +12,12 @@ class Constants {
         const val REMEMBER = "recordar"
         const val EURO = "€"
         const val JAVA_DEPRECATED = "Deprecated in Java"
-        const val UNUSED_MATERIAL = "UnusedMaterial3ScaffoldPaddingParameter"
         const val HOME = "home"
         const val GRAPHIC = "graphic"
         const val SETTINGS = "settings"
+        const val AMAZON = "Amazon"
+        const val HOBBY = "Ocio"
+        const val PLATFORMS = "Plataformas"
 
     }
 }
