@@ -111,6 +111,7 @@ val spacing300: Dp @Composable get() = dimensionResource(id = R.dimen.spacing_30
 val spacing400: Dp @Composable get() = dimensionResource(id = R.dimen.spacing_400)
 
 /* Text Size */
+val textSize1: TextUnit @Composable get() = textUnitOf(id = R.dimen.textSize1)
 val textSize5: TextUnit @Composable get() = textUnitOf(id = R.dimen.textSize5)
 val textSize6: TextUnit @Composable get() = textUnitOf(id = R.dimen.textSize6)
 val textSize7: TextUnit @Composable get() = textUnitOf(id = R.dimen.textSize7)

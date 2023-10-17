@@ -56,11 +56,11 @@ class LoginActivity : ComponentActivity() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val emailText = remember { mutableStateOf(TextFieldValue("jeropastrana@gmail.com")) }
+            val emailText = remember { mutableStateOf(TextFieldValue("cuentacuenta0124@gmail.com")) }
             val emailHelper by viewModel.emailHelperText.observeAsState()
             val wasEmailFieldFocused = remember { mutableStateOf(false) }
 
-            val passText = remember { mutableStateOf(TextFieldValue("DorianGray2402")) }
+            val passText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
             val passHelper by viewModel.passHelperText.observeAsState()
             val wasPassFieldFocused = remember { mutableStateOf(false) }
 
