@@ -1,15 +1,14 @@
 package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.ui.theme.emptyString
+import com.pr.paymentreminder.ui.theme.orElse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,12 +33,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    @Composable
-    fun CheckDateText(service: Service?) {
+    fun checkDateText(service: Service?) {
         if (service?.date.isNullOrEmpty()) {
-            _textDate.value = stringResource(id = R.string.payment_date)
+            _textDate.value = R.string.payment_date.toString()
         } else {
-            _textDate.value = service?.date.toString()
+            _textDate.value = service?.date.orElse { emptyString() }
         }
+    }
+
+    fun updateDate(newDate: String) {
+        _textDate.value = newDate
     }
 }

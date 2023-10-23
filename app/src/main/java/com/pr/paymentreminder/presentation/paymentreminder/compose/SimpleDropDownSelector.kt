@@ -99,7 +99,7 @@ fun TrailingIcon(
     isExpanded: Boolean,
     onClick: () -> Unit
 ) {
-    val rotation by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f)
+    val rotation by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f, label = emptyString())
 
     val modifier = Modifier.clickable(onClick = onClick)
         .let { if (config.animation) it.rotate(rotation) else it }

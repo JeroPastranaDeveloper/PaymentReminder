@@ -18,5 +18,8 @@ class Constants {
         const val AMAZON = "Amazon"
         const val HOBBY = "Ocio"
         const val PLATFORMS = "Plataformas"
+        const val WEEKLY = "Semanal"
+        const val MONTHLY = "Mensual"
+        const val YEARLY = "Anual"
     }
 }
