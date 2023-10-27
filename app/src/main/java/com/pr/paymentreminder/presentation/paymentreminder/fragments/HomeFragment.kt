@@ -29,6 +29,7 @@ import com.pr.paymentreminder.ui.theme.spacing72
 @Composable
 fun HomeFragment(viewModel: HomeViewModel) {
     var selectedService by remember { mutableStateOf<Service?>(null) }
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -42,6 +43,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
             viewModel.services.value.map { service ->
                 ServiceCard(service) {
                     selectedService = service
+                    showBottomSheet = true
                 }
             }
         }
@@ -51,9 +53,8 @@ fun HomeFragment(viewModel: HomeViewModel) {
                 .align(Alignment.BottomEnd)
                 .padding(bottom = spacing72, end = spacing16),
             onClick = {
-                ServiceBottomSheet(service = null, viewModel = viewModel) {
-                    selectedService = null
-                }
+                selectedService = null
+                showBottomSheet = true
             }
         ) {
             Icon(
@@ -62,10 +63,18 @@ fun HomeFragment(viewModel: HomeViewModel) {
             )
         }
 
-        selectedService?.let {
-            ServiceBottomSheet(service = it, viewModel) {
+        if (showBottomSheet) {
+            ServiceBottomSheet(service = selectedService, viewModel) {
                 selectedService = null
+                showBottomSheet = false
             }
         }
+
+        /*selectedService?.let {
+            ServiceBottomSheet(service = it, viewModel) {
+                selectedService = null
+                showBottomSheet = false
+            }
+        }*/
     }
 }
