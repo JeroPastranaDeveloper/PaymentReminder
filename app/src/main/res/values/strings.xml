@@ -20,4 +20,12 @@
     <string name="title_home">home</string>
     <string name="title_settings">settings</string>
     <string name="title_graphic">graphic</string>
+    <string name="category">Categoría: %1$s</string>
+    <string name="service_name">Nombre del servicio</string>
+    <string name="service_price">Precio del servicio</string>
+    <string name="payment_date">Fecha de pago</string>
+    <string name="payment_type">Tipo de pago: %1$s</string>
+    <string name="remember_days_before">Recordar %1$s días antes</string>
+    <string name="select_category">Selecciona categoría</string>
+    <string name="btn_save">Guardar</string>
 </resources>

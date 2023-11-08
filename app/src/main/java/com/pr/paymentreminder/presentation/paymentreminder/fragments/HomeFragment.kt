@@ -1,98 +1,80 @@
 package com.pr.paymentreminder.presentation.paymentreminder.fragments
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import com.pr.paymentreminder.R
-import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceBottomSheet
+import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceCard
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
-import com.pr.paymentreminder.ui.theme.dimen100
-import com.pr.paymentreminder.ui.theme.dimen16
-import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.emptyString
-import com.pr.paymentreminder.ui.theme.spacing4
-import com.pr.paymentreminder.ui.theme.spacing8
+import com.pr.paymentreminder.ui.theme.spacing16
+import com.pr.paymentreminder.ui.theme.spacing72
 
 @Composable
 fun HomeFragment(viewModel: HomeViewModel) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceEvenly,
-    ) {
-        for (service in viewModel.services.value) {
-            ServiceCard(service)
-        }
-        Spacer(modifier = Modifier.height(dimen56))
-    }
-}
+    var selectedService by remember { mutableStateOf<Service?>(null) }
+    var showBottomSheet by remember { mutableStateOf(false) }
 
-@Composable
-private fun ServiceCard(service: Service) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(spacing8)
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .background(Color(0xFFEADDFF))
-                .fillMaxWidth()
-                .padding(dimen16),
-            horizontalArrangement = Arrangement.Start,
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-            Image(
-                painter = painterResource(R.drawable.ic_launcher_background),
-                contentDescription = emptyString(),
-                modifier = Modifier
-                    .width(dimen100)
-                    .height(dimen100)
-                    .align(Alignment.CenterVertically),
-                contentScale = ContentScale.Fit,
-            )
-
-            Column(modifier = Modifier
-                .padding(start = spacing4)
-                .align(Alignment.CenterVertically)) {
-                Text(
-                    text = service.name,
-                    modifier = Modifier.padding(spacing4),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Spacer(modifier = Modifier.height(spacing8))
-                Text(
-                    text = service.date,
-                    modifier = Modifier.padding(spacing4),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Spacer(modifier = Modifier.height(spacing8))
-                Text(
-                    text = "${service.price}${Constants.EURO}",
-                    modifier = Modifier.padding(spacing4),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+            viewModel.services.value.map { service ->
+                ServiceCard(service) {
+                    selectedService = service
+                    showBottomSheet = true
+                }
             }
         }
+
+        FloatingActionButton(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = spacing72, end = spacing16),
+            onClick = {
+                selectedService = null
+                showBottomSheet = true
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = emptyString()
+            )
+        }
+
+        if (showBottomSheet) {
+            ServiceBottomSheet(service = selectedService, viewModel) {
+                selectedService = null
+                showBottomSheet = false
+            }
+        }
+
+        /*selectedService?.let {
+            ServiceBottomSheet(service = it, viewModel) {
+                selectedService = null
+                showBottomSheet = false
+            }
+        }*/
     }
 }
