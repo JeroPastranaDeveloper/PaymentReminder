@@ -11,4 +11,8 @@ class LoginRepositoryImpl @Inject constructor(
     override suspend fun login(email: String, password: String): LiveData<Boolean> {
         return dataSource.login(email, password)
     }
+
+    override fun isUserAuthenticated(): Boolean {
+        return dataSource.isUserAuthenticated()
+    }
 }

@@ -3,7 +3,9 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,6 +24,7 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceBottomSheet
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceCard
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
+import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing72
@@ -40,11 +43,20 @@ fun HomeFragment(viewModel: HomeViewModel) {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
+            Spacer(modifier = Modifier.height(dimen8))
             viewModel.services.value.map { service ->
                 ServiceCard(service) {
                     selectedService = service
                     showBottomSheet = true
                 }
+            }
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
+        if (showBottomSheet) {
+            ServiceBottomSheet(service = selectedService, viewModel) {
+                selectedService = null
+                showBottomSheet = false
             }
         }
 
@@ -61,13 +73,6 @@ fun HomeFragment(viewModel: HomeViewModel) {
                 imageVector = Icons.Default.Add,
                 contentDescription = emptyString()
             )
-        }
-
-        if (showBottomSheet) {
-            ServiceBottomSheet(service = selectedService, viewModel) {
-                selectedService = null
-                showBottomSheet = false
-            }
         }
 
         /*selectedService?.let {

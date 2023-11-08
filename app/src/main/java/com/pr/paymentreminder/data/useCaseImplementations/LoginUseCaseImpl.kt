@@ -12,4 +12,7 @@ LoginUseCase {
     override suspend fun login(email: String, password: String): LiveData<Boolean> {
         return loginRepository.login(email, password)
     }
+    override fun isUserAuthenticated(): Boolean {
+        return loginRepository.isUserAuthenticated()
+    }
 }
