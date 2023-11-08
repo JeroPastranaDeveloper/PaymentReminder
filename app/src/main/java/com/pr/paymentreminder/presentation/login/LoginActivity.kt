@@ -57,6 +57,7 @@ class LoginActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.checkIfUserIsAuthenticated()
         setContent {
             Content()
         }
@@ -71,18 +72,13 @@ class LoginActivity : ComponentActivity() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val emailText = remember { mutableStateOf(TextFieldValue("cuentacuenta0124@gmail.com")) }
-            val emailHelper by viewModel.emailHelperText.observeAsState()
-            val wasEmailFieldFocused = remember { mutableStateOf(false) }
-
+            val emailText = remember { mutableStateOf(TextFieldValue("cuentadepruebas@gmail.com")) }
             val passText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
-            val passHelper by viewModel.passHelperText.observeAsState()
-            val wasPassFieldFocused = remember { mutableStateOf(false) }
 
             Spacer(modifier = Modifier.height(dimen16))
 
-            EmailField(emailText, wasEmailFieldFocused, emailHelper)
-            PassField(passText, wasPassFieldFocused, passHelper)
+            EmailField(emailText)
+            PassField(passText)
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -121,10 +117,11 @@ class LoginActivity : ComponentActivity() {
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
     private fun EmailField(
-        emailText: MutableState<TextFieldValue>,
-        wasEmailFieldFocused: MutableState<Boolean>,
-        emailHelper: String?
+        emailText: MutableState<TextFieldValue>
     ) {
+
+        val emailHelper by viewModel.emailHelperText.observeAsState()
+        val wasEmailFieldFocused = remember { mutableStateOf(false) }
         TextField(
             value = emailText.value,
             onValueChange = { emailText.value = it },
@@ -157,11 +154,10 @@ class LoginActivity : ComponentActivity() {
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
     private fun PassField(
-        passText: MutableState<TextFieldValue>,
-        wasPassFieldFocused: MutableState<Boolean>,
-        passHelper: String?
+        passText: MutableState<TextFieldValue>
     ) {
-        // Define un estado para controlar si se muestra la contraseña
+        val passHelper by viewModel.passHelperText.observeAsState()
+        val wasPassFieldFocused = remember { mutableStateOf(false) }
         val passwordVisibility = remember { mutableStateOf(false) }
 
         TextField(

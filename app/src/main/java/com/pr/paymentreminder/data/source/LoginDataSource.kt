@@ -8,7 +8,7 @@ import javax.inject.Inject
 class LoginDataSource @Inject constructor(){
     private val auth = FirebaseAuth.getInstance()
 
-    suspend fun login(email: String, password: String): LiveData<Boolean> {
+    fun login(email: String, password: String): LiveData<Boolean> {
         val resultLiveData = MutableLiveData<Boolean>()
 
         auth.signInWithEmailAndPassword(email, password)
@@ -17,5 +17,10 @@ class LoginDataSource @Inject constructor(){
             }
 
         return resultLiveData
+    }
+
+    fun isUserAuthenticated(): Boolean {
+        val currentUser = auth.currentUser
+        return currentUser != null
     }
 }

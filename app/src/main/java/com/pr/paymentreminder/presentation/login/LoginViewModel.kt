@@ -54,4 +54,9 @@ class LoginViewModel @Inject constructor(
             _isLoginSuccessful.value = it
         }
     }
+
+    fun checkIfUserIsAuthenticated() {
+        val isUserAuthenticated = loginUseCase.isUserAuthenticated()
+        _isLoginSuccessful.value = isUserAuthenticated
+    }
 }
