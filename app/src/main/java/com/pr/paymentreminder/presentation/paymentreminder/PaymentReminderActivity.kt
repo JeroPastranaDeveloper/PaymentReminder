@@ -3,6 +3,7 @@ package com.pr.paymentreminder.presentation.paymentreminder
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.compose.material.BottomNavigation
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -30,28 +31,30 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFrag
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PaymentReminderActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Handle back press event here
+                val dialog = AlertDialog.Builder(this@PaymentReminderActivity)
+                    .setTitle(R.string.exit_question)
+                    .setMessage(R.string.exit_confirmation)
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        finish()
+                    }
+                    .setNegativeButton(R.string.no, null)
+                    .create()
+                dialog.show()
+            }
+        })
         setContent {
             Content()
         }
-    }
-
-    @Deprecated(Constants.JAVA_DEPRECATED)
-    override fun onBackPressed() {
-        val dialog = AlertDialog.Builder(this)
-            .setTitle(R.string.exit_question)
-            .setMessage(R.string.exit_confirmation)
-            .setPositiveButton(R.string.yes) { _, _ ->
-                finish()
-            }
-            .setNegativeButton(R.string.no, null)
-            .create()
-        dialog.show()
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -75,10 +78,11 @@ class PaymentReminderActivity : AppCompatActivity() {
                 navController = navController,
                 startDestination = CurrentScreen.Home.route
             ) {
-                val viewModel: HomeViewModel by viewModels()
-                composable(CurrentScreen.Home.route) { HomeFragment(viewModel) }
+                val homeViewModel: HomeViewModel by viewModels()
+                val settingsViewModel: SettingsViewModel by viewModels()
+                composable(CurrentScreen.Home.route) { HomeFragment(homeViewModel) }
                 composable(CurrentScreen.Graphic.route) { GraphicFragment() }
-                composable(CurrentScreen.Settings.route) { SettingsFragment() }
+                composable(CurrentScreen.Settings.route) { SettingsFragment(settingsViewModel) }
             }
         }
     }

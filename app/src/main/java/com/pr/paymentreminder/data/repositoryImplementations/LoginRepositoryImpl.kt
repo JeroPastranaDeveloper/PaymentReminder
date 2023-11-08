@@ -15,4 +15,6 @@ class LoginRepositoryImpl @Inject constructor(
     override fun isUserAuthenticated(): Boolean {
         return dataSource.isUserAuthenticated()
     }
+
+    override fun signOut() = dataSource.signOut()
 }

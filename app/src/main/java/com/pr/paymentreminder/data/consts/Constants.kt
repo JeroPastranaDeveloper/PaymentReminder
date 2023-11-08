@@ -11,7 +11,6 @@ class Constants {
         const val TYPE = "type"
         const val REMEMBER = "remember"
         const val EURO = "€"
-        const val JAVA_DEPRECATED = "Deprecated in Java"
         const val HOME = "home"
         const val GRAPHIC = "graphic"
         const val SETTINGS = "settings"

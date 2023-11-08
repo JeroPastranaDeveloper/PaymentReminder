@@ -23,4 +23,6 @@ class LoginDataSource @Inject constructor(){
         val currentUser = auth.currentUser
         return currentUser != null
     }
+
+    fun signOut() = auth.signOut()
 }

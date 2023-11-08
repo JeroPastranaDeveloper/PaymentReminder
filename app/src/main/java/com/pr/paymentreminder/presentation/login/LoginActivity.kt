@@ -204,8 +204,6 @@ class LoginActivity : ComponentActivity() {
             if (isLoginSuccessful) {
                 startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
                 finish()
-            } else {
-                Toast.makeText(this@LoginActivity, R.string.error_login, Toast.LENGTH_SHORT).show()
             }
         }
     }

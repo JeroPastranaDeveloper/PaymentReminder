@@ -28,4 +28,6 @@
     <string name="remember_days_before">Recordar %1$s días antes</string>
     <string name="select_category">Selecciona categoría</string>
     <string name="btn_save">Guardar</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="logout_question">Vas a cerrar sesión, ¿Estás seguro?</string>
 </resources>

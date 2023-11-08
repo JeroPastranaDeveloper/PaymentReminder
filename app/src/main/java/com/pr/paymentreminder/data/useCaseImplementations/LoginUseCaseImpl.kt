@@ -15,4 +15,5 @@ LoginUseCase {
     override fun isUserAuthenticated(): Boolean {
         return loginRepository.isUserAuthenticated()
     }
+    override fun signOut() = loginRepository.signOut()
 }
