@@ -8,6 +8,7 @@ import com.pr.paymentreminder.R
 
 val dimen0: Dp @Composable get() = dimensionResource(id = R.dimen.dimen0)
 val dimen1: Dp @Composable get() = dimensionResource(id = R.dimen.dimen1)
+val dimen4: Dp @Composable get() = dimensionResource(id = R.dimen.dimen4)
 val dimen8: Dp @Composable get() = dimensionResource(id = R.dimen.dimen8)
 val dimen16: Dp @Composable get() = dimensionResource(id = R.dimen.dimen16)
 val dimen56: Dp @Composable get() = dimensionResource(id = R.dimen.dimen56)
