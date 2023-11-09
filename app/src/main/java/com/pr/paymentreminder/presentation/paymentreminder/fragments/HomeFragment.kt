@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,13 +54,6 @@ fun HomeFragment(viewModel: HomeViewModel) {
             Spacer(modifier = Modifier.weight(1f))
         }
 
-        if (showBottomSheet) {
-            ServiceBottomSheet(service = selectedService, viewModel) {
-                selectedService = null
-                showBottomSheet = false
-            }
-        }
-
         FloatingActionButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -75,11 +69,18 @@ fun HomeFragment(viewModel: HomeViewModel) {
             )
         }
 
-        /*selectedService?.let {
+        if (showBottomSheet) {
+            ServiceBottomSheet(selectedService, viewModel) {
+                selectedService = null
+                showBottomSheet = false
+            }
+        }
+    }
+}
+
+/*selectedService?.let {
             ServiceBottomSheet(service = it, viewModel) {
                 selectedService = null
                 showBottomSheet = false
             }
         }*/
-    }
-}
