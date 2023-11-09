@@ -19,10 +19,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -35,6 +37,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.emptyString
+import kotlinx.coroutines.flow.filter
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -54,6 +57,13 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     var selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
     val daysRemember = listOf(1, 2, 3)
     var daysExpanded by remember { mutableStateOf(false) }
+
+    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.HalfExpanded)
+    LaunchedEffect(sheetState) {
+        snapshotFlow { sheetState.isVisible }
+            .filter { isVisible -> !isVisible }
+            .collect { onDismiss() }
+    }
 
     ModalBottomSheetLayout(
         sheetContent = {
@@ -185,6 +195,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 Button(
                     onClick = {
                         // TODO
+                        onDismiss()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -195,7 +206,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 Spacer(modifier = Modifier.height(dimen56))
             }
         },
-        sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.HalfExpanded),
+        sheetState = sheetState,
         content = {}
     )
 }

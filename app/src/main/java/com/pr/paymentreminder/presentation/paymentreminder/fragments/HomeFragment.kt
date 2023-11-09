@@ -53,13 +53,6 @@ fun HomeFragment(viewModel: HomeViewModel) {
             Spacer(modifier = Modifier.weight(1f))
         }
 
-        if (showBottomSheet) {
-            ServiceBottomSheet(service = selectedService, viewModel) {
-                selectedService = null
-                showBottomSheet = false
-            }
-        }
-
         FloatingActionButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -75,11 +68,11 @@ fun HomeFragment(viewModel: HomeViewModel) {
             )
         }
 
-        /*selectedService?.let {
-            ServiceBottomSheet(service = it, viewModel) {
+        if (showBottomSheet) {
+            ServiceBottomSheet(selectedService, viewModel) {
                 selectedService = null
                 showBottomSheet = false
             }
-        }*/
+        }
     }
 }
