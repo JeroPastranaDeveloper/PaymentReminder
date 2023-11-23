@@ -11,4 +11,16 @@ class ServicesRepositoryImpl @Inject constructor (
     override suspend fun getServices(): List<Service> {
         return dataSource.getServices()
     }
+
+    override suspend fun createService(service: Service) {
+        return dataSource.createService(service)
+    }
+
+    override suspend fun updateService(serviceName: String, newServiceData: Service) {
+        return dataSource.updateService(serviceName, newServiceData)
+    }
+
+    override suspend fun deleteService(serviceName: String) {
+        return dataSource.deleteService(serviceName)
+    }
 }

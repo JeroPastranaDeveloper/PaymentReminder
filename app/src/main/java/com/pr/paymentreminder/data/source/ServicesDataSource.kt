@@ -37,9 +37,31 @@ class ServicesDataSource @Inject constructor() {
                     }
                     continuation.resume(Unit)
                 }
-                override fun onCancelled(databaseError: DatabaseError) {}
+
+                override fun onCancelled(databaseError: DatabaseError) {/* nothing */}
             })
         }
         return services
+    }
+
+    fun createService(service: Service) {
+        val database = Firebase.database
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
+        servicesRef.push().setValue(service)
+    }
+
+    fun updateService(serviceName: String, newServiceData: Service) {
+        val database = Firebase.database
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
+        servicesRef.child(serviceName).setValue(newServiceData)
+    }
+
+    fun deleteService(serviceName: String) {
+        val database = Firebase.database
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
+        servicesRef.child(serviceName).removeValue()
     }
 }

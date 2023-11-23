@@ -3,6 +3,7 @@ package com.pr.paymentreminder.data.consts
 class Constants {
     companion object {
         const val SERVICES = "services"
+        const val ID = "id"
         const val DATE = "date"
         const val NAME = "name"
         const val PRICE = "price"
