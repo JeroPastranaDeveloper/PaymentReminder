@@ -11,4 +11,16 @@ class ServicesUseCaseImpl @Inject constructor(
     override suspend fun getServices(): List<Service> {
         return repository.getServices()
     }
+
+    override suspend fun createService(service: Service) {
+        return repository.createService(service)
+    }
+
+    override suspend fun updateService(serviceName: String, newServiceData: Service) {
+        return repository.updateService(serviceName, newServiceData)
+    }
+
+    override suspend fun deleteService(serviceName: String) {
+        return repository.deleteService(serviceName)
+    }
 }

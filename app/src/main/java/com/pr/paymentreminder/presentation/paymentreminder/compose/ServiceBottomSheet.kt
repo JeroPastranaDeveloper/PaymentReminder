@@ -37,6 +37,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.emptyString
+import com.pr.paymentreminder.ui.theme.orElse
 import kotlinx.coroutines.flow.filter
 import java.util.Calendar
 
@@ -64,6 +65,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
             .filter { isVisible -> !isVisible }
             .collect { onDismiss() }
     }
+    //if (!sheetState.isVisible) ModalBottomSheetValue.Hidden else ModalBottomSheetValue.HalfExpanded
 
     ModalBottomSheetLayout(
         sheetContent = {
@@ -80,8 +82,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 Spacer(modifier = Modifier.height(dimen16))
 
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        stringResource(id = R.string.category, selectedCategory),
+                    Text(stringResource(id = R.string.category, selectedCategory),
                         modifier = Modifier
                             .clickable {
                                 categoriesExpanded = !categoriesExpanded
@@ -119,8 +120,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
                         )
                     }
-                    Text(
-                        text = viewModel.textDate.value,
+                    Text(text = viewModel.textDate.value,
                         modifier = Modifier
                             .clickable {
                                 datePickerDialog.show()
@@ -131,8 +131,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 Spacer(modifier = Modifier.height(dimen16))
 
-                Text(
-                    stringResource(id = R.string.payment_type, selectedPaymentType),
+                Text(stringResource(id = R.string.payment_type, selectedPaymentType),
                     modifier = Modifier
                         .clickable {
                             typesExpanded = !typesExpanded
@@ -166,8 +165,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 Spacer(modifier = Modifier.height(dimen16))
 
-                Text(
-                    stringResource(id = R.string.remember_days_before, selectedRemember),
+                Text(stringResource(id = R.string.remember_days_before, selectedRemember),
                     modifier = Modifier
                         .clickable {
                             daysExpanded = !daysExpanded
@@ -191,10 +189,32 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 }
 
                 Spacer(modifier = Modifier.height(dimen16))
+                val originalServiceName = service?.name
 
                 Button(
                     onClick = {
-                        // TODO
+                        if (service != null) {
+                            val updatedServiceData = Service(
+                                category = selectedCategory,
+                                color = emptyString(),
+                                date = viewModel.textDate.value,
+                                name = serviceName.text,
+                                price = servicePrice.text,
+                                remember = selectedRemember,
+                                type = selectedPaymentType
+                            )
+                            viewModel.updateService(originalServiceName.orElse { emptyString() }, updatedServiceData)
+                        }  else {
+                            createService(
+                                selectedCategory,
+                                viewModel,
+                                serviceName,
+                                servicePrice,
+                                selectedRemember,
+                                selectedPaymentType
+                            )
+                        }
+                        viewModel.getServices()
                         onDismiss()
                     },
                     modifier = Modifier
@@ -209,4 +229,25 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
         sheetState = sheetState,
         content = {}
     )
+    Spacer(modifier = Modifier.height(dimen56))
+}
+
+private fun createService(
+    selectedCategory: String,
+    viewModel: HomeViewModel,
+    serviceName: TextFieldValue,
+    servicePrice: TextFieldValue,
+    selectedRemember: String,
+    selectedPaymentType: String
+) {
+    val newService = Service(
+        category = selectedCategory,
+        color = emptyString(),
+        date = viewModel.textDate.value,
+        name = serviceName.text,
+        price = servicePrice.text,
+        remember = selectedRemember,
+        type = selectedPaymentType
+    )
+    viewModel.createService(newService)
 }

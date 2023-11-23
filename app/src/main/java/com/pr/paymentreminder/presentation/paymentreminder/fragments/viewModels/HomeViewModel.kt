@@ -27,7 +27,7 @@ class HomeViewModel @Inject constructor(
         getServices()
     }
 
-    private fun getServices() {
+    fun getServices() {
         viewModelScope.launch {
             _services.value = servicesUseCase.getServices()
         }
@@ -43,5 +43,23 @@ class HomeViewModel @Inject constructor(
 
     fun updateDate(newDate: String) {
         _textDate.value = newDate
+    }
+
+    fun createService(service: Service) {
+        viewModelScope.launch {
+            servicesUseCase.createService(service)
+        }
+    }
+
+    fun updateService(serviceName: String, newServiceData: Service) {
+        viewModelScope.launch {
+            servicesUseCase.updateService(serviceName, newServiceData)
+        }
+    }
+
+    fun deleteService(serviceName: String) {
+        viewModelScope.launch {
+            servicesUseCase.deleteService(serviceName)
+        }
     }
 }
