@@ -119,7 +119,6 @@ class LoginActivity : ComponentActivity() {
     private fun EmailField(
         emailText: MutableState<TextFieldValue>
     ) {
-
         val emailHelper by viewModel.emailHelperText.observeAsState()
         val wasEmailFieldFocused = remember { mutableStateOf(false) }
         TextField(

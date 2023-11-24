@@ -1,6 +1,7 @@
 package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.app.DatePickerDialog
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -21,23 +24,33 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.Categories
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
+import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
+import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen56
+import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.orElse
+import com.pr.paymentreminder.ui.theme.spacing16
+import com.pr.paymentreminder.ui.theme.spacing20
+import com.pr.paymentreminder.ui.theme.spacing8
 import kotlinx.coroutines.flow.filter
 import java.util.Calendar
 
@@ -65,21 +78,42 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
             .filter { isVisible -> !isVisible }
             .collect { onDismiss() }
     }
-    //if (!sheetState.isVisible) ModalBottomSheetValue.Hidden else ModalBottomSheetValue.HalfExpanded
 
     ModalBottomSheetLayout(
         sheetContent = {
             Column(
                 modifier = Modifier.padding(dimen16)
             ) {
+                val serviceNameHelper by viewModel.serviceNameHelperText.observeAsState()
+                val wasServiceNameFieldFocused = remember { mutableStateOf(false)}
                 TextField(
                     value = serviceName,
                     onValueChange = { serviceName = it },
                     label = { Text(stringResource(id = R.string.service_name)) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = spacing8)
+                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
+                        .onFocusChanged {
+                            if (wasServiceNameFieldFocused.value && !it.isFocused) {
+                                viewModel.validateServiceName(serviceName.text)
+                            }
+                            wasServiceNameFieldFocused.value = it.isFocused
+                        },
+                    isError = !serviceNameHelper.isNullOrEmpty(),
+                    singleLine = true
                 )
+                if (!serviceNameHelper.isNullOrEmpty()) {
+                    Text(
+                        text = stringResource(id = R.string.invalid_service_name),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = spacing20, end = spacing16, bottom = spacing8),
+                        color = Color.Red
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(dimen16))
+                Spacer(modifier = Modifier.height(dimen8))
 
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(id = R.string.category, selectedCategory),
@@ -156,14 +190,37 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 Spacer(modifier = Modifier.height(dimen16))
 
+                val servicePriceHelper by viewModel.servicePriceHelperText.observeAsState()
+                val wasServicePriceFieldFocused = remember { mutableStateOf(false)}
                 TextField(
                     value = servicePrice,
                     onValueChange = { servicePrice = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     label = { Text(stringResource(id = R.string.service_price)) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = spacing8)
+                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
+                        .onFocusChanged {
+                            if (wasServicePriceFieldFocused.value && !it.isFocused) {
+                                viewModel.validateServicePrice(servicePrice.text)
+                            }
+                            wasServicePriceFieldFocused.value = it.isFocused
+                        },
+                    isError = !servicePriceHelper.isNullOrEmpty(),
+                    singleLine = true
                 )
+                if (!servicePriceHelper.isNullOrEmpty()) {
+                    Text(
+                        text = stringResource(id = R.string.invalid_service_price),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = spacing20, end = spacing16, bottom = spacing8),
+                        color = Color.Red
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(dimen16))
+                Spacer(modifier = Modifier.height(dimen8))
 
                 Text(stringResource(id = R.string.remember_days_before, selectedRemember),
                     modifier = Modifier

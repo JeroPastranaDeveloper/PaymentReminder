@@ -30,4 +30,6 @@
     <string name="btn_save">Guardar</string>
     <string name="logout">Cerrar sesión</string>
     <string name="logout_question">Vas a cerrar sesión, ¿Estás seguro?</string>
+    <string name="invalid_service_name">Nombre del servicio inválido</string>
+    <string name="invalid_service_price">Precio del servicio inválido</string>
 </resources>
