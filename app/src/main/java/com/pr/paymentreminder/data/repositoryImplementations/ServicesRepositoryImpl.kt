@@ -16,8 +16,8 @@ class ServicesRepositoryImpl @Inject constructor (
         return dataSource.createService(service)
     }
 
-    override suspend fun updateService(serviceName: String, newServiceData: Service) {
-        return dataSource.updateService(serviceName, newServiceData)
+    override suspend fun updateService(serviceId: String, newServiceData: Service) {
+        return dataSource.updateService(serviceId, newServiceData)
     }
 
     override suspend fun deleteService(serviceName: String) {
