@@ -26,6 +26,7 @@ class ServicesDataSource @Inject constructor() {
             servicesRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (serviceSnapshot in snapshot.children) {
+                        val imageUriString = serviceSnapshot.child(Constants.IMAGE).value as String?
                         val service = Service(
                             serviceSnapshot.key.orElse { emptyString() } ,
                             serviceSnapshot.child(Constants.CATEGORY).value as String,
@@ -34,7 +35,8 @@ class ServicesDataSource @Inject constructor() {
                             serviceSnapshot.child(Constants.NAME).value as String,
                             serviceSnapshot.child(Constants.PRICE).value as String,
                             serviceSnapshot.child(Constants.REMEMBER).value as String,
-                            serviceSnapshot.child(Constants.TYPE).value as String
+                            serviceSnapshot.child(Constants.TYPE).value as String,
+                            imageUriString,
                         )
                         services.add(service)
                     }

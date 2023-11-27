@@ -1,5 +1,6 @@
 package com.pr.paymentreminder.presentation.paymentreminder.compose
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,7 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import coil.compose.rememberAsyncImagePainter
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
@@ -40,11 +42,14 @@ fun ServiceCard(service: Service, onClick: () -> Unit) {
             horizontalArrangement = Arrangement.Start,
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_launcher_background),
+                painter = if (service.image != null) {
+                    rememberAsyncImagePainter(model = Uri.parse(service.image))
+                } else {
+                    painterResource(id = R.drawable.ic_launcher_background)
+                },
                 contentDescription = emptyString(),
                 modifier = Modifier
-                    .width(dimen100)
-                    .height(dimen100)
+                    .size(dimen100)
                     .align(Alignment.CenterVertically),
                 contentScale = ContentScale.Fit,
             )
@@ -55,18 +60,6 @@ fun ServiceCard(service: Service, onClick: () -> Unit) {
                     .align(Alignment.CenterVertically)
                     .weight(1f)
             ) {
-                /*if (service.name.length > 20) {
-                    MarqueeText(
-                        text = service.name,
-                        modifier = Modifier.padding(spacing4)
-                    )
-                } else {
-                    Text(
-                        text = service.name,
-                        modifier = Modifier.padding(spacing4),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }*/
                 Text(
                     text = service.name,
                     modifier = Modifier.padding(spacing4),
@@ -87,28 +80,4 @@ fun ServiceCard(service: Service, onClick: () -> Unit) {
             }
         }
     }
-
-    /*@Composable
-    @Stable
-    private fun CategoriesDropDown(
-        modifier: Modifier = Modifier,
-        value: Categories,
-        items: List<Categories>,
-        onItemChanged: (Categories) -> Unit
-    ) {
-        val list by remember { derivedStateOf { items } }
-        val selectedCategory = value.category
-        val rotationState = remember { mutableFloatStateOf(0f) }
-        SimpleDropDownSelection(
-            startValue = selectedCategory.takeIf { it.isNotEmpty() }.orElse {
-                //stringResource(id = R.string.select_category)
-                 "Selecciona categoría"
-            },
-            list = list.map { it.category },
-            modifier = modifier.padding(horizontal = spacing30)
-        ) { position ->
-            onItemChanged(list[position])
-            rotationState.floatValue += 180f
-        }
-    }*/
 }
