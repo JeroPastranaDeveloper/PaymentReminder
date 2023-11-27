@@ -8,5 +8,6 @@ data class Service(
     var name: String,
     val price: String,
     val remember: String,
-    val type: String
+    val type: String,
+    val image: String?
 )

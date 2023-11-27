@@ -1,14 +1,21 @@
 package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.app.DatePickerDialog
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenuItem
@@ -24,26 +31,32 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import coil.compose.rememberAsyncImagePainter
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Categories
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.ui.theme.dimen0
 import com.pr.paymentreminder.ui.theme.dimen1
+import com.pr.paymentreminder.ui.theme.dimen150
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen56
@@ -60,6 +73,13 @@ import java.util.Calendar
 @Composable
 fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: () -> Unit) {
     val context = LocalContext.current
+
+    val imageUriString = service?.image
+    val imageUri = remember { mutableStateOf(imageUriString?.let { Uri.parse(it) }) }
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let { imageUri.value = it }
+    }
+
 
     var serviceName by remember { mutableStateOf(TextFieldValue(service?.name ?: emptyString())) }
     var servicePrice by remember { mutableStateOf(TextFieldValue(service?.price ?: emptyString())) }
@@ -81,7 +101,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     var daysExpanded by remember { mutableStateOf(false) }
     var rememberValidation by remember { mutableStateOf(false) }
 
-    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.HalfExpanded)
+    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
     LaunchedEffect(sheetState) {
         snapshotFlow { sheetState.isVisible }
             .filter { isVisible -> !isVisible }
@@ -94,6 +114,24 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
             Column(
                 modifier = Modifier.padding(dimen16)
             ) {
+                Box(modifier = Modifier.size(dimen150).align(Alignment.CenterHorizontally).clickable {
+                    launcher.launch(Constants.IMAGE_PATH)
+                }) {
+                    if (imageUri.value != null) {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = imageUri.value),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.add),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+
                 val serviceNameHelper by viewModel.serviceNameHelperText.observeAsState()
                 val wasServiceNameFieldFocused = remember { mutableStateOf(false) }
                 TextField(
@@ -338,7 +376,8 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                                     name = serviceName.text,
                                     price = servicePrice.text,
                                     remember = selectedRemember,
-                                    type = selectedPaymentType
+                                    type = selectedPaymentType,
+                                    image = imageUri.value.toString()
                                 )
                                 viewModel.updateService(
                                     serviceId.orElse { emptyString() },
@@ -352,7 +391,8 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                                     serviceDate,
                                     servicePrice,
                                     selectedRemember,
-                                    selectedPaymentType
+                                    selectedPaymentType,
+                                    imageUri
                                 )
                             }
                             viewModel.getServices()
@@ -389,7 +429,8 @@ private fun createService(
     serviceDate: String,
     servicePrice: TextFieldValue,
     selectedRemember: String,
-    selectedPaymentType: String
+    selectedPaymentType: String,
+    image: MutableState<Uri?>
 ) {
     val newService = Service(
         id = emptyString(),
@@ -399,7 +440,8 @@ private fun createService(
         name = serviceName.text,
         price = servicePrice.text,
         remember = selectedRemember,
-        type = selectedPaymentType
+        type = selectedPaymentType,
+        image = image.value.toString()
     )
     viewModel.createService(newService)
 }
