@@ -318,13 +318,12 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 }
 
                 Spacer(modifier = Modifier.height(if (serviceRememberHelperText.isNullOrEmpty()) dimen0 else dimen8))
-                val originalServiceName = service?.name
+                val serviceId = service?.id
 
                 Button(
                     onClick = {
                         val isServiceNameValid = viewModel.validateServiceName(serviceName.text)
-                        val isServiceCategoryValid =
-                            viewModel.validateServiceCategory(selectedCategory)
+                        val isServiceCategoryValid = viewModel.validateServiceCategory(selectedCategory)
                         val isServiceDateValid = viewModel.validateServiceDate(serviceDate)
                         val isServiceTypeValid = viewModel.validateServiceType(selectedPaymentType)
                         val isServicePriceValid = viewModel.validateServicePrice(servicePrice.text)
@@ -332,6 +331,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
                             if (service != null) {
                                 val updatedServiceData = Service(
+                                    id = serviceId.orEmpty(),
                                     category = selectedCategory,
                                     color = emptyString(),
                                     date = serviceDate,
@@ -341,7 +341,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                                     type = selectedPaymentType
                                 )
                                 viewModel.updateService(
-                                    originalServiceName.orElse { emptyString() },
+                                    serviceId.orElse { emptyString() },
                                     updatedServiceData
                                 )
                             } else {
@@ -392,6 +392,7 @@ private fun createService(
     selectedPaymentType: String
 ) {
     val newService = Service(
+        id = emptyString(),
         category = selectedCategory,
         color = emptyString(),
         date = serviceDate,

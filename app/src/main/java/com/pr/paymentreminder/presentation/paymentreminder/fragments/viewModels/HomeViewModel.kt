@@ -6,6 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
@@ -59,13 +62,21 @@ class HomeViewModel @Inject constructor(
 
     fun createService(service: Service) {
         viewModelScope.launch {
-            servicesUseCase.createService(service)
+            val database = Firebase.database
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
+            val key = servicesRef.push().key
+            if (key != null) {
+                service.id = key
+                servicesUseCase.createService(service)
+            }
         }
     }
 
-    fun updateService(serviceName: String, newServiceData: Service) {
+
+    fun updateService(serviceId: String, newServiceData: Service) {
         viewModelScope.launch {
-            servicesUseCase.updateService(serviceName, newServiceData)
+            servicesUseCase.updateService(serviceId, newServiceData)
         }
     }
 

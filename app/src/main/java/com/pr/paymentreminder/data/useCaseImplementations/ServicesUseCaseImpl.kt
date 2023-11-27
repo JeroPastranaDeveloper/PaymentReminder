@@ -16,8 +16,8 @@ class ServicesUseCaseImpl @Inject constructor(
         return repository.createService(service)
     }
 
-    override suspend fun updateService(serviceName: String, newServiceData: Service) {
-        return repository.updateService(serviceName, newServiceData)
+    override suspend fun updateService(serviceId: String, newServiceData: Service) {
+        return repository.updateService(serviceId, newServiceData)
     }
 
     override suspend fun deleteService(serviceName: String) {

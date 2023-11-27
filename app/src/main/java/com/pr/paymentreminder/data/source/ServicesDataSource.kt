@@ -8,6 +8,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.ui.theme.emptyString
+import com.pr.paymentreminder.ui.theme.orElse
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -25,6 +27,7 @@ class ServicesDataSource @Inject constructor() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (serviceSnapshot in snapshot.children) {
                         val service = Service(
+                            serviceSnapshot.key.orElse { emptyString() } ,
                             serviceSnapshot.child(Constants.CATEGORY).value as String,
                             serviceSnapshot.child(Constants.COLOR).value as String,
                             serviceSnapshot.child(Constants.DATE).value as String,
@@ -48,14 +51,17 @@ class ServicesDataSource @Inject constructor() {
         val database = Firebase.database
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
-        servicesRef.push().setValue(service)
+        val key = servicesRef.push().key
+        if (key != null) {
+            servicesRef.child(key).setValue(service)
+        }
     }
 
-    fun updateService(serviceName: String, newServiceData: Service) {
+    fun updateService(serviceId: String, newServiceData: Service) {
         val database = Firebase.database
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
-        servicesRef.child(serviceName).setValue(newServiceData)
+        servicesRef.child(serviceId).setValue(newServiceData)
     }
 
     fun deleteService(serviceName: String) {
