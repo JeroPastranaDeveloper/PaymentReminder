@@ -2,15 +2,18 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
-import com.pr.paymentreminder.ui.theme.emptyString
-import com.pr.paymentreminder.ui.theme.orElse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,8 +23,29 @@ class HomeViewModel @Inject constructor(
     private val _services = mutableStateOf<List<Service>>(emptyList())
     val services: State<List<Service>> = _services
 
-    private val _textDate = mutableStateOf(emptyString())
-    val textDate: State<String> = _textDate
+    private val _serviceNameHelperText = MutableLiveData<String?>()
+    val serviceNameHelperText: LiveData<String?>
+        get() = _serviceNameHelperText
+
+    private val _serviceCategoryHelperText = MutableLiveData<String?>()
+    val serviceCategoryHelperText: LiveData<String?>
+        get() = _serviceCategoryHelperText
+
+    private val _serviceDateHelperText = MutableLiveData<String?>()
+    val serviceDateHelperText: LiveData<String?>
+        get() = _serviceDateHelperText
+
+    private val _serviceTypeHelperText = MutableLiveData<String?>()
+    val serviceTypesHelperText: LiveData<String?>
+        get() = _serviceTypeHelperText
+
+    private val _servicePriceHelperText = MutableLiveData<String?>()
+    val servicePriceHelperText: LiveData<String?>
+        get() = _servicePriceHelperText
+
+    private val _serviceRememberHelperText = MutableLiveData<String?>()
+    val serviceRememberHelperText: LiveData<String?>
+        get() = _serviceRememberHelperText
 
     init {
         getServices()
@@ -31,18 +55,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _services.value = servicesUseCase.getServices()
         }
-    }
-
-    fun checkDateText(service: Service?) {
-        if (service?.date.isNullOrEmpty()) {
-            _textDate.value = R.string.payment_date.toString()
-        } else {
-            _textDate.value = service?.date.orElse { emptyString() }
-        }
-    }
-
-    fun updateDate(newDate: String) {
-        _textDate.value = newDate
     }
 
     fun createService(service: Service) {
@@ -61,5 +73,84 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             servicesUseCase.deleteService(serviceName)
         }
+    }
+
+    fun validateServiceName(serviceName: String): Boolean {
+        val isValid: Boolean
+        if (serviceName.isEmpty()) {
+            _serviceNameHelperText.value = R.string.invalid_service_name.toString()
+            isValid = false
+        } else {
+            _serviceNameHelperText.value = null
+            isValid = true
+        }
+        return isValid
+    }
+
+    fun validateServiceCategory(serviceCategory: String): Boolean {
+        val isValid: Boolean
+        if (serviceCategory.isEmpty()) {
+            _serviceCategoryHelperText.value = R.string.invalid_service_category.toString()
+            isValid = false
+        } else {
+            _serviceCategoryHelperText.value = null
+            isValid = true
+        }
+        return isValid
+    }
+
+    fun validateServiceDate(serviceDate: String): Boolean {
+        if (serviceDate.isNotEmpty()) {
+            val formatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
+            val selectedDate = LocalDate.parse(serviceDate, formatter)
+            val currentDate = LocalDate.now()
+
+            return if (selectedDate.isBefore(currentDate)) {
+                _serviceDateHelperText.value = R.string.invalid_service_date.toString()
+                false
+            } else {
+                _serviceDateHelperText.value = null
+                true
+            }
+        } else {
+            _serviceDateHelperText.value = R.string.invalid_service_date.toString()
+            return false
+        }
+    }
+
+    fun validateServiceType(serviceType: String) : Boolean {
+        val isValid: Boolean
+        if (serviceType.isEmpty()) {
+            _serviceTypeHelperText.value = R.string.invalid_service_type.toString()
+            isValid = false
+        } else {
+            _serviceTypeHelperText.value = null
+            isValid = true
+        }
+        return isValid
+    }
+
+    fun validateServicePrice(servicePrice: String): Boolean {
+        val isValid: Boolean
+        if (servicePrice.isEmpty() || servicePrice.contains(Regex("[ -,]"))) {
+            _servicePriceHelperText.value = R.string.invalid_service_price.toString()
+            isValid = false
+        } else {
+            _servicePriceHelperText.value = null
+            isValid = true
+        }
+        return isValid
+    }
+
+    fun validateServiceRemember(serviceRemember: String): Boolean {
+        val isValid: Boolean
+        if (serviceRemember.isEmpty()) {
+            _serviceRememberHelperText.value = R.string.invalid_service_remember.toString()
+            isValid = false
+        } else {
+            _serviceRememberHelperText.value = null
+            isValid = true
+        }
+        return isValid
     }
 }

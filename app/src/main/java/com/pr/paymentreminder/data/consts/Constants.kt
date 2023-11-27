@@ -21,5 +21,6 @@ class Constants {
         const val WEEKLY = "Semanal"
         const val MONTHLY = "Mensual"
         const val YEARLY = "Anual"
+        const val DATE_FORMAT = "dd/MM/yyyy"
     }
 }

@@ -26,7 +26,7 @@ class LoginViewModel @Inject constructor(
         get() = _isLoginSuccessful
 
     fun validateEmail(email: String) : Boolean {
-        var isValid = false
+        val isValid : Boolean
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() || email.isEmpty()) {
             _emailHelperText.value = R.string.invalid_email.toString()
             isValid = false
@@ -38,7 +38,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun validatePassword(password: String) : Boolean {
-        var isValid = false
+        val isValid : Boolean
         if (password.length < 8 || !password.matches(".*[0-9].*".toRegex()) || password.isEmpty()) {
             _passHelperText.value = R.string.invalid_pass.toString()
             isValid = false

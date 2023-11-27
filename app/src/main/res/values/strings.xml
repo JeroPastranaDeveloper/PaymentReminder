@@ -20,14 +20,20 @@
     <string name="title_home">home</string>
     <string name="title_settings">settings</string>
     <string name="title_graphic">graphic</string>
-    <string name="category">Categoría: %1$s</string>
+    <string name="category">Categoría: %s</string>
     <string name="service_name">Nombre del servicio</string>
     <string name="service_price">Precio del servicio</string>
-    <string name="payment_date">Fecha de pago</string>
-    <string name="payment_type">Tipo de pago: %1$s</string>
+    <string name="payment_date">Fecha de pago: %s</string>
+    <string name="payment_type">Tipo de pago: %s</string>
     <string name="remember_days_before">Recordar %1$s días antes</string>
     <string name="select_category">Selecciona categoría</string>
     <string name="btn_save">Guardar</string>
     <string name="logout">Cerrar sesión</string>
     <string name="logout_question">Vas a cerrar sesión, ¿Estás seguro?</string>
+    <string name="invalid_service_name">Nombre del servicio inválido</string>
+    <string name="invalid_service_category">Categoría del servicio inválida</string>
+    <string name="invalid_service_type">Tipo del servicio inválido</string>
+    <string name="invalid_service_price">Precio del servicio inválido</string>
+    <string name="invalid_service_date">Fecha del servicio inválida</string>
+    <string name="invalid_service_remember">Recordatorio del servicio inválido</string>
 </resources>
