@@ -40,7 +40,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -73,10 +72,13 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+// TODO: PONER TEXTFIELD PARA LA URL DE LA IMAGEN
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: () -> Unit) {
     val context = LocalContext.current
+    
+    var imageUrl by remember { mutableStateOf(TextFieldValue(service?.image ?: emptyString())) }
 
     val imageUriString = service?.image
     val imageUri = remember { mutableStateOf(imageUriString?.let { Uri.parse(it) }) }
@@ -120,7 +122,23 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
             Column(
                 modifier = Modifier.padding(dimen16)
             ) {
-                ImageBox(launcher, imageUri, Modifier.align(Alignment.CenterHorizontally))
+                //ImageBox(launcher, imageUri, Modifier.align(Alignment.CenterHorizontally))
+
+                TextField(
+                    value = imageUrl,
+                    onValueChange = { imageUrl = it },
+                    label = { Text(stringResource(id = R.string.service_image_url)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = spacing8)
+                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                    singleLine = true
+                )
+
+
+
+                
+                Spacer(modifier = Modifier.height(dimen16))
 
                 TextField(
                     value = serviceName,
@@ -358,7 +376,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         servicePrice = servicePrice,
                         serviceId = serviceId,
                         selectedRemember = selectedRemember,
-                        imageUri = imageUri,
+                        imageUri = imageUrl,
                         service = service,
                         onDismiss = onDismiss,
                         context = context
@@ -379,9 +397,11 @@ private fun ImageBox(
     imageUri: MutableState<Uri?>,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.size(dimen150).clickable {
-        launcher.launch(Constants.IMAGE_PATH)
-    }) {
+    Box(modifier = modifier
+        .size(dimen150)
+        .clickable {
+            launcher.launch(Constants.IMAGE_PATH)
+        }) {
         if (imageUri.value != null) {
             Image(
                 painter = rememberAsyncImagePainter(model = imageUri.value),
@@ -406,7 +426,7 @@ data class ButtonFunctionality(
     val servicePrice: TextFieldValue,
     val serviceId: String?,
     val selectedRemember: String,
-    val imageUri: MutableState<Uri?>,
+    val imageUri: TextFieldValue,
     val service: Service?,
     val onDismiss: () -> Unit,
     val context: Context
@@ -437,7 +457,7 @@ private fun SaveButton(
                             price = servicePrice.text,
                             remember = selectedRemember,
                             type = selectedPaymentType,
-                            image = imageUri.value.toString()
+                            image = imageUri.text
                         )
 
                         if (service != null) {
