@@ -24,6 +24,7 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceBottomSheet
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceCard
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
+import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing16
@@ -56,8 +57,8 @@ fun HomeFragment(viewModel: HomeViewModel) {
                         viewModel.getServices()
                     }
                 )
-
             }
+            Spacer(modifier = Modifier.height(dimen56))
             Spacer(modifier = Modifier.weight(1f))
         }
 
