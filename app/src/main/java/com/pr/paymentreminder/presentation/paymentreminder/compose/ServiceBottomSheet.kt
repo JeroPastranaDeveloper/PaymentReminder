@@ -361,7 +361,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 Spacer(modifier = Modifier.height(if (serviceRememberHelperText.isNullOrEmpty()) dimen0 else dimen8))
                 val serviceId = service?.id
-
+// NkKK4z46yxB2iIEVlFC
                 Button(
                     onClick = {
                         val isServiceNameValid = viewModel.validateServiceName(serviceName.text)
@@ -372,7 +372,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                         if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
                             val serviceData = Service(
-                                id = emptyString(),
+                                id = serviceId.orElse { emptyString() },
                                 category = selectedCategory,
                                 name = serviceName.text,
                                 color = emptyString(),
