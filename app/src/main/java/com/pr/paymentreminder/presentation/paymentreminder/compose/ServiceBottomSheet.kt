@@ -31,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -67,7 +66,9 @@ import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing20
 import com.pr.paymentreminder.ui.theme.spacing8
 import kotlinx.coroutines.flow.filter
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -210,7 +211,10 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     DatePickerDialog(
                         context,
                         { _, year, month, dayOfMonth ->
-                            serviceDate = "${dayOfMonth}/${month + 1}/${year}"
+                            val calendar = Calendar.getInstance()
+                            calendar.set(year, month, dayOfMonth)
+                            val dateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
+                            serviceDate = dateFormat.format(calendar.time)
                             viewModel.validateServiceDate(serviceDate)
                         },
                         Calendar.getInstance()[Calendar.YEAR],
@@ -367,14 +371,16 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         val isServicePriceValid = viewModel.validateServicePrice(servicePrice.text)
 
                         if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
-                            val serviceData = ServiceData(
-                                selectedCategory = selectedCategory,
-                                serviceName = serviceName,
-                                serviceDate = serviceDate,
-                                servicePrice = servicePrice,
-                                selectedRemember = selectedRemember,
-                                selectedPaymentType = selectedPaymentType,
-                                image = imageUri
+                            val serviceData = Service(
+                                id = emptyString(),
+                                category = selectedCategory,
+                                name = serviceName.text,
+                                color = emptyString(),
+                                date = serviceDate,
+                                price = servicePrice.text,
+                                remember = selectedRemember,
+                                type = selectedPaymentType,
+                                image = imageUri.value.toString()
                             )
 
                             if (service != null) {
@@ -404,6 +410,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             viewModel.validateServiceDate(serviceDate)
                             viewModel.validateServiceType(selectedPaymentType)
                             viewModel.validateServicePrice(servicePrice.text)
+                            viewModel.validateServiceRemember(selectedRemember)
 
                             Toast.makeText(context, R.string.invalid_data, Toast.LENGTH_LONG).show()
                         }
@@ -423,30 +430,20 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     Spacer(modifier = Modifier.height(dimen56))
 }
 
-data class ServiceData(
-    val selectedCategory: String,
-    val serviceName: TextFieldValue,
-    val serviceDate: String,
-    val servicePrice: TextFieldValue,
-    val selectedRemember: String,
-    val selectedPaymentType: String,
-    val image: MutableState<Uri?>
-)
-
 private fun createService(
-    serviceData: ServiceData,
+    serviceData: Service,
     viewModel: HomeViewModel
 ) {
     val newService = Service(
         id = emptyString(),
-        category = serviceData.selectedCategory,
+        category = serviceData.category,
         color = emptyString(),
-        date = serviceData.serviceDate,
-        name = serviceData.serviceName.text,
-        price = serviceData.servicePrice.text,
-        remember = serviceData.selectedRemember,
-        type = serviceData.selectedPaymentType,
-        image = serviceData.image.value.toString()
+        date = serviceData.date,
+        name = serviceData.name,
+        price = serviceData.price,
+        remember = serviceData.remember,
+        type = serviceData.type,
+        image = serviceData.image.toString()
     )
     viewModel.createService(newService)
 }
