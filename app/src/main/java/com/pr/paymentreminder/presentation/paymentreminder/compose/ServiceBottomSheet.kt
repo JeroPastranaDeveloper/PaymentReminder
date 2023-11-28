@@ -2,22 +2,14 @@ package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.net.Uri
 import android.widget.Toast
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenuItem
@@ -41,14 +33,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import coil.compose.rememberAsyncImagePainter
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Categories
@@ -57,7 +48,6 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.ui.theme.dimen0
 import com.pr.paymentreminder.ui.theme.dimen1
-import com.pr.paymentreminder.ui.theme.dimen150
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen56
@@ -72,42 +62,47 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-// TODO: PONER TEXTFIELD PARA LA URL DE LA IMAGEN
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: () -> Unit) {
     val context = LocalContext.current
-    
+
     var imageUrl by remember { mutableStateOf(TextFieldValue(service?.image ?: emptyString())) }
 
-    val imageUriString = service?.image
+    /*val imageUriString = service?.image
     val imageUri = remember { mutableStateOf(imageUriString?.let { Uri.parse(it) }) }
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let { imageUri.value = it }
-    }
+    }*/
 
     var serviceName by remember { mutableStateOf(TextFieldValue(service?.name ?: emptyString())) }
-    val serviceNameHelper by viewModel.serviceNameHelperText.observeAsState()
+    val serviceNameHelperText by viewModel.serviceNameHelperText.observeAsState()
     val wasServiceNameFieldFocused = remember { mutableStateOf(false) }
 
     var servicePrice by remember { mutableStateOf(TextFieldValue(service?.price ?: emptyString())) }
+    val servicePriceHelperText by viewModel.servicePriceHelperText.observeAsState()
+    val wasServicePriceFieldFocused = remember { mutableStateOf(false) }
 
     var selectedCategory by remember { mutableStateOf(service?.category ?: emptyString()) }
     val categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS)
     var categoriesExpanded by remember { mutableStateOf(false) }
     var categoriesValidation by remember { mutableStateOf(false) }
+    val serviceCategoriesHelperText by viewModel.serviceCategoryHelperText.observeAsState()
 
     var serviceDate by remember { mutableStateOf(service?.date ?: emptyString()) }
+    val serviceDateHelperText by viewModel.serviceDateHelperText.observeAsState()
 
     var selectedPaymentType by remember { mutableStateOf(service?.type ?: emptyString()) }
     val types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY)
     var typesExpanded by remember { mutableStateOf(false) }
     var typesValidation by remember { mutableStateOf(false) }
+    val serviceTypesHelperText by viewModel.serviceTypesHelperText.observeAsState()
 
     var selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
     val daysRemember = listOf(1, 2, 3)
     var daysExpanded by remember { mutableStateOf(false) }
     var rememberValidation by remember { mutableStateOf(false) }
+    val serviceRememberHelperText by viewModel.serviceRememberHelperText.observeAsState()
 
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
     LaunchedEffect(sheetState) {
@@ -135,9 +130,6 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     singleLine = true
                 )
 
-
-
-                
                 Spacer(modifier = Modifier.height(dimen16))
 
                 TextField(
@@ -149,68 +141,51 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         .padding(vertical = spacing8)
                         .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
                         .onFocusChanged {
-                            if (wasServiceNameFieldFocused.value && !it.isFocused) {
-                                viewModel.validateServiceName(serviceName.text)
-                            }
+                            checkServiceNameFocus(
+                                wasServiceNameFieldFocused,
+                                it,
+                                viewModel,
+                                serviceName
+                            )
                             wasServiceNameFieldFocused.value = it.isFocused
                         },
-                    isError = !serviceNameHelper.isNullOrEmpty(),
+                    isError = !serviceNameHelperText.isNullOrEmpty(),
                     singleLine = true
                 )
-                if (!serviceNameHelper.isNullOrEmpty()) {
-                    Text(
-                        text = stringResource(id = R.string.invalid_service_name),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = spacing20, end = spacing16, bottom = spacing8),
-                        color = Color.Red
-                    )
-                }
 
-                Spacer(modifier = Modifier.height(if (serviceNameHelper.isNullOrEmpty()) dimen0 else dimen8))
-
-                val serviceCategoriesHelperText by viewModel.serviceCategoryHelperText.observeAsState()
+                HelperSeparator(serviceNameHelperText.orElse { emptyString() })
+                ServiceNameHelperText(serviceNameHelperText)
+                ServiceSeparator(serviceNameHelperText.orElse { emptyString() })
 
                 Text(stringResource(id = R.string.category, selectedCategory),
                     modifier = Modifier.clickable { categoriesExpanded = !categoriesExpanded }
                 )
 
                 if (categoriesExpanded) {
-                    DropdownMenu(
-                        expanded = categoriesExpanded,
-                        onDismissRequest = {
-                            categoriesExpanded = false
-                            categoriesValidation = true
-                        }
-                    ) {
-                        categories.forEach { category ->
-                            DropdownMenuItem(onClick = {
-                                selectedCategory = category.category
-                                categoriesExpanded = false
-                            }) {
-                                Text(text = category.category)
-                            }
-                        }
-                    }
                     viewModel.validateServiceCategory(selectedCategory)
                 }
 
-                Spacer(modifier = Modifier.height(if (serviceCategoriesHelperText.isNullOrEmpty()) dimen16 else dimen8))
-
-                if (!serviceCategoriesHelperText.isNullOrEmpty() && categoriesValidation) {
-                    Text(
-                        text = stringResource(id = R.string.invalid_service_category),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = spacing20, end = spacing16, bottom = spacing8),
-                        color = Color.Red
-                    )
-                    !categoriesValidation
+                DropdownMenu(
+                    expanded = categoriesExpanded,
+                    onDismissRequest = {
+                        categoriesExpanded = false
+                        categoriesValidation = true
+                    }
+                ) {
+                    categories.forEach { category ->
+                        DropdownMenuItem(onClick = {
+                            selectedCategory = category.category
+                            categoriesExpanded = false
+                        }) {
+                            Text(text = category.category)
+                        }
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(if (serviceCategoriesHelperText.isNullOrEmpty()) dimen0 else dimen8))
 
-                val serviceDateHelperText by viewModel.serviceDateHelperText.observeAsState()
+                HelperSeparator(serviceCategoriesHelperText.orElse { emptyString() })
+                ServiceCategoriesHelperText(serviceCategoriesHelperText, categoriesValidation)
+                ServiceSeparator(serviceCategoriesHelperText.orElse { emptyString() })
 
                 val datePickerDialog = remember {
                     DatePickerDialog(
@@ -218,7 +193,8 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         { _, year, month, dayOfMonth ->
                             val calendar = Calendar.getInstance()
                             calendar.set(year, month, dayOfMonth)
-                            val dateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
+                            val dateFormat =
+                                SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
                             serviceDate = dateFormat.format(calendar.time)
                             viewModel.validateServiceDate(serviceDate)
                         },
@@ -230,23 +206,13 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 Text(
                     text = stringResource(id = R.string.payment_date, serviceDate),
-                    modifier = Modifier.clickable { datePickerDialog.show() })
+                    modifier = Modifier.clickable { datePickerDialog.show() }
+                )
 
-                Spacer(modifier = Modifier.height(if (serviceDateHelperText.isNullOrEmpty()) dimen16 else dimen8))
+                HelperSeparator(serviceDateHelperText.orElse { emptyString() })
+                ServiceDateHelperText(serviceDateHelperText)
+                ServiceSeparator(serviceDateHelperText.orElse { emptyString() })
 
-                if (!serviceDateHelperText.isNullOrEmpty()) {
-                    Text(
-                        text = stringResource(id = R.string.invalid_service_date),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = spacing20, end = spacing16, bottom = spacing8),
-                        color = Color.Red
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(if (serviceDateHelperText.isNullOrEmpty()) dimen0 else dimen8))
-
-                val serviceTypesHelperText by viewModel.serviceTypesHelperText.observeAsState()
                 Text(stringResource(id = R.string.payment_type, selectedPaymentType),
                     modifier = Modifier
                         .clickable {
@@ -255,43 +221,32 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 )
 
                 if (typesExpanded) {
-                    DropdownMenu(
-                        expanded = typesExpanded,
-                        onDismissRequest = {
-                            typesExpanded = false
-                            typesValidation = true
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        types.forEach { type ->
-                            DropdownMenuItem(onClick = {
-                                selectedPaymentType = type.type
-                                typesExpanded = false
-                            }) {
-                                Text(text = type.type)
-                            }
-                        }
-                    }
                     viewModel.validateServiceType(selectedPaymentType)
                 }
 
-                Spacer(modifier = Modifier.height(if (serviceTypesHelperText.isNullOrEmpty()) dimen16 else dimen8))
-
-                if (!serviceTypesHelperText.isNullOrEmpty() && typesValidation) {
-                    Text(
-                        text = stringResource(id = R.string.invalid_service_type),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = spacing20, end = spacing16, bottom = spacing8),
-                        color = Color.Red
-                    )
-                    !typesValidation
+                DropdownMenu(
+                    expanded = typesExpanded,
+                    onDismissRequest = {
+                        typesExpanded = false
+                        typesValidation = true
+                    }
+                ) {
+                    types.forEach { type ->
+                        DropdownMenuItem(onClick = {
+                            selectedPaymentType = type.type
+                            typesExpanded = false
+                        }) {
+                            Text(text = type.type)
+                        }
+                    }
                 }
+                viewModel.validateServiceType(selectedPaymentType)
 
-                Spacer(modifier = Modifier.height(if (serviceTypesHelperText.isNullOrEmpty()) dimen0 else dimen8))
 
-                val servicePriceHelperText by viewModel.servicePriceHelperText.observeAsState()
-                val wasServicePriceFieldFocused = remember { mutableStateOf(false) }
+                HelperSeparator(serviceTypesHelperText.orElse { emptyString() })
+                ServiceTypesHelperText(serviceTypesHelperText, typesValidation)
+                ServiceSeparator(serviceTypesHelperText.orElse { emptyString() })
+
                 TextField(
                     value = servicePrice,
                     onValueChange = { servicePrice = it },
@@ -302,27 +257,22 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         .padding(vertical = spacing8)
                         .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
                         .onFocusChanged {
-                            if (wasServicePriceFieldFocused.value && !it.isFocused) {
-                                viewModel.validateServicePrice(servicePrice.text)
-                            }
+                            checkServicePriceFocus(
+                                wasServicePriceFieldFocused,
+                                it,
+                                viewModel,
+                                servicePrice
+                            )
                             wasServicePriceFieldFocused.value = it.isFocused
                         },
                     isError = !servicePriceHelperText.isNullOrEmpty(),
                     singleLine = true
                 )
-                if (!servicePriceHelperText.isNullOrEmpty()) {
-                    Text(
-                        text = stringResource(id = R.string.invalid_service_price),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = spacing20, end = spacing16, bottom = spacing8),
-                        color = Color.Red
-                    )
-                }
 
-                Spacer(modifier = Modifier.height(dimen8))
+                HelperSeparator(servicePriceHelperText.orElse { emptyString() })
+                ServicePriceHelperText(servicePriceHelperText)
+                ServiceSeparator(servicePriceHelperText.orElse { emptyString() })
 
-                val serviceRememberHelperText by viewModel.serviceRememberHelperText.observeAsState()
                 Text(stringResource(id = R.string.remember_days_before, selectedRemember),
                     modifier = Modifier
                         .clickable {
@@ -331,40 +281,31 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 )
 
                 if (daysExpanded) {
-                    DropdownMenu(
-                        expanded = daysExpanded,
-                        onDismissRequest = {
-                            daysExpanded = false
-                            rememberValidation = false
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        daysRemember.forEach { day ->
-                            DropdownMenuItem(onClick = {
-                                selectedRemember = day.toString()
-                                daysExpanded = false
-                            }) {
-                                Text(text = day.toString())
-                            }
-                        }
-                    }
                     viewModel.validateServiceRemember(selectedRemember)
                 }
 
-                Spacer(modifier = Modifier.height(if (serviceRememberHelperText.isNullOrEmpty()) dimen16 else dimen8))
-
-                if (!serviceRememberHelperText.isNullOrEmpty()) {
-                    Text(
-                        text = stringResource(id = R.string.invalid_service_remember),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = spacing20, end = spacing16, bottom = spacing8),
-                        color = Color.Red
-                    )
-                    !rememberValidation
+                DropdownMenu(
+                    expanded = daysExpanded,
+                    onDismissRequest = {
+                        daysExpanded = false
+                        rememberValidation = false
+                    }
+                ) {
+                    daysRemember.forEach { day ->
+                        DropdownMenuItem(onClick = {
+                            selectedRemember = day.toString()
+                            daysExpanded = false
+                        }) {
+                            Text(text = day.toString())
+                        }
+                    }
                 }
+                viewModel.validateServiceRemember(selectedRemember)
 
-                Spacer(modifier = Modifier.height(if (serviceRememberHelperText.isNullOrEmpty()) dimen0 else dimen8))
+                HelperSeparator(serviceRememberHelperText.orElse { emptyString() })
+                ServiceRememberHelperText(serviceRememberHelperText, rememberValidation)
+                ServiceSeparator(serviceRememberHelperText.orElse { emptyString() })
+
                 val serviceId = service?.id
                 SaveButton(
                     viewModel,
@@ -391,7 +332,125 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     )
 }
 
+private fun checkServicePriceFocus(
+    wasServicePriceFieldFocused: MutableState<Boolean>,
+    it: FocusState,
+    viewModel: HomeViewModel,
+    servicePrice: TextFieldValue
+) {
+    if (wasServicePriceFieldFocused.value && !it.isFocused) {
+        viewModel.validateServicePrice(servicePrice.text)
+    }
+}
+
+private fun checkServiceNameFocus(
+    wasServiceNameFieldFocused: MutableState<Boolean>,
+    it: FocusState,
+    viewModel: HomeViewModel,
+    serviceName: TextFieldValue
+) {
+    if (wasServiceNameFieldFocused.value && !it.isFocused) {
+        viewModel.validateServiceName(serviceName.text)
+    }
+}
+
 @Composable
+private fun ServiceRememberHelperText(
+    serviceRememberHelperText: String?,
+    rememberValidation: Boolean
+) {
+    if (!serviceRememberHelperText.isNullOrEmpty()) {
+        Text(
+            text = stringResource(id = R.string.invalid_service_remember),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = spacing20, end = spacing16, bottom = spacing8),
+            color = Color.Red
+        )
+        !rememberValidation
+    }
+}
+
+@Composable
+private fun ServicePriceHelperText(
+    servicePriceHelperText: String?
+) {
+    if (!servicePriceHelperText.isNullOrEmpty()) {
+        Text(
+            text = stringResource(id = R.string.invalid_service_price),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = spacing20, end = spacing16, bottom = spacing8),
+            color = Color.Red
+        )
+    }
+}
+
+@Composable
+private fun ServiceTypesHelperText(
+    serviceTypesHelperText: String?,
+    typesValidation: Boolean
+) {
+    if (!serviceTypesHelperText.isNullOrEmpty() && typesValidation) {
+        Text(
+            text = stringResource(id = R.string.invalid_service_type),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = spacing20, end = spacing16, bottom = spacing8),
+            color = Color.Red
+        )
+        !typesValidation
+    }
+}
+
+@Composable
+private fun ServiceDateHelperText(
+    serviceDateHelperText: String?
+) {
+    if (!serviceDateHelperText.isNullOrEmpty()) {
+        Text(
+            text = stringResource(id = R.string.invalid_service_date),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = spacing20, end = spacing16, bottom = spacing8),
+            color = Color.Red
+        )
+    }
+}
+
+@Composable
+private fun ServiceCategoriesHelperText(
+    serviceCategoriesHelperText: String?,
+    categoriesValidation: Boolean
+) {
+    if (!serviceCategoriesHelperText.isNullOrEmpty() && categoriesValidation) {
+        Text(
+            text = stringResource(id = R.string.invalid_service_category),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = spacing20, end = spacing16, bottom = spacing8),
+            color = Color.Red
+        )
+        !categoriesValidation
+    }
+}
+
+@Composable
+private fun ServiceNameHelperText(
+    serviceNameHelperText: String?
+) {
+    if (!serviceNameHelperText.isNullOrEmpty()) {
+        Text(
+            text = stringResource(id = R.string.invalid_service_name),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = spacing20, end = spacing16, bottom = spacing8),
+            color = Color.Red
+        )
+    }
+}
+
+/*@Composable
 private fun ImageBox(
     launcher: ManagedActivityResultLauncher<String, Uri?>,
     imageUri: MutableState<Uri?>,
@@ -416,7 +475,7 @@ private fun ImageBox(
             )
         }
     }
-}
+}*/
 
 data class ButtonFunctionality(
     val serviceName: TextFieldValue,
@@ -490,6 +549,16 @@ private fun SaveButton(
     ) {
         Text(text = stringResource(id = R.string.btn_save))
     }
+}
+
+@Composable
+private fun HelperSeparator(helperText: String) {
+    Spacer(modifier = Modifier.height(if (helperText.isEmpty()) dimen16 else dimen8))
+}
+
+@Composable
+fun ServiceSeparator(helperText: String) {
+    Spacer(modifier = Modifier.height(if (helperText.isEmpty()) dimen0 else dimen8))
 }
 
 private fun updateService(
