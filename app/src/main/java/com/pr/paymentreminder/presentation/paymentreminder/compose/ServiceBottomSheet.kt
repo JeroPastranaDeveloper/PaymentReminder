@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -83,8 +84,10 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
         uri?.let { imageUri.value = it }
     }
 
-
     var serviceName by remember { mutableStateOf(TextFieldValue(service?.name ?: emptyString())) }
+    val serviceNameHelper by viewModel.serviceNameHelperText.observeAsState()
+    val wasServiceNameFieldFocused = remember { mutableStateOf(false) }
+
     var servicePrice by remember { mutableStateOf(TextFieldValue(service?.price ?: emptyString())) }
 
     var selectedCategory by remember { mutableStateOf(service?.category ?: emptyString()) }
@@ -117,26 +120,8 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
             Column(
                 modifier = Modifier.padding(dimen16)
             ) {
-                Box(modifier = Modifier.size(dimen150).align(Alignment.CenterHorizontally).clickable {
-                    launcher.launch(Constants.IMAGE_PATH)
-                }) {
-                    if (imageUri.value != null) {
-                        Image(
-                            painter = rememberAsyncImagePainter(model = imageUri.value),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.add),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
+                ImageBox(launcher, imageUri, Modifier.align(Alignment.CenterHorizontally))
 
-                val serviceNameHelper by viewModel.serviceNameHelperText.observeAsState()
-                val wasServiceNameFieldFocused = remember { mutableStateOf(false) }
                 TextField(
                     value = serviceName,
                     onValueChange = { serviceName = it },
@@ -164,7 +149,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     )
                 }
 
-                Spacer(modifier = Modifier.height(dimen8))
+                Spacer(modifier = Modifier.height(if (serviceNameHelper.isNullOrEmpty()) dimen0 else dimen8))
 
                 val serviceCategoriesHelperText by viewModel.serviceCategoryHelperText.observeAsState()
 
@@ -388,6 +373,31 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     )
 }
 
+@Composable
+private fun ImageBox(
+    launcher: ManagedActivityResultLauncher<String, Uri?>,
+    imageUri: MutableState<Uri?>,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier.size(dimen150).clickable {
+        launcher.launch(Constants.IMAGE_PATH)
+    }) {
+        if (imageUri.value != null) {
+            Image(
+                painter = rememberAsyncImagePainter(model = imageUri.value),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.add),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
 data class ButtonFunctionality(
     val serviceName: TextFieldValue,
     val selectedCategory: String,
@@ -410,46 +420,48 @@ private fun SaveButton(
     Button(
         onClick = {
             with(buttonFunctionality) {
-            val isServiceNameValid = viewModel.validateServiceName(serviceName.text)
-            val isServiceCategoryValid = viewModel.validateServiceCategory(selectedCategory)
-            val isServiceDateValid = viewModel.validateServiceDate(serviceDate)
-            val isServiceTypeValid = viewModel.validateServiceType(selectedPaymentType)
-            val isServicePriceValid = viewModel.validateServicePrice(servicePrice.text)
+                with(viewModel) {
+                    val isServiceNameValid = validateServiceName(serviceName.text)
+                    val isServiceCategoryValid = validateServiceCategory(selectedCategory)
+                    val isServiceDateValid = validateServiceDate(serviceDate)
+                    val isServiceTypeValid = validateServiceType(selectedPaymentType)
+                    val isServicePriceValid = validateServicePrice(servicePrice.text)
 
-            if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
-                    val serviceData = Service(
-                        id = serviceId.orElse { emptyString() },
-                        category = selectedCategory,
-                        name = serviceName.text,
-                        color = emptyString(),
-                        date = serviceDate,
-                        price = servicePrice.text,
-                        remember = selectedRemember,
-                        type = selectedPaymentType,
-                        image = imageUri.value.toString()
-                    )
+                    if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
+                        val serviceData = Service(
+                            id = serviceId.orElse { emptyString() },
+                            category = selectedCategory,
+                            name = serviceName.text,
+                            color = emptyString(),
+                            date = serviceDate,
+                            price = servicePrice.text,
+                            remember = selectedRemember,
+                            type = selectedPaymentType,
+                            image = imageUri.value.toString()
+                        )
 
-                    if (service != null) {
-                        updateService(serviceData, viewModel)
+                        if (service != null) {
+                            updateService(serviceData, viewModel)
+                        } else {
+                            createService(serviceData, viewModel)
+                        }
+                        viewModel.getServices()
+                        onDismiss()
+
                     } else {
-                        createService(serviceData, viewModel)
+                        validateServiceName(serviceName.text)
+                        validateServiceCategory(selectedCategory)
+                        validateServiceDate(serviceDate)
+                        validateServiceType(selectedPaymentType)
+                        validateServicePrice(servicePrice.text)
+                        validateServiceRemember(selectedRemember)
+
+                        Toast.makeText(
+                            context,
+                            R.string.invalid_data,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                    viewModel.getServices()
-                    onDismiss()
-
-                } else {
-                    viewModel.validateServiceName(serviceName.text)
-                    viewModel.validateServiceCategory(selectedCategory)
-                    viewModel.validateServiceDate(serviceDate)
-                    viewModel.validateServiceType(selectedPaymentType)
-                    viewModel.validateServicePrice(servicePrice.text)
-                    viewModel.validateServiceRemember(selectedRemember)
-
-                    Toast.makeText(
-                        context,
-                        R.string.invalid_data,
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
             }
         },
