@@ -45,10 +45,18 @@ fun HomeFragment(viewModel: HomeViewModel) {
         ) {
             Spacer(modifier = Modifier.height(dimen8))
             viewModel.services.value.map { service ->
-                ServiceCard(service) {
-                    selectedService = service
-                    showBottomSheet = true
-                }
+                ServiceCard(
+                    service = service,
+                    onClick = {
+                        selectedService = service
+                        showBottomSheet = true
+                    },
+                    deleteService = {
+                        viewModel.deleteService(service.id)
+                        viewModel.getServices()
+                    }
+                )
+
             }
             Spacer(modifier = Modifier.weight(1f))
         }
