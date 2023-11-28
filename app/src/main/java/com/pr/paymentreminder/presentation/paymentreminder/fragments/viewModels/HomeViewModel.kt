@@ -80,9 +80,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteService(serviceName: String) {
+    fun deleteService(serviceId: String) {
         viewModelScope.launch {
-            servicesUseCase.deleteService(serviceName)
+            servicesUseCase.deleteService(serviceId)
         }
     }
 
