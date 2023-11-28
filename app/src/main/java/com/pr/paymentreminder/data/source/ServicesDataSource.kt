@@ -49,14 +49,11 @@ class ServicesDataSource @Inject constructor() {
         return services
     }
 
-    fun createService(service: Service) {
+    fun createService(id: String, service: Service) {
         val database = Firebase.database
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
-        val key = servicesRef.push().key
-        if (key != null) {
-            servicesRef.child(key).setValue(service)
-        }
+        servicesRef.child(id).setValue(service)
     }
 
     fun updateService(serviceId: String, newServiceData: Service) {
@@ -66,10 +63,10 @@ class ServicesDataSource @Inject constructor() {
         servicesRef.child(serviceId).setValue(newServiceData)
     }
 
-    fun deleteService(serviceName: String) {
+    fun deleteService(serviceId: String) {
         val database = Firebase.database
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
-        servicesRef.child(serviceName).removeValue()
+        servicesRef.child(serviceId).removeValue()
     }
 }

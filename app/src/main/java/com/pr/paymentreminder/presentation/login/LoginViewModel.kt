@@ -4,9 +4,11 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,9 +51,11 @@ class LoginViewModel @Inject constructor(
         return isValid
     }
 
-    suspend fun login(email: String, password: String) {
-        loginUseCase.login(email, password).observeForever {
-            _isLoginSuccessful.value = it
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            loginUseCase.login(email, password).observeForever { result ->
+                _isLoginSuccessful.value = result
+            }
         }
     }
 

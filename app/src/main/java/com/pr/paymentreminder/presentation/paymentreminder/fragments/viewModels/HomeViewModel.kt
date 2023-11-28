@@ -65,14 +65,13 @@ class HomeViewModel @Inject constructor(
             val database = Firebase.database
             val userId = FirebaseAuth.getInstance().currentUser?.uid
             val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
-            val key = servicesRef.push().key
-            if (key != null) {
-                service.id = key
-                servicesUseCase.createService(service)
+            val id = servicesRef.push().key
+            if (id != null) {
+                service.id = id
+                servicesUseCase.createService(id, service)
             }
         }
     }
-
 
     fun updateService(serviceId: String, newServiceData: Service) {
         viewModelScope.launch {

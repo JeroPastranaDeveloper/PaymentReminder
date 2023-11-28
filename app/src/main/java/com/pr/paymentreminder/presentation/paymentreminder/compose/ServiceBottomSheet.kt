@@ -1,6 +1,7 @@
 package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -67,7 +68,9 @@ import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing20
 import com.pr.paymentreminder.ui.theme.spacing8
 import kotlinx.coroutines.flow.filter
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -210,7 +213,10 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     DatePickerDialog(
                         context,
                         { _, year, month, dayOfMonth ->
-                            serviceDate = "${dayOfMonth}/${month + 1}/${year}"
+                            val calendar = Calendar.getInstance()
+                            calendar.set(year, month, dayOfMonth)
+                            val dateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
+                            serviceDate = dateFormat.format(calendar.time)
                             viewModel.validateServiceDate(serviceDate)
                         },
                         Calendar.getInstance()[Calendar.YEAR],
@@ -357,61 +363,22 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 Spacer(modifier = Modifier.height(if (serviceRememberHelperText.isNullOrEmpty()) dimen0 else dimen8))
                 val serviceId = service?.id
-
-                Button(
-                    onClick = {
-                        val isServiceNameValid = viewModel.validateServiceName(serviceName.text)
-                        val isServiceCategoryValid = viewModel.validateServiceCategory(selectedCategory)
-                        val isServiceDateValid = viewModel.validateServiceDate(serviceDate)
-                        val isServiceTypeValid = viewModel.validateServiceType(selectedPaymentType)
-                        val isServicePriceValid = viewModel.validateServicePrice(servicePrice.text)
-
-                        if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
-                            if (service != null) {
-                                val updatedServiceData = Service(
-                                    id = serviceId.orEmpty(),
-                                    category = selectedCategory,
-                                    color = emptyString(),
-                                    date = serviceDate,
-                                    name = serviceName.text,
-                                    price = servicePrice.text,
-                                    remember = selectedRemember,
-                                    type = selectedPaymentType,
-                                    image = imageUri.value.toString()
-                                )
-                                viewModel.updateService(
-                                    serviceId.orElse { emptyString() },
-                                    updatedServiceData
-                                )
-                            } else {
-                                createService(
-                                    selectedCategory,
-                                    viewModel,
-                                    serviceName,
-                                    serviceDate,
-                                    servicePrice,
-                                    selectedRemember,
-                                    selectedPaymentType,
-                                    imageUri
-                                )
-                            }
-                            viewModel.getServices()
-                            onDismiss()
-                        } else {
-                            viewModel.validateServiceName(serviceName.text)
-                            viewModel.validateServiceCategory(selectedCategory)
-                            viewModel.validateServiceDate(serviceDate)
-                            viewModel.validateServiceType(selectedPaymentType)
-                            viewModel.validateServicePrice(servicePrice.text)
-
-                            Toast.makeText(context, R.string.invalid_data, Toast.LENGTH_LONG).show()
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(text = stringResource(id = R.string.btn_save))
-                }
+                SaveButton(
+                    viewModel,
+                    buttonFunctionality = ButtonFunctionality(
+                        serviceName = serviceName,
+                        selectedCategory = selectedCategory,
+                        serviceDate = serviceDate,
+                        selectedPaymentType = selectedPaymentType,
+                        servicePrice = servicePrice,
+                        serviceId = serviceId,
+                        selectedRemember = selectedRemember,
+                        imageUri = imageUri,
+                        service = service,
+                        onDismiss = onDismiss,
+                        context = context
+                    )
+                )
 
                 Spacer(modifier = Modifier.height(dimen56))
             }
@@ -419,29 +386,115 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
         sheetState = sheetState,
         content = {}
     )
-    Spacer(modifier = Modifier.height(dimen56))
+}
+
+data class ButtonFunctionality(
+    val serviceName: TextFieldValue,
+    val selectedCategory: String,
+    val serviceDate: String,
+    val selectedPaymentType: String,
+    val servicePrice: TextFieldValue,
+    val serviceId: String?,
+    val selectedRemember: String,
+    val imageUri: MutableState<Uri?>,
+    val service: Service?,
+    val onDismiss: () -> Unit,
+    val context: Context
+)
+
+@Composable
+private fun SaveButton(
+    viewModel: HomeViewModel,
+    buttonFunctionality: ButtonFunctionality
+) {
+    Button(
+        onClick = {
+            with(buttonFunctionality) {
+            val isServiceNameValid = viewModel.validateServiceName(serviceName.text)
+            val isServiceCategoryValid = viewModel.validateServiceCategory(selectedCategory)
+            val isServiceDateValid = viewModel.validateServiceDate(serviceDate)
+            val isServiceTypeValid = viewModel.validateServiceType(selectedPaymentType)
+            val isServicePriceValid = viewModel.validateServicePrice(servicePrice.text)
+
+            if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
+                    val serviceData = Service(
+                        id = serviceId.orElse { emptyString() },
+                        category = selectedCategory,
+                        name = serviceName.text,
+                        color = emptyString(),
+                        date = serviceDate,
+                        price = servicePrice.text,
+                        remember = selectedRemember,
+                        type = selectedPaymentType,
+                        image = imageUri.value.toString()
+                    )
+
+                    if (service != null) {
+                        updateService(serviceData, viewModel)
+                    } else {
+                        createService(serviceData, viewModel)
+                    }
+                    viewModel.getServices()
+                    onDismiss()
+
+                } else {
+                    viewModel.validateServiceName(serviceName.text)
+                    viewModel.validateServiceCategory(selectedCategory)
+                    viewModel.validateServiceDate(serviceDate)
+                    viewModel.validateServiceType(selectedPaymentType)
+                    viewModel.validateServicePrice(servicePrice.text)
+                    viewModel.validateServiceRemember(selectedRemember)
+
+                    Toast.makeText(
+                        context,
+                        R.string.invalid_data,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Text(text = stringResource(id = R.string.btn_save))
+    }
+}
+
+private fun updateService(
+    service: Service,
+    viewModel: HomeViewModel
+) {
+    val updatedServiceData = Service(
+        id = service.id,
+        category = service.category,
+        color = emptyString(),
+        date = service.date,
+        name = service.name,
+        price = service.price,
+        remember = service.remember,
+        type = service.type,
+        image = service.image
+    )
+    viewModel.updateService(
+        service.id.orElse { emptyString() },
+        updatedServiceData
+    )
 }
 
 private fun createService(
-    selectedCategory: String,
-    viewModel: HomeViewModel,
-    serviceName: TextFieldValue,
-    serviceDate: String,
-    servicePrice: TextFieldValue,
-    selectedRemember: String,
-    selectedPaymentType: String,
-    image: MutableState<Uri?>
+    serviceData: Service,
+    viewModel: HomeViewModel
 ) {
     val newService = Service(
         id = emptyString(),
-        category = selectedCategory,
+        category = serviceData.category,
         color = emptyString(),
-        date = serviceDate,
-        name = serviceName.text,
-        price = servicePrice.text,
-        remember = selectedRemember,
-        type = selectedPaymentType,
-        image = image.value.toString()
+        date = serviceData.date,
+        name = serviceData.name,
+        price = serviceData.price,
+        remember = serviceData.remember,
+        type = serviceData.type,
+        image = serviceData.image.toString()
     )
     viewModel.createService(newService)
 }
