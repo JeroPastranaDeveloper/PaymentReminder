@@ -367,6 +367,16 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         val isServicePriceValid = viewModel.validateServicePrice(servicePrice.text)
 
                         if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
+                            val serviceData = ServiceData(
+                                selectedCategory = selectedCategory,
+                                serviceName = serviceName,
+                                serviceDate = serviceDate,
+                                servicePrice = servicePrice,
+                                selectedRemember = selectedRemember,
+                                selectedPaymentType = selectedPaymentType,
+                                image = imageUri
+                            )
+
                             if (service != null) {
                                 val updatedServiceData = Service(
                                     id = serviceId.orEmpty(),
@@ -384,16 +394,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                                     updatedServiceData
                                 )
                             } else {
-                                createService(
-                                    selectedCategory,
-                                    viewModel,
-                                    serviceName,
-                                    serviceDate,
-                                    servicePrice,
-                                    selectedRemember,
-                                    selectedPaymentType,
-                                    imageUri
-                                )
+                                createService(serviceData, viewModel)
                             }
                             viewModel.getServices()
                             onDismiss()
@@ -422,26 +423,30 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     Spacer(modifier = Modifier.height(dimen56))
 }
 
+data class ServiceData(
+    val selectedCategory: String,
+    val serviceName: TextFieldValue,
+    val serviceDate: String,
+    val servicePrice: TextFieldValue,
+    val selectedRemember: String,
+    val selectedPaymentType: String,
+    val image: MutableState<Uri?>
+)
+
 private fun createService(
-    selectedCategory: String,
-    viewModel: HomeViewModel,
-    serviceName: TextFieldValue,
-    serviceDate: String,
-    servicePrice: TextFieldValue,
-    selectedRemember: String,
-    selectedPaymentType: String,
-    image: MutableState<Uri?>
+    serviceData: ServiceData,
+    viewModel: HomeViewModel
 ) {
     val newService = Service(
         id = emptyString(),
-        category = selectedCategory,
+        category = serviceData.selectedCategory,
         color = emptyString(),
-        date = serviceDate,
-        name = serviceName.text,
-        price = servicePrice.text,
-        remember = selectedRemember,
-        type = selectedPaymentType,
-        image = image.value.toString()
+        date = serviceData.serviceDate,
+        name = serviceData.serviceName.text,
+        price = serviceData.servicePrice.text,
+        remember = serviceData.selectedRemember,
+        type = serviceData.selectedPaymentType,
+        image = serviceData.image.value.toString()
     )
     viewModel.createService(newService)
 }
