@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -41,18 +42,53 @@ fun ServiceCard(service: Service, onClick: () -> Unit) {
         Row(
             horizontalArrangement = Arrangement.Start,
         ) {
-            Image(
-                painter = if (service.image != null) {
-                    rememberAsyncImagePainter(model = Uri.parse(service.image))
-                } else {
-                    painterResource(id = R.drawable.ic_launcher_background)
-                },
-                contentDescription = emptyString(),
-                modifier = Modifier
-                    .size(dimen100)
-                    .align(Alignment.CenterVertically),
-                contentScale = ContentScale.Fit,
-            )
+            val imageUri = service.image?.let { Uri.parse(it) }
+            if (imageUri != null) {
+                val painter = rememberAsyncImagePainter(model = imageUri)
+
+                Image(
+                    painter = painter,
+                    contentDescription = emptyString(),
+                    modifier = Modifier
+                        .size(dimen100)
+                        .align(Alignment.CenterVertically),
+                    contentScale = ContentScale.Fit,
+                )
+
+                /*when (painter.state) {
+                    is AsyncImagePainter.State.Loading -> {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterVertically)) // Indicador de carga
+                    }
+                    is AsyncImagePainter.State.Error -> {
+                        Toast.makeText(LocalContext.current, "Error", Toast.LENGTH_SHORT).show()
+                    }
+                    is AsyncImagePainter.State.Success -> {
+                        Image(
+                            painter = painter,
+                            contentDescription = emptyString(),
+                            modifier = Modifier
+                                .width(dimen100)
+                                .height(dimen100)
+                                .align(Alignment.CenterVertically),
+                            contentScale = ContentScale.Fit,
+                        )
+                    }
+
+                    AsyncImagePainter.State.Empty -> {
+                        Toast.makeText(LocalContext.current, "Empty", Toast.LENGTH_SHORT).show()
+                    }
+                }*/
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_background),
+                    contentDescription = emptyString(),
+                    modifier = Modifier
+                        .width(dimen100)
+                        .height(dimen100)
+                        .align(Alignment.CenterVertically),
+                    contentScale = ContentScale.Fit,
+                )
+            }
 
             Column(
                 modifier = Modifier
