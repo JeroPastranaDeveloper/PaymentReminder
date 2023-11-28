@@ -140,10 +140,9 @@ fun ServiceCard(service: Service, onClick: () -> Unit, deleteService: (String) -
     }
 }
 
-
 /*when (painter.state) {
                     is AsyncImagePainter.State.Loading -> {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterVertically)) // Indicador de carga
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterVertically))
                     }
                     is AsyncImagePainter.State.Error -> {
                         Toast.makeText(LocalContext.current, "Error", Toast.LENGTH_SHORT).show()
