@@ -20,7 +20,7 @@ class ServicesRepositoryImpl @Inject constructor (
         return dataSource.updateService(serviceId, newServiceData)
     }
 
-    override suspend fun deleteService(serviceName: String) {
-        return dataSource.deleteService(serviceName)
+    override suspend fun deleteService(serviceId: String) {
+        return dataSource.deleteService(serviceId)
     }
 }

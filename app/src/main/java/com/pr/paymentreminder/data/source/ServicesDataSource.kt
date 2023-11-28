@@ -63,10 +63,10 @@ class ServicesDataSource @Inject constructor() {
         servicesRef.child(serviceId).setValue(newServiceData)
     }
 
-    fun deleteService(serviceName: String) {
+    fun deleteService(serviceId: String) {
         val database = Firebase.database
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
-        servicesRef.child(serviceName).removeValue()
+        servicesRef.child(serviceId).removeValue()
     }
 }

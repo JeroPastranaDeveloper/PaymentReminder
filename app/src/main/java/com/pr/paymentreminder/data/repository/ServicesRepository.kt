@@ -6,5 +6,5 @@ interface ServicesRepository {
     suspend fun getServices(): List<Service>
     suspend fun createService(id: String, service: Service)
     suspend fun updateService(serviceId: String, newServiceData: Service)
-    suspend fun deleteService(serviceName: String)
+    suspend fun deleteService(serviceId: String)
 }
