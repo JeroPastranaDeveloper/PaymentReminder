@@ -115,17 +115,17 @@ class HomeViewModel @Inject constructor(
             val selectedDate = LocalDate.parse(serviceDate, formatter)
             val currentDate = LocalDate.now()
 
-            return if (selectedDate.isBefore(currentDate)) {
+            if (selectedDate.isBefore(currentDate)) {
                 _serviceDateHelperText.value = R.string.invalid_service_date.toString()
-                false
-            } else {
-                _serviceDateHelperText.value = null
-                true
+                return false
             }
         } else {
             _serviceDateHelperText.value = R.string.invalid_service_date.toString()
             return false
         }
+
+        _serviceDateHelperText.value = null
+        return true
     }
 
     fun validateServiceType(serviceType: String) : Boolean {

@@ -104,6 +104,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     var rememberValidation by remember { mutableStateOf(false) }
     val serviceRememberHelperText by viewModel.serviceRememberHelperText.observeAsState()
 
+    // TODO: ARREGLAR VISIBILIDAD DE LOS COJONES
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
     LaunchedEffect(sheetState) {
         snapshotFlow { sheetState.isVisible }
