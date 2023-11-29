@@ -39,7 +39,6 @@ class PaymentReminderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // Handle back press event here
                 val dialog = AlertDialog.Builder(this@PaymentReminderActivity)
                     .setTitle(R.string.exit_question)
                     .setMessage(R.string.exit_confirmation)
