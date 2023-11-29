@@ -24,5 +24,6 @@ class Constants {
         const val DATE_FORMAT = "dd/MM/yyyy"
         const val IMAGE = "image"
         const val IMAGE_PATH = "image/*"
+        const val DEFAULT_IMAGE = "https://clubbalonmanomalaga.com/wp-content/plugins/accelerated-mobile-pages/images/SD-default-image.png"
     }
 }

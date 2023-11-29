@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PaymentReminder</string>
+    <string name="app_name">Payment Reminder</string>
     <string name="invalid_email">Email inválido</string>
     <string name="invalid_pass">La contraseña ha de ser válida</string>
     <string name="hint_email">Email</string>
@@ -23,6 +23,7 @@
     <string name="category">Categoría: %s</string>
     <string name="service_name">Nombre del servicio</string>
     <string name="service_price">Precio del servicio</string>
+    <string name="service_image_url">URL de la imagen</string>
     <string name="payment_date">Fecha de pago: %s</string>
     <string name="payment_type">Tipo de pago: %s</string>
     <string name="remember_days_before">Recordar %1$s días antes</string>

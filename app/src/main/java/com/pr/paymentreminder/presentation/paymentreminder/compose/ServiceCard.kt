@@ -1,6 +1,5 @@
 package com.pr.paymentreminder.presentation.paymentreminder.compose
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.ExperimentalMaterialApi
@@ -33,15 +31,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
-import com.pr.paymentreminder.R
+import coil.decode.SvgDecoder
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.ui.theme.dimen100
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen8
-import com.pr.paymentreminder.ui.theme.emptyString
+import com.pr.paymentreminder.ui.theme.orElse
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
@@ -49,6 +48,7 @@ import com.pr.paymentreminder.ui.theme.spacing8
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ServiceCard(service: Service, onClick: () -> Unit, deleteService: (String) -> Unit) {
+    val context = LocalContext.current
     val dismissState = rememberDismissState()
     val dismissThresholds = { _: DismissDirection -> FractionalThreshold(0.2f) }
 
@@ -87,7 +87,7 @@ fun ServiceCard(service: Service, onClick: () -> Unit, deleteService: (String) -
             Row(
                 horizontalArrangement = Arrangement.Start,
             ) {
-                val imageUri = service.image?.let { Uri.parse(it) }
+                /*val imageUri = service.image?.let { Uri.parse(it) }
                 if (imageUri != null) {
                     val painter = rememberAsyncImagePainter(model = imageUri)
 
@@ -109,11 +109,30 @@ fun ServiceCard(service: Service, onClick: () -> Unit, deleteService: (String) -
                             .align(Alignment.CenterVertically),
                         contentScale = ContentScale.Fit,
                     )
-                }
+                }*/
+
+                val imageLoader = ImageLoader.Builder(context)
+                    .components {
+                        add(SvgDecoder.Factory())
+                    }
+                    .build()
+
+                val imageUrl = service.image.takeIf { !it.isNullOrEmpty() }.orElse{ Constants.DEFAULT_IMAGE }
+                val image = rememberAsyncImagePainter(model = imageUrl, imageLoader = imageLoader)
+
+                Image(
+                    painter = image,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(dimen100)
+                        .padding(start = spacing4)
+                        .align(Alignment.CenterVertically),
+                    contentScale = ContentScale.Fit,
+                )
 
                 Column(
                     modifier = Modifier
-                        .padding(start = spacing4)
+                        .padding(spacing4)
                         .align(Alignment.CenterVertically)
                         .weight(1f)
                 ) {
