@@ -54,9 +54,14 @@ class HomeViewModel @Inject constructor(
         getServices()
     }
 
+    private fun Service.getDate(): LocalDate {
+        val formatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
+        return LocalDate.parse(this.date, formatter)
+    }
+
     fun getServices() {
         viewModelScope.launch {
-            _services.value = servicesUseCase.getServices()
+            _services.value = servicesUseCase.getServices().sortedBy { it.getDate() }
         }
     }
 
