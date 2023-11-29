@@ -3,7 +3,6 @@ package com.pr.paymentreminder.presentation.paymentreminder
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.AlertDialog
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -32,32 +31,29 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import android.Manifest
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import androidx.annotation.RequiresApi
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
-import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.notifications.AlarmReceiver
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 @AndroidEntryPoint
 class PaymentReminderActivity : AppCompatActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
-    private val context: Context = this@PaymentReminderActivity
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         checkNotificationPermissions()
+        checkAndRequestPermissions()
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -73,11 +69,6 @@ class PaymentReminderActivity : AppCompatActivity() {
             }
         })
 
-        val services = homeViewModel.services.value
-        for (service in services) {
-            scheduleNotification(service)
-        }
-
         setContent {
             Content()
         }
@@ -91,24 +82,15 @@ class PaymentReminderActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("ScheduleExactAlarm")
-    private fun scheduleNotification(service: Service) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent =
-            PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-
-        val sdf = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
-        val date = sdf.parse(service.date)
-        val calendar = Calendar.getInstance().apply {
-            time = date
-            set(Calendar.HOUR_OF_DAY, 16)
-            set(Calendar.MINUTE, 19)
-            set(Calendar.SECOND, 0)
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun checkAndRequestPermissions() {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (!alarmManager.canScheduleExactAlarms()) {
+            val intent = Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
         }
-
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

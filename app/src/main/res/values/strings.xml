@@ -37,4 +37,6 @@
     <string name="invalid_service_price">Precio del servicio inválido</string>
     <string name="invalid_service_date">Fecha del servicio inválida</string>
     <string name="invalid_service_remember">Recordatorio del servicio inválido</string>
+    <string name="notification_singular">%1$s día para pagar %2$s</string>
+    <string name="notification_plural">%1$s días para pagar %2$s</string>
 </resources>

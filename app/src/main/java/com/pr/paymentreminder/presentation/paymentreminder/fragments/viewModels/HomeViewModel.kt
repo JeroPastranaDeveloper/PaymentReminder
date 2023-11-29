@@ -14,6 +14,7 @@ import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import com.pr.paymentreminder.notifications.AlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -23,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val servicesUseCase: ServicesUseCase
+    private val servicesUseCase: ServicesUseCase,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
     private val _services = mutableStateOf<List<Service>>(emptyList())
     val services: State<List<Service>> = _services
@@ -75,7 +77,10 @@ class HomeViewModel @Inject constructor(
 
     fun getServices() {
         viewModelScope.launch {
-            _services.value = servicesUseCase.getServices().onEach { it.updateDate() }.sortedBy { it.getDate() }
+            _services.value = servicesUseCase.getServices().onEach {
+                it.updateDate()
+                alarmScheduler.scheduleAlarm(it)
+            }.sortedBy { it.getDate() }
         }
     }
 
