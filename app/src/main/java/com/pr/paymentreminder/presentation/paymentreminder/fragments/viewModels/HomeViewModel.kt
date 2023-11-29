@@ -11,12 +11,14 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
+import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,9 +61,20 @@ class HomeViewModel @Inject constructor(
         return LocalDate.parse(this.date, formatter)
     }
 
+    private fun Service.updateDate() {
+        val today = LocalDate.now()
+        if (this.getDate().isEqual(today)) {
+            when (this.type) {
+                PaymentType.WEEKLY.type -> this.date = this.getDate().plus(1, ChronoUnit.WEEKS).format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
+                PaymentType.MONTHLY.type -> this.date = this.getDate().plus(1, ChronoUnit.MONTHS).format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
+                PaymentType.YEARLY.type -> this.date = this.getDate().plus(1, ChronoUnit.YEARS).format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
+            }
+        }
+    }
+
     fun getServices() {
         viewModelScope.launch {
-            _services.value = servicesUseCase.getServices().sortedBy { it.getDate() }
+            _services.value = servicesUseCase.getServices().onEach { it.updateDate() }.sortedBy { it.getDate() }
         }
     }
 
