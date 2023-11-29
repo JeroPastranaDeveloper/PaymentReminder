@@ -69,6 +69,7 @@ class HomeViewModel @Inject constructor(
                 PaymentType.MONTHLY.type -> this.date = this.getDate().plus(1, ChronoUnit.MONTHS).format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
                 PaymentType.YEARLY.type -> this.date = this.getDate().plus(1, ChronoUnit.YEARS).format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
             }
+            updateService(this.id, this)
         }
     }
 
