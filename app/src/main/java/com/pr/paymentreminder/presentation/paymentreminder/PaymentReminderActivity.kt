@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -40,7 +39,6 @@ class PaymentReminderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // Handle back press event here
                 val dialog = AlertDialog.Builder(this@PaymentReminderActivity)
                     .setTitle(R.string.exit_question)
                     .setMessage(R.string.exit_confirmation)
@@ -58,7 +56,6 @@ class PaymentReminderActivity : AppCompatActivity() {
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun Content() {
         val navController = rememberNavController()
