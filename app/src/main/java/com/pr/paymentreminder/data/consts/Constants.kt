@@ -25,5 +25,11 @@ class Constants {
         const val IMAGE = "image"
         const val IMAGE_PATH = "image/*"
         const val DEFAULT_IMAGE = "https://clubbalonmanomalaga.com/wp-content/plugins/accelerated-mobile-pages/images/SD-default-image.png"
+        const val NOTIFICATION_ID = "NOTIFICATION_ID"
+        const val SERVICE_NAME = "SERVICE_NAME"
+        const val SERVICE_REMEMBER = "SERVICE_REMEMBER"
+        const val SERVICE_PRICE = "SERVICE_PRICE"
+        const val NOTIFICATION_CHANNEL_ID = "ServiceChannel"
+        const val NOTIFICATION_CHANNEL_NAME = "Service Channel"
     }
 }

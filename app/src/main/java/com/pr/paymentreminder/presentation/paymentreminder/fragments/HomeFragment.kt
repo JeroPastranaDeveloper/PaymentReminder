@@ -122,8 +122,6 @@ fun HomeFragment(viewModel: HomeViewModel) {
             }
         )
 
-
-
         if (showBottomSheet) {
             ServiceBottomSheet(selectedService, viewModel) {
                 selectedService = null
