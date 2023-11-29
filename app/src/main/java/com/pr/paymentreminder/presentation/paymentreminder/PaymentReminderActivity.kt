@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.material.BottomNavigation
@@ -23,11 +24,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import android.Manifest
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
@@ -38,7 +44,6 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFra
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.Integer.parseInt
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -46,8 +51,14 @@ import java.util.Locale
 @AndroidEntryPoint
 class PaymentReminderActivity : AppCompatActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
+    private val context: Context = this@PaymentReminderActivity
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        checkNotificationPermissions()
+
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val dialog = AlertDialog.Builder(this@PaymentReminderActivity)
@@ -72,7 +83,13 @@ class PaymentReminderActivity : AppCompatActivity() {
         }
     }
 
-    val context: Context = this@PaymentReminderActivity
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkNotificationPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
+        }
+    }
 
     @SuppressLint("ScheduleExactAlarm")
     private fun scheduleNotification(service: Service) {
@@ -81,9 +98,6 @@ class PaymentReminderActivity : AppCompatActivity() {
         val pendingIntent =
             PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
-        // Verifica el permiso para enviar notificaciones
-
-        // Programa la notificación si el permiso está otorgado
         val sdf = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
         val date = sdf.parse(service.date)
         val calendar = Calendar.getInstance().apply {
