@@ -35,7 +35,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 context.getString(R.string.notification_singular, serviceRemember, serviceName)
             )
             .setContentText("$servicePrice€")
-            .setSmallIcon(R.drawable.logo)
+            .setSmallIcon(R.drawable.logo_no_bg)
             .build()
 
         val notificationId = intent?.getIntExtra(Constants.NOTIFICATION_ID, 0) ?: 0
