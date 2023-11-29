@@ -132,7 +132,7 @@ fun ServiceCard(service: Service, onClick: () -> Unit, deleteService: (String) -
 
                 Column(
                     modifier = Modifier
-                        .padding(start = spacing4)
+                        .padding(spacing4)
                         .align(Alignment.CenterVertically)
                         .weight(1f)
                 ) {
