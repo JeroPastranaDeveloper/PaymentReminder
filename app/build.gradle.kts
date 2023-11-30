@@ -89,4 +89,5 @@ dependencies {
     implementation("io.coil-kt:coil-svg:2.5.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.github.QuadFlask:colorpicker:0.0.15")
 }
