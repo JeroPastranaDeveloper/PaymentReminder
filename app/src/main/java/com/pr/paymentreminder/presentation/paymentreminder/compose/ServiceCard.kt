@@ -14,22 +14,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +38,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.ui.theme.dimen100
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen8
@@ -49,14 +46,18 @@ import com.pr.paymentreminder.ui.theme.orElse
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun ServiceCard(service: Service, onClick: () -> Unit, deleteService: (String) -> Unit) {
+fun ServiceCard(
+    service: Service,
+    onClick: () -> Unit,
+    dismissState: DismissState,
+    deleteService: (String) -> Unit,
+    viewModel: HomeViewModel
+) {
     val context = LocalContext.current
-    val dismissState = rememberDismissState()
     val dismissThresholds = { _: DismissDirection -> FractionalThreshold(0.2f) }
 
     SwipeToDismiss(
@@ -82,9 +83,16 @@ fun ServiceCard(service: Service, onClick: () -> Unit, deleteService: (String) -
         },
         directions = setOf(DismissDirection.EndToStart)
     ) {
+        val scope = rememberCoroutineScope()
+
         if (dismissState.isDismissed(DismissDirection.EndToStart)) {
             deleteService(service.id)
+            scope.launch {
+                dismissState.reset()
+                viewModel.getServices()
+            }
         }
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
