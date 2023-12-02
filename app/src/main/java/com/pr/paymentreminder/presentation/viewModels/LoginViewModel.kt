@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.presentation.login
+package com.pr.paymentreminder.presentation.viewModels
 
 import android.util.Patterns
 import androidx.lifecycle.LiveData
