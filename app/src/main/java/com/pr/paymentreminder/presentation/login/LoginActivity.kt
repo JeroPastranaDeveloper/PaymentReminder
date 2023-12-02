@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,11 +37,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
+import com.pr.paymentreminder.presentation.register.RegisterActivity
 import com.pr.paymentreminder.presentation.viewModels.LoginViewModel
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
@@ -65,7 +66,6 @@ class LoginActivity : ComponentActivity() {
         }
     }
 
-    @Preview(showBackground = true)
     @Composable
     private fun Content() {
         Column(
@@ -83,6 +83,11 @@ class LoginActivity : ComponentActivity() {
             PassField(passText)
 
             Spacer(modifier = Modifier.weight(1f))
+
+            Text(text = stringResource(id = R.string.register), modifier = Modifier.clickable {
+                startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+                finish()
+            })
 
             LoginButton(emailText, passText)
             CheckLogin()
