@@ -117,7 +117,6 @@ class LoginActivity : ComponentActivity() {
     }
 
     @Composable
-    @OptIn(ExperimentalMaterial3Api::class)
     private fun EmailField(
         emailText: MutableState<TextFieldValue>
     ) {
@@ -153,7 +152,6 @@ class LoginActivity : ComponentActivity() {
     }
 
     @Composable
-    @OptIn(ExperimentalMaterial3Api::class)
     private fun PassField(
         passText: MutableState<TextFieldValue>
     ) {
