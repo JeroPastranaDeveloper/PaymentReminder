@@ -9,13 +9,13 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -37,10 +37,13 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
@@ -50,7 +53,6 @@ import com.pr.paymentreminder.presentation.viewModels.LoginViewModel
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
-import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing20
@@ -78,7 +80,8 @@ class LoginActivity : ComponentActivity() {
             modifier = Modifier
                 .padding(spacing16)
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             val emailText = remember { mutableStateOf(TextFieldValue("cuentadepruebas@gmail.com")) }
             val passText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
@@ -88,24 +91,33 @@ class LoginActivity : ComponentActivity() {
             EmailField(emailText)
             PassField(passText)
 
-            // TODO: ALINEAR IMAGEN
             Image(
                 painter = painterResource(id = R.drawable.logo_no_bg),
                 contentDescription = null,
-                modifier = Modifier.fillMaxWidth().weight(1f)
+                modifier = Modifier.fillMaxWidth().padding(vertical = spacing72)
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Text(text = stringResource(id = R.string.register), modifier = Modifier.clickable {
-                startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
-                finish()
-            })
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
+                        append(stringResource(id = R.string.register))
+                    }
+                },
+                modifier = Modifier.padding(bottom = spacing8).clickable {
+                    startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+                    finish()
+                },
+                color = Color.Blue
+            )
+
 
             LoginButton(emailText, passText)
             CheckLogin()
         }
     }
+
 
     @Composable
     private fun LoginButton(
