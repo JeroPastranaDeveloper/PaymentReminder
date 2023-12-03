@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.presentation.login
+package com.pr.paymentreminder.presentation.register
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,18 +9,18 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +29,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,12 +45,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.presentation.login.LoginActivity
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
-import com.pr.paymentreminder.presentation.register.RegisterActivity
-import com.pr.paymentreminder.presentation.viewModels.LoginViewModel
+import com.pr.paymentreminder.presentation.viewModels.RegisterViewModel
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
@@ -62,13 +62,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class LoginActivity : ComponentActivity() {
-    private val viewModel: LoginViewModel by viewModels()
+class RegisterActivity : ComponentActivity() {
+    private val viewModel: RegisterViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen()
-        viewModel.checkIfUserIsAuthenticated()
         setContent {
             Content()
         }
@@ -79,17 +77,19 @@ class LoginActivity : ComponentActivity() {
         Column(
             modifier = Modifier
                 .padding(spacing16)
+                .verticalScroll(rememberScrollState())
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val emailText = remember { mutableStateOf(TextFieldValue("cuentadepruebas@gmail.com")) }
-            val passText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
+            val emailText = remember { mutableStateOf(TextFieldValue()) }
+            val passText = remember { mutableStateOf(TextFieldValue()) }
+            val repeatPassText = remember { mutableStateOf(TextFieldValue()) }
 
             Spacer(modifier = Modifier.height(dimen16))
 
             EmailField(emailText)
             PassField(passText)
+            PassRepeatField(passText, repeatPassText)
 
             Image(
                 painter = painterResource(id = R.drawable.logo_no_bg),
@@ -102,39 +102,35 @@ class LoginActivity : ComponentActivity() {
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
-                        append(stringResource(id = R.string.register))
+                        append(stringResource(id = R.string.login))
                     }
                 },
                 modifier = Modifier.padding(bottom = spacing8).clickable {
-                    startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+                    startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
                     finish()
                 },
                 color = Color.Blue
             )
 
-
-            LoginButton(emailText, passText)
-            CheckLogin()
+            RegisterButton(emailText, passText, repeatPassText)
+            CheckRegister()
         }
     }
 
-
     @Composable
-    private fun LoginButton(
+    private fun RegisterButton(
         emailText: MutableState<TextFieldValue>,
-        passText: MutableState<TextFieldValue>
+        passText: MutableState<TextFieldValue>,
+        repeatPassText: MutableState<TextFieldValue>
     ) {
         Button(
             onClick = {
-                if (viewModel.validateEmail(emailText.value.text) && viewModel.validatePassword(
-                        passText.value.text
-                    )
-                ) {
+                if ((viewModel.validateEmail(emailText.value.text)) && (viewModel.validatePassword(passText.value.text)) && (viewModel.validatePasswordMatch(passText.value.text, repeatPassText.value.text))) {
                     lifecycleScope.launch {
-                        viewModel.login(emailText.value.text, passText.value.text)
+                        viewModel.register(emailText.value.text, passText.value.text)
                     }
                 } else {
-                    Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT)
+                    Toast.makeText(this@RegisterActivity, R.string.invalid_data, Toast.LENGTH_SHORT)
                         .show()
                 }
             },
@@ -142,7 +138,7 @@ class LoginActivity : ComponentActivity() {
                 .fillMaxWidth()
                 .padding(horizontal = spacing16)
         ) {
-            Text(text = stringResource(id = R.string.login))
+            Text(text = stringResource(id = R.string.register))
         }
     }
 
@@ -176,6 +172,53 @@ class LoginActivity : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = spacing20, end = spacing16, bottom = spacing8),
+                color = Color.Red
+            )
+        }
+    }
+
+    @Composable
+    private fun PassRepeatField(
+        passText: MutableState<TextFieldValue>,
+        repeatPassText: MutableState<TextFieldValue>
+    ) {
+        val passHelper by viewModel.repeatPassHelperText.observeAsState()
+        val wasPassFieldFocused = remember { mutableStateOf(false) }
+        val passwordVisibility = remember { mutableStateOf(false) }
+
+        TextField(
+            value = repeatPassText.value,
+            onValueChange = { repeatPassText.value = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = spacing16, vertical = spacing8)
+                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
+                .onFocusChanged {
+                    if (wasPassFieldFocused.value && !it.isFocused) {
+                        viewModel.validatePasswordMatch(passText.value.text, repeatPassText.value.text)
+                    }
+                    wasPassFieldFocused.value = it.isFocused
+                },
+            label = { Text(text = stringResource(id = R.string.repeat_password)) },
+            isError = !passHelper.isNullOrEmpty(),
+            visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
+            singleLine = true,
+            trailingIcon = {
+                IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
+                    Icon(
+                        imageVector = if (passwordVisibility.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        contentDescription = emptyString()
+                    )
+                }
+            }
+        )
+
+        if (!passHelper.isNullOrEmpty()) {
+            Text(
+                text = stringResource(id = R.string.passwords_do_not_match),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = spacing20, end = spacing16, bottom = spacing16),
                 color = Color.Red
             )
         }
@@ -228,10 +271,10 @@ class LoginActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun CheckLogin() {
-        viewModel.isLoginSuccessful.observeAsState().value?.let { isLoginSuccessful ->
-            if (isLoginSuccessful) {
-                startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
+    private fun CheckRegister() {
+        viewModel.isRegisterSuccessful.observeAsState().value?.let { isRegisterSuccessful ->
+            if (isRegisterSuccessful) {
+                startActivity(Intent(this@RegisterActivity, PaymentReminderActivity::class.java))
                 finish()
             }
         }

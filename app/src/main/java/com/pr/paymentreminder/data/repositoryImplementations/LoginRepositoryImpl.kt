@@ -6,15 +6,15 @@ import com.pr.paymentreminder.data.source.LoginDataSource
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
-    private val dataSource: LoginDataSource
+    private val loginDataSource: LoginDataSource
 ) : LoginRepository {
     override suspend fun login(email: String, password: String): LiveData<Boolean> {
-        return dataSource.login(email, password)
+        return loginDataSource.login(email, password)
     }
 
     override fun isUserAuthenticated(): Boolean {
-        return dataSource.isUserAuthenticated()
+        return loginDataSource.isUserAuthenticated()
     }
 
-    override fun signOut() = dataSource.signOut()
+    override fun signOut() = loginDataSource.signOut()
 }

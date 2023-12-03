@@ -24,11 +24,15 @@
             android:name=".presentation.login.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.PaymentReminder.Splash" >
-            <intent-filter>
+            <intent-filter android:priority="1">
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".presentation.register.RegisterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PaymentReminder" />
     </application>
 </manifest>

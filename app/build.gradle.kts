@@ -82,7 +82,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("androidx.compose.runtime:runtime-livedata:1.6.0-beta01")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.0-beta02")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0-rc01")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation("androidx.compose.material:material-icons-extended:1.5.4")

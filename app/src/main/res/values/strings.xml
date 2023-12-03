@@ -1,11 +1,14 @@
 <resources>
     <string name="app_name">Payment Reminder</string>
     <string name="invalid_email">Email inválido</string>
-    <string name="invalid_pass">La contraseña ha de ser válida</string>
+    <string name="invalid_pass">Contraseña inválida</string>
+    <string name="passwords_do_not_match">Las contraseñas no coinciden</string>
     <string name="hint_email">Email</string>
     <string name="login">Login</string>
+    <string name="register">Registrarse</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="repeat_password">Repite la contraseña</string>
     <string name="title_activity_payment_reminder">PaymentReminderActivity</string>
     <string name="invalid_data">Datos inválidos</string>
     <string name="error_login">Error al iniciar sesión</string>
