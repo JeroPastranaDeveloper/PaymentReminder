@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.DismissDirection
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -77,19 +79,23 @@ fun HomeFragment(viewModel: HomeViewModel) {
                             .fillMaxSize()
                             .pullRefresh(refreshState)
                             .verticalScroll(scrollState),
-                        verticalArrangement = Arrangement.SpaceEvenly,
+                        verticalArrangement = Arrangement.SpaceEvenly
                     ) {
                         viewModel.services.value.map { service ->
+                            val dismissState = rememberDismissState()
                             ServiceCard(
                                 service = service,
                                 onClick = {
                                     selectedService = service
                                     showBottomSheet = true
                                 },
+                                dismissState = dismissState,
                                 deleteService = {
-                                    viewModel.deleteService(service.id)
-                                    viewModel.getServices()
-                                }
+                                    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+                                        viewModel.deleteService(service.id)
+                                    }
+                                },
+                                viewModel = viewModel
                             )
                         }
                         Spacer(modifier = Modifier.height(dimen56))

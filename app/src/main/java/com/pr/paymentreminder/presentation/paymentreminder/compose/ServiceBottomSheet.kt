@@ -2,14 +2,21 @@ package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenuItem
@@ -31,7 +38,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -47,7 +56,11 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.ui.theme.dimen0
 import com.pr.paymentreminder.ui.theme.dimen1
+import com.pr.paymentreminder.ui.theme.dimen100
+import com.pr.paymentreminder.ui.theme.dimen150
 import com.pr.paymentreminder.ui.theme.dimen16
+import com.pr.paymentreminder.ui.theme.dimen2
+import com.pr.paymentreminder.ui.theme.dimen24
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen8
@@ -102,6 +115,9 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     var daysExpanded by remember { mutableStateOf(false) }
     var rememberValidation by remember { mutableStateOf(false) }
     val serviceRememberHelperText by viewModel.serviceRememberHelperText.observeAsState()
+
+    var selectedColor by remember { mutableStateOf(Color.White) }
+    var colorPickerDialogOpen by remember { mutableStateOf(false) }
 
     // TODO: ARREGLAR VISIBILIDAD DE LOS COJONES
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
@@ -273,12 +289,31 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 ServicePriceHelperText(servicePriceHelperText)
                 ServiceSeparator(servicePriceHelperText.orElse { emptyString() })
 
-                Text(stringResource(id = R.string.remember_days_before, selectedRemember),
-                    modifier = Modifier
-                        .clickable {
-                            daysExpanded = !daysExpanded
-                        }
-                )
+                Row(verticalAlignment = Alignment.Top) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(stringResource(id = R.string.remember_days_before, selectedRemember),
+                            modifier = Modifier
+                                .clickable {
+                                    daysExpanded = !daysExpanded
+                                }
+                        )
+                        HelperSeparator(serviceRememberHelperText.orElse { emptyString() })
+                        ServiceRememberHelperText(serviceRememberHelperText, rememberValidation)
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(dimen56)
+                            .clip(CircleShape)
+                            .background(selectedColor)
+                            .border(dimen2, Color.Black, CircleShape)
+                            .clickable {
+                                colorPickerDialogOpen = true
+                                showColorPickerDialog(colorPickerDialogOpen, context)
+                            }
+                    )
+                }
+                Spacer(modifier = Modifier.height(dimen16))
 
                 if (daysExpanded) {
                     viewModel.validateServiceRemember(selectedRemember)
@@ -302,8 +337,6 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 }
                 viewModel.validateServiceRemember(selectedRemember)
 
-                HelperSeparator(serviceRememberHelperText.orElse { emptyString() })
-                ServiceRememberHelperText(serviceRememberHelperText, rememberValidation)
                 ServiceSeparator(serviceRememberHelperText.orElse { emptyString() })
 
                 val serviceId = service?.id
@@ -330,6 +363,33 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
         sheetState = sheetState,
         content = {}
     )
+}
+
+@Composable
+fun showColorPickerDialog(
+    colorPickerDialogOpen: Boolean,
+    context: Context
+) {
+    if (colorPickerDialogOpen) {
+        ColorPickerDialog.newBuilder()
+            .setDialogType(ColorPickerDialog.TYPE_PRESETS)
+            .setPresets(intArrayOf(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.MAGENTA))
+            .setDialogId(0)
+            .setColor(Color.BLACK)
+            .setPresetsColumns(6)
+            .setOnColorSelectedListener(object : OnColorSelectedListener {
+                override fun onColorSelected(color: Int) {
+                    selectedColor = color
+                }
+            })
+            .setPresetsListener(object : ColorPickerDialog.OnColorSelectedListener {
+                override fun onColorSelected(color: Int) {
+                    selectedColor = color
+                }
+            })
+            .setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, id -> colorPickerDialogOpen = false })
+            .show(context, "ColorPickerDialog")
+    }
 }
 
 private fun checkServicePriceFocus(
