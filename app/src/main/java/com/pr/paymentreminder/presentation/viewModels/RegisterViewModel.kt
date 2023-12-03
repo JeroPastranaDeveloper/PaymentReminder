@@ -22,6 +22,9 @@ class RegisterViewModel @Inject constructor(
     private val _passHelperText = MutableLiveData<String?>()
     val passHelperText: LiveData<String?>
         get() = _passHelperText
+    private val _repeatPassHelperText = MutableLiveData<String?>()
+    val repeatPassHelperText: LiveData<String?>
+        get() = _repeatPassHelperText
 
     private val _isRegisterSuccessful = MutableLiveData<Boolean>()
     val isRegisterSuccessful: LiveData<Boolean>
@@ -37,6 +40,18 @@ class RegisterViewModel @Inject constructor(
             isValid = true
         }
         return isValid
+    }
+
+    fun validatePasswordMatch(password: String, repeatPassword: String) : Boolean {
+        val isMatch : Boolean
+        if (password != repeatPassword) {
+            _repeatPassHelperText.value = R.string.passwords_do_not_match.toString()
+            isMatch = false
+        } else {
+            _repeatPassHelperText.value = null
+            isMatch = true
+        }
+        return isMatch
     }
 
     fun validatePassword(password: String) : Boolean {
