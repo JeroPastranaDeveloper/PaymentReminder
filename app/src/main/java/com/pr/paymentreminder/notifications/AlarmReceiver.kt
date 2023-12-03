@@ -2,12 +2,14 @@ package com.pr.paymentreminder.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
+import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -27,6 +29,8 @@ class AlarmReceiver : BroadcastReceiver() {
         val serviceRemember = intent?.getStringExtra(Constants.SERVICE_REMEMBER)
         val servicePrice = intent?.getStringExtra(Constants.SERVICE_PRICE)
 
+        val activityIntent = Intent(context, PaymentReminderActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, PendingIntent.FLAG_MUTABLE)
 
         val notification = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
             .setContentTitle(if (Integer.parseInt(serviceRemember.orEmpty()) > 1)
@@ -36,6 +40,7 @@ class AlarmReceiver : BroadcastReceiver() {
             )
             .setContentText("$servicePrice€")
             .setSmallIcon(R.drawable.logo_no_bg)
+            .setContentIntent(pendingIntent)
             .build()
 
         val notificationId = intent?.getIntExtra(Constants.NOTIFICATION_ID, 0) ?: 0
