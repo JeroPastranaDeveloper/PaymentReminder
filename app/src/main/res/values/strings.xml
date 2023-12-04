@@ -42,4 +42,8 @@
     <string name="invalid_service_remember">Recordatorio del servicio inválido</string>
     <string name="notification_singular">%1$s día para pagar %2$s</string>
     <string name="notification_plural">%1$s días para pagar %2$s</string>
+    <string name="dialog_name">Nombre: %s</string>
+    <string name="dialog_date">Fecha de pago: %s</string>
+    <string name="dialog_type">Tipo de pago: %s</string>
+    <string name="dialog_pryce">Precio: %s</string>
 </resources>
