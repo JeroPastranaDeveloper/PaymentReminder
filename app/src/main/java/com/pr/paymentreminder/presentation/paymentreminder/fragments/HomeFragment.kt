@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceBottomSheet
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceCard
+import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceDialog
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen56
@@ -49,6 +50,7 @@ import com.pr.paymentreminder.ui.theme.spacing72
 fun HomeFragment(viewModel: HomeViewModel) {
     var selectedService by remember { mutableStateOf<Service?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
     var refreshing by remember { mutableStateOf(false) }
 
     val refreshState = rememberPullRefreshState(
@@ -87,7 +89,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
                                 service = service,
                                 onClick = {
                                     selectedService = service
-                                    showBottomSheet = true
+                                    showDialog = true
                                 },
                                 dismissState = dismissState,
                                 deleteService = {
@@ -133,6 +135,20 @@ fun HomeFragment(viewModel: HomeViewModel) {
                 selectedService = null
                 showBottomSheet = false
             }
+        }
+
+        if (showDialog) {
+            ServiceDialog(
+                service = selectedService,
+                onClick = {
+                    selectedService = null
+                    showDialog = false
+                },
+                onEdit = {
+                    showBottomSheet = true
+                    showDialog = false
+                }
+            )
         }
     }
 }
