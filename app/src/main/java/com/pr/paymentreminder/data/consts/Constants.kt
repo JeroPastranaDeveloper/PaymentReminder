@@ -31,5 +31,6 @@ class Constants {
         const val SERVICE_PRICE = "SERVICE_PRICE"
         const val NOTIFICATION_CHANNEL_ID = "ServiceChannel"
         const val NOTIFICATION_CHANNEL_NAME = "Service Channel"
+        const val ALL_SERVICES = "Todos"
     }
 }
