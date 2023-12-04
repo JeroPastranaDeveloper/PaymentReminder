@@ -40,6 +40,7 @@ import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.GraphicViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,6 +48,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class PaymentReminderActivity : AppCompatActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
+    private val graphicViewModel: GraphicViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,9 +116,8 @@ class PaymentReminderActivity : AppCompatActivity() {
                 navController = navController,
                 startDestination = CurrentScreen.Home.route
             ) {
-                val settingsViewModel: SettingsViewModel by viewModels()
                 composable(CurrentScreen.Home.route) { HomeFragment(homeViewModel) }
-                composable(CurrentScreen.Graphic.route) { GraphicFragment() }
+                composable(CurrentScreen.Graphic.route) { GraphicFragment(graphicViewModel) }
                 composable(CurrentScreen.Settings.route) { SettingsFragment(settingsViewModel) }
             }
         }
