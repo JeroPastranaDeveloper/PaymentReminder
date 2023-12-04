@@ -2,7 +2,6 @@ package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,11 +54,8 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.ui.theme.dimen0
 import com.pr.paymentreminder.ui.theme.dimen1
-import com.pr.paymentreminder.ui.theme.dimen100
-import com.pr.paymentreminder.ui.theme.dimen150
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen2
-import com.pr.paymentreminder.ui.theme.dimen24
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen8
@@ -116,7 +111,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     var rememberValidation by remember { mutableStateOf(false) }
     val serviceRememberHelperText by viewModel.serviceRememberHelperText.observeAsState()
 
-    var selectedColor by remember { mutableStateOf(Color.White) }
+    val selectedColor by remember { mutableStateOf(Color.White) }
     var colorPickerDialogOpen by remember { mutableStateOf(false) }
 
     // TODO: ARREGLAR VISIBILIDAD DE LOS COJONES
@@ -309,7 +304,6 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             .border(dimen2, Color.Black, CircleShape)
                             .clickable {
                                 colorPickerDialogOpen = true
-                                showColorPickerDialog(colorPickerDialogOpen, context)
                             }
                     )
                 }
@@ -363,33 +357,6 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
         sheetState = sheetState,
         content = {}
     )
-}
-
-@Composable
-fun showColorPickerDialog(
-    colorPickerDialogOpen: Boolean,
-    context: Context
-) {
-    if (colorPickerDialogOpen) {
-        ColorPickerDialog.newBuilder()
-            .setDialogType(ColorPickerDialog.TYPE_PRESETS)
-            .setPresets(intArrayOf(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.MAGENTA))
-            .setDialogId(0)
-            .setColor(Color.BLACK)
-            .setPresetsColumns(6)
-            .setOnColorSelectedListener(object : OnColorSelectedListener {
-                override fun onColorSelected(color: Int) {
-                    selectedColor = color
-                }
-            })
-            .setPresetsListener(object : ColorPickerDialog.OnColorSelectedListener {
-                override fun onColorSelected(color: Int) {
-                    selectedColor = color
-                }
-            })
-            .setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, id -> colorPickerDialogOpen = false })
-            .show(context, "ColorPickerDialog")
-    }
 }
 
 private fun checkServicePriceFocus(

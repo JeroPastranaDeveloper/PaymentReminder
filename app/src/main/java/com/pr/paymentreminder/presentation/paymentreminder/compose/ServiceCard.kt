@@ -48,7 +48,7 @@ import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ServiceCard(
     service: Service,
@@ -100,7 +100,7 @@ fun ServiceCard(
             onClick = onClick
         ) {
             Row(
-                horizontalArrangement = Arrangement.Start,
+                horizontalArrangement = Arrangement.Start
             ) {
                 /*val imageUri = service.image?.let { Uri.parse(it) }
                 if (imageUri != null) {
