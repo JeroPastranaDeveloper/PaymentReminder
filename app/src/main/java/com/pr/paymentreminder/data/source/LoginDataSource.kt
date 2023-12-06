@@ -1,22 +1,21 @@
 package com.pr.paymentreminder.data.source
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class LoginDataSource @Inject constructor(){
     private val auth = FirebaseAuth.getInstance()
 
-    fun login(email: String, password: String): LiveData<Boolean> {
-        val resultLiveData = MutableLiveData<Boolean>()
+    private val _loginState = MutableStateFlow(false)
+    val loginState: StateFlow<Boolean> = _loginState
 
+    fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-                resultLiveData.value = task.isSuccessful
+                _loginState.value = task.isSuccessful
             }
-
-        return resultLiveData
     }
 
     fun isUserAuthenticated(): Boolean {
@@ -24,5 +23,9 @@ class LoginDataSource @Inject constructor(){
         return currentUser != null
     }
 
-    fun signOut() = auth.signOut()
+    fun signOut() {
+        auth.signOut()
+        // Actualiza el estado a falso cuando cierra la sesión
+        _loginState.value = false
+    }
 }
