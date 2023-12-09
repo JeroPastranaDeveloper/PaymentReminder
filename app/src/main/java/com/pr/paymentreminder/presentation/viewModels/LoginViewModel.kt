@@ -1,16 +1,13 @@
 package com.pr.paymentreminder.presentation.viewModels
 
 import android.util.Patterns
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
-import com.pr.paymentreminder.ui.theme.emptyString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,53 +15,52 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase
 ): ViewModel() {
-    private val _emailHelperText = MutableStateFlow<String?>(null)
-    val emailHelperText: StateFlow<String?>
+    private val _emailHelperText = MutableLiveData<String?>()
+    val emailHelperText: LiveData<String?>
         get() = _emailHelperText
 
-    private val _passHelperText = MutableStateFlow<String?>(null)
-    val passHelperText: StateFlow<String?>
+    private val _passHelperText = MutableLiveData<String?>()
+    val passHelperText: LiveData<String?>
         get() = _passHelperText
 
-    private val _isLoginSuccessful = MutableSharedFlow<Boolean>()
-    val isLoginSuccessful: SharedFlow<Boolean>
+    private val _isLoginSuccessful = MutableLiveData<Boolean>()
+    val isLoginSuccessful: LiveData<Boolean>
         get() = _isLoginSuccessful
 
-    var email: String = emptyString()
-    var password: String = emptyString()
-
-    fun validateEmail(): Boolean {
-        return if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() || email.isEmpty()) {
+    fun validateEmail(email: String) : Boolean {
+        val isValid : Boolean
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() || email.isEmpty()) {
             _emailHelperText.value = R.string.invalid_email.toString()
-            false
+            isValid = false
         } else {
             _emailHelperText.value = null
-            true
+            isValid = true
         }
+        return isValid
     }
 
-    fun validatePassword(): Boolean {
-        return if (password.length < 8 || !password.matches(".*[0-9].*".toRegex()) || password.isEmpty()) {
+    fun validatePassword(password: String) : Boolean {
+        val isValid : Boolean
+        if (password.length < 8 || !password.matches(".*[0-9].*".toRegex()) || password.isEmpty()) {
             _passHelperText.value = R.string.invalid_pass.toString()
-            false
+            isValid = false
         } else {
             _passHelperText.value = null
-            true
+            isValid = true
         }
+        return isValid
     }
 
-    fun login() {
+    fun login(email: String, password: String) {
         viewModelScope.launch {
-            loginUseCase.login(email, password).collect { result ->
-                _isLoginSuccessful.emit(result)
+            loginUseCase.login(email, password).observeForever { result ->
+                _isLoginSuccessful.value = result
             }
         }
     }
 
-     fun checkIfUserIsAuthenticated() {
-        viewModelScope.launch {
-            val isUserAuthenticated = loginUseCase.isUserAuthenticated()
-            _isLoginSuccessful.emit(isUserAuthenticated)
-        }
+    fun checkIfUserIsAuthenticated() {
+        val isUserAuthenticated = loginUseCase.isUserAuthenticated()
+        _isLoginSuccessful.value = isUserAuthenticated
     }
 }

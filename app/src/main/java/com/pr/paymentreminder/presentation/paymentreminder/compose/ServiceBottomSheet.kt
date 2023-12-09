@@ -172,27 +172,24 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     modifier = Modifier.clickable { categoriesExpanded = !categoriesExpanded }
                 )
 
-                if (categoriesExpanded) {
-                    viewModel.validateServiceCategory(selectedCategory)
-                }
-
                 DropdownMenu(
                     expanded = categoriesExpanded,
                     onDismissRequest = {
                         categoriesExpanded = false
                         categoriesValidation = true
+                        validateServiceCategory(viewModel, selectedCategory)
                     }
                 ) {
                     categories.forEach { category ->
                         DropdownMenuItem(onClick = {
                             selectedCategory = category.category
                             categoriesExpanded = false
+                            validateServiceCategory(viewModel, selectedCategory)
                         }) {
                             Text(text = category.category)
                         }
                     }
                 }
-
 
                 HelperSeparator(serviceCategoriesHelperText.orElse { emptyString() })
                 ServiceCategoriesHelperText(serviceCategoriesHelperText, categoriesValidation)
@@ -231,28 +228,24 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         }
                 )
 
-                if (typesExpanded) {
-                    viewModel.validateServiceType(selectedPaymentType)
-                }
-
                 DropdownMenu(
                     expanded = typesExpanded,
                     onDismissRequest = {
                         typesExpanded = false
                         typesValidation = true
+                        validateServiceType(viewModel, selectedPaymentType)
                     }
                 ) {
                     types.forEach { type ->
                         DropdownMenuItem(onClick = {
                             selectedPaymentType = type.type
                             typesExpanded = false
+                            validateServiceType(viewModel, selectedPaymentType)
                         }) {
                             Text(text = type.type)
                         }
                     }
                 }
-                viewModel.validateServiceType(selectedPaymentType)
-
 
                 HelperSeparator(serviceTypesHelperText.orElse { emptyString() })
                 ServiceTypesHelperText(serviceTypesHelperText, typesValidation)
@@ -309,27 +302,24 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 }
                 Spacer(modifier = Modifier.height(dimen16))
 
-                if (daysExpanded) {
-                    viewModel.validateServiceRemember(selectedRemember)
-                }
-
                 DropdownMenu(
                     expanded = daysExpanded,
                     onDismissRequest = {
                         daysExpanded = false
                         rememberValidation = false
+                        validateServiceRemember(viewModel, selectedRemember)
                     }
                 ) {
                     daysRemember.forEach { day ->
                         DropdownMenuItem(onClick = {
                             selectedRemember = day.toString()
                             daysExpanded = false
+                            validateServiceRemember(viewModel, selectedRemember)
                         }) {
                             Text(text = day.toString())
                         }
                     }
                 }
-                viewModel.validateServiceRemember(selectedRemember)
 
                 ServiceSeparator(serviceRememberHelperText.orElse { emptyString() })
 
@@ -358,6 +348,10 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
         content = {}
     )
 }
+
+private fun validateServiceCategory(viewModel: HomeViewModel, selectedCategory: String) = viewModel.validateServiceCategory(selectedCategory)
+private fun validateServiceType(viewModel: HomeViewModel, selectedPaymentType: String) = viewModel.validateServiceType(selectedPaymentType)
+private fun validateServiceRemember(viewModel: HomeViewModel, selectedRemember: String) = viewModel.validateServiceRemember(selectedRemember)
 
 private fun checkServicePriceFocus(
     wasServicePriceFieldFocused: MutableState<Boolean>,

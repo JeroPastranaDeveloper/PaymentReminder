@@ -1,9 +1,9 @@
 package com.pr.paymentreminder.data.repository
 
-import kotlinx.coroutines.flow.StateFlow
+import androidx.lifecycle.LiveData
 
 interface LoginRepository {
-    fun login(email: String, password: String): StateFlow<Boolean>
+    suspend fun login(email: String, password: String): LiveData<Boolean>
     fun isUserAuthenticated(): Boolean
     fun signOut()
 }

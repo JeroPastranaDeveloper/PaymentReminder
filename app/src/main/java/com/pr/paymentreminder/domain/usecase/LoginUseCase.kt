@@ -1,9 +1,9 @@
 package com.pr.paymentreminder.domain.usecase
 
-import kotlinx.coroutines.flow.StateFlow
+import androidx.lifecycle.LiveData
 
 interface LoginUseCase {
-    fun login(email: String, password: String): StateFlow<Boolean>
+    suspend fun login(email: String, password: String): LiveData<Boolean>
     fun isUserAuthenticated(): Boolean
     fun signOut()
 }

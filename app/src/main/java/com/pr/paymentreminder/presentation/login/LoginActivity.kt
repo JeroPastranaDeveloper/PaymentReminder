@@ -27,8 +27,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -113,19 +113,25 @@ class LoginActivity : ComponentActivity() {
             )
 
 
-            LoginButton()
+            LoginButton(emailText, passText)
             CheckLogin()
         }
     }
 
 
     @Composable
-    private fun LoginButton() {
+    private fun LoginButton(
+        emailText: MutableState<TextFieldValue>,
+        passText: MutableState<TextFieldValue>
+    ) {
         Button(
             onClick = {
-                if (viewModel.validateEmail() && viewModel.validatePassword()) {
+                if (viewModel.validateEmail(emailText.value.text) && viewModel.validatePassword(
+                        passText.value.text
+                    )
+                ) {
                     lifecycleScope.launch {
-                        viewModel.login()
+                        viewModel.login(emailText.value.text, passText.value.text)
                     }
                 } else {
                     Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT)
@@ -144,21 +150,18 @@ class LoginActivity : ComponentActivity() {
     private fun EmailField(
         emailText: MutableState<TextFieldValue>
     ) {
-        val emailHelper by viewModel.emailHelperText.collectAsState()
+        val emailHelper by viewModel.emailHelperText.observeAsState()
         val wasEmailFieldFocused = remember { mutableStateOf(false) }
         TextField(
             value = emailText.value,
-            onValueChange = {
-                emailText.value = it
-                viewModel.email = it.text
-            },
+            onValueChange = { emailText.value = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = spacing16, vertical = spacing8)
                 .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
                 .onFocusChanged {
                     if (wasEmailFieldFocused.value && !it.isFocused) {
-                        viewModel.validateEmail() // Sin argumento
+                        viewModel.validateEmail(emailText.value.text)
                     }
                     wasEmailFieldFocused.value = it.isFocused
                 },
@@ -182,23 +185,20 @@ class LoginActivity : ComponentActivity() {
     private fun PassField(
         passText: MutableState<TextFieldValue>
     ) {
-        val passHelper by viewModel.passHelperText.collectAsState()
+        val passHelper by viewModel.passHelperText.observeAsState()
         val wasPassFieldFocused = remember { mutableStateOf(false) }
         val passwordVisibility = remember { mutableStateOf(false) }
 
         TextField(
             value = passText.value,
-            onValueChange = {
-                passText.value = it
-                viewModel.password = it.text // Asigna el valor del campo de texto a la variable password del viewModel
-            },
+            onValueChange = { passText.value = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = spacing16, vertical = spacing8)
                 .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
                 .onFocusChanged {
                     if (wasPassFieldFocused.value && !it.isFocused) {
-                        viewModel.validatePassword() // Sin argumento
+                        viewModel.validatePassword(passText.value.text)
                     }
                     wasPassFieldFocused.value = it.isFocused
                 },
@@ -229,10 +229,11 @@ class LoginActivity : ComponentActivity() {
 
     @Composable
     private fun CheckLogin() {
-        val isLoginSuccessful by viewModel.isLoginSuccessful.collectAsState(false)
-        if (isLoginSuccessful) {
-            startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
-            finish()
+        viewModel.isLoginSuccessful.observeAsState().value?.let { isLoginSuccessful ->
+            if (isLoginSuccessful) {
+                startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
+                finish()
+            }
         }
     }
 }
