@@ -1,13 +1,12 @@
 package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,29 +14,26 @@ import javax.inject.Inject
 class GraphicViewModel @Inject constructor(
     private val servicesUseCase: ServicesUseCase
 ) : ViewModel() {
-    private val _services = mutableStateOf<List<Service>>(emptyList())
-    val services: State<List<Service>> = _services
+    private val _services = MutableStateFlow<List<Service>>(emptyList())
+    val services: StateFlow<List<Service>> = _services
 
-    private val _weeklyServices = mutableStateOf<List<Service>>(emptyList())
-    val weeklyServices: State<List<Service>> = _weeklyServices
-
-    private val _monthlyServices = mutableStateOf<List<Service>>(emptyList())
-    val monthlyServices: State<List<Service>> = _monthlyServices
-
-    private val _annualServices = mutableStateOf<List<Service>>(emptyList())
-    val annualServices: State<List<Service>> = _annualServices
+    private val _filteredServices = MutableStateFlow<List<Service>>(emptyList())
+    val filteredServices: StateFlow<List<Service>> = _filteredServices
 
     init {
         getServices()
     }
 
-    fun getServices() {
+    private fun getServices() {
         viewModelScope.launch {
             _services.value = servicesUseCase.getServices()
+            _filteredServices.value = _services.value
+        }
+    }
 
-            _weeklyServices.value = _services.value.filter { it.type == PaymentType.WEEKLY.type }
-            _monthlyServices.value = _services.value.filter { it.type == PaymentType.MONTHLY.type }
-            _annualServices.value = _services.value.filter { it.type == PaymentType.YEARLY.type }
+    fun filterServices(filter: String) {
+        viewModelScope.launch {
+            _filteredServices.value = servicesUseCase.getFilteredServices(filter)
         }
     }
 }

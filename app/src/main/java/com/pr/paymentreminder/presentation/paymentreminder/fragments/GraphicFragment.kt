@@ -11,6 +11,7 @@ import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,15 +30,13 @@ import com.pr.paymentreminder.ui.theme.spacing4
 
 @Composable
 fun GraphicFragment(graphicViewModel: GraphicViewModel) {
-    var services by remember(graphicViewModel.services) {
-        mutableStateOf(graphicViewModel.services.value)
-    }
+    val services by graphicViewModel.filteredServices.collectAsState()
 
     var selectedChip by remember { mutableStateOf(Constants.ALL_SERVICES) }
 
-    if (selectedChip == Constants.ALL_SERVICES) {
-        services = graphicViewModel.services.value
-    }
+    val paymentWeekly = PaymentType.WEEKLY.type
+    val paymentMonthly = PaymentType.MONTHLY.type
+    val paymentYearly = PaymentType.YEARLY.type
 
     Column(
         modifier = Modifier
@@ -47,26 +46,26 @@ fun GraphicFragment(graphicViewModel: GraphicViewModel) {
         Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
             ServicesChip(
                 title = stringResource(id = R.string.all_services),
-                onClick = { services = graphicViewModel.services.value },
+                onClick = { graphicViewModel.filterServices(Constants.ALL_SERVICES) },
                 selected = selectedChip == Constants.ALL_SERVICES,
                 onSelectedChange = { selectedChip = it }
             )
             ServicesChip(
                 title = stringResource(id = R.string.weekly_services),
-                onClick = { services = graphicViewModel.weeklyServices.value },
-                selected = selectedChip == PaymentType.WEEKLY.type,
+                onClick = { graphicViewModel.filterServices(paymentWeekly) },
+                selected = selectedChip == paymentWeekly,
                 onSelectedChange = { selectedChip = it }
             )
             ServicesChip(
                 title = stringResource(id = R.string.monthly_services),
-                onClick = { services = graphicViewModel.monthlyServices.value },
-                selected = selectedChip == PaymentType.MONTHLY.type,
+                onClick = { graphicViewModel.filterServices(paymentMonthly) },
+                selected = selectedChip == paymentMonthly,
                 onSelectedChange = { selectedChip = it }
             )
             ServicesChip(
                 title = stringResource(id = R.string.yearly_services),
-                onClick = { services = graphicViewModel.annualServices.value },
-                selected = selectedChip == PaymentType.YEARLY.type,
+                onClick = { graphicViewModel.filterServices(paymentYearly) },
+                selected = selectedChip == paymentYearly,
                 onSelectedChange = { selectedChip = it }
             )
         }
