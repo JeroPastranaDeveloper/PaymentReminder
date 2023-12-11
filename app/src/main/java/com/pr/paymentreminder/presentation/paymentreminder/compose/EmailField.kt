@@ -19,7 +19,6 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.spacing16
-import com.pr.paymentreminder.ui.theme.spacing20
 import com.pr.paymentreminder.ui.theme.spacing8
 
 @Composable
@@ -52,12 +51,6 @@ fun EmailField(
     )
 
     if (!emailHelperText.isNullOrEmpty()) {
-        Text(
-            text = stringResource(id = R.string.invalid_email),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = spacing20, end = spacing16, bottom = spacing8),
-            color = Color.Red
-        )
+        HelperText(R.string.invalid_email)
     }
 }

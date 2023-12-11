@@ -31,11 +31,10 @@ import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
 
-
 @Composable
-fun PassField(
-    passText: TextFieldValue,
-    onPassTextChange: (TextFieldValue) -> Unit,
+fun PassRepeatField(
+    repeatPassText: TextFieldValue,
+    onRepeatPassTextChange: (TextFieldValue) -> Unit,
     wasPassFieldFocused: Boolean,
     onPassFieldFocusChange: (Boolean) -> Unit,
     passHelper: LiveData<String?>,
@@ -45,19 +44,19 @@ fun PassField(
     val passwordVisibility = remember { mutableStateOf(false) }
 
     TextField(
-        value = passText,
-        onValueChange = onPassTextChange,
+        value = repeatPassText,
+        onValueChange = onRepeatPassTextChange,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = spacing16, vertical = spacing8)
             .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
             .onFocusChanged {
                 if (wasPassFieldFocused && !it.isFocused) {
-                    onPassValidation(passText.text)
+                    onPassValidation(repeatPassText.text)
                 }
                 onPassFieldFocusChange(it.isFocused)
             },
-        label = { Text(text = stringResource(id = R.string.password)) },
+        label = { Text(text = stringResource(id = R.string.repeat_password)) },
         isError = !passHelper.value.isNullOrEmpty(),
         visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
         singleLine = true,
@@ -72,6 +71,6 @@ fun PassField(
     )
 
     if (!passHelperText.isNullOrEmpty()) {
-        HelperText(R.string.invalid_pass)
+        HelperText(R.string.passwords_do_not_match)
     }
 }

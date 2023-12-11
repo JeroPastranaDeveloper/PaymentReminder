@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pr.paymentreminder.R
 import com.pr.paymentreminder.domain.usecase.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -40,9 +39,9 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    fun validatePasswordMatch(password: String, repeatPassword: String) : Boolean {
+    fun validatePasswordMatch(password: String, repeatPassword: String, helperText: String) : Boolean {
         return if (password != repeatPassword) {
-            _repeatPassHelperText.value = R.string.passwords_do_not_match.toString()
+            _repeatPassHelperText.value = helperText
             false
         } else {
             _repeatPassHelperText.value = null
