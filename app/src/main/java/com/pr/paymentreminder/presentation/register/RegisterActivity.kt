@@ -49,6 +49,7 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.presentation.login.LoginActivity
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
 import com.pr.paymentreminder.presentation.paymentreminder.compose.EmailField
+import com.pr.paymentreminder.presentation.paymentreminder.compose.PassField
 import com.pr.paymentreminder.presentation.viewModels.RegisterViewModel
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
@@ -85,6 +86,7 @@ class RegisterActivity : ComponentActivity() {
             val emailText = remember { mutableStateOf(TextFieldValue()) }
             val wasEmailFieldFocused = remember { mutableStateOf(false) }
             val passText = remember { mutableStateOf(TextFieldValue()) }
+            val wasPassFieldFocused = remember { mutableStateOf(false) }
             val repeatPassText = remember { mutableStateOf(TextFieldValue()) }
 
             Spacer(modifier = Modifier.height(dimen16))
@@ -99,7 +101,20 @@ class RegisterActivity : ComponentActivity() {
                     viewModel.validateEmail(emailText.value.text, getString(R.string.invalid_email))
                 }
             )
-            PassField(passText)
+            PassField(
+                passText = passText.value,
+                onPassTextChange = { passText.value = it },
+                wasPassFieldFocused = wasPassFieldFocused.value,
+                onPassFieldFocusChange = { wasPassFieldFocused.value = it },
+                passHelper = viewModel.passHelperText,
+                onPassValidation = {
+                    viewModel.validatePassword(
+                        passText.value.text,
+                        getString(R.string.invalid_pass)
+                    )
+                }
+            )
+
             PassRepeatField(passText, repeatPassText)
 
             Image(
@@ -139,7 +154,10 @@ class RegisterActivity : ComponentActivity() {
                 if ((viewModel.validateEmail(
                         emailText.value.text,
                         getString(R.string.invalid_email)
-                    )) && (viewModel.validatePassword(passText.value.text)) && (viewModel.validatePasswordMatch(passText.value.text, repeatPassText.value.text))) {
+                    )) && (viewModel.validatePassword(
+                        passText.value.text,
+                        getString(R.string.invalid_pass)
+                    )) && (viewModel.validatePasswordMatch(passText.value.text, repeatPassText.value.text))) {
                     lifecycleScope.launch {
                         viewModel.register(emailText.value.text, passText.value.text)
                     }
@@ -195,52 +213,6 @@ class RegisterActivity : ComponentActivity() {
         if (!passHelper.isNullOrEmpty()) {
             Text(
                 text = stringResource(id = R.string.passwords_do_not_match),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = spacing20, end = spacing16, bottom = spacing16),
-                color = Color.Red
-            )
-        }
-    }
-
-    @Composable
-    private fun PassField(
-        passText: MutableState<TextFieldValue>
-    ) {
-        val passHelper by viewModel.passHelperText.observeAsState()
-        val wasPassFieldFocused = remember { mutableStateOf(false) }
-        val passwordVisibility = remember { mutableStateOf(false) }
-
-        TextField(
-            value = passText.value,
-            onValueChange = { passText.value = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = spacing16, vertical = spacing8)
-                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-                .onFocusChanged {
-                    if (wasPassFieldFocused.value && !it.isFocused) {
-                        viewModel.validatePassword(passText.value.text)
-                    }
-                    wasPassFieldFocused.value = it.isFocused
-                },
-            label = { Text(text = stringResource(id = R.string.password)) },
-            isError = !passHelper.isNullOrEmpty(),
-            visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
-            singleLine = true,
-            trailingIcon = {
-                IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
-                    Icon(
-                        imageVector = if (passwordVisibility.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                        contentDescription = emptyString()
-                    )
-                }
-            }
-        )
-
-        if (!passHelper.isNullOrEmpty()) {
-            Text(
-                text = stringResource(id = R.string.invalid_pass),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = spacing20, end = spacing16, bottom = spacing16),

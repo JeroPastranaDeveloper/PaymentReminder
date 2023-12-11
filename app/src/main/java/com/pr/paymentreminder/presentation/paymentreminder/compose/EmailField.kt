@@ -32,6 +32,7 @@ fun EmailField(
     onEmailValidation: (String) -> Unit
 ) {
     val emailHelperText by emailHelper.observeAsState(null)
+
     TextField(
         value = emailText,
         onValueChange = onEmailTextChange,

@@ -50,9 +50,9 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    fun validatePassword(password: String) : Boolean {
+    fun validatePassword(password: String, helperText: String) : Boolean {
         return if (password.length < 8 || !password.matches(".*[0-9].*".toRegex()) || password.isEmpty()) {
-            _passHelperText.value = R.string.invalid_pass.toString()
+            _passHelperText.value = helperText
             false
         } else {
             _passHelperText.value = null
