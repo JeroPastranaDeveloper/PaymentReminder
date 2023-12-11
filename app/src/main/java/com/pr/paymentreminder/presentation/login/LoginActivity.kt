@@ -45,6 +45,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
@@ -85,10 +86,20 @@ class LoginActivity : ComponentActivity() {
         ) {
             val emailText = remember { mutableStateOf(TextFieldValue("cuentadepruebas@gmail.com")) }
             val passText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
+            val wasEmailFieldFocused = remember { mutableStateOf(false) }
 
             Spacer(modifier = Modifier.height(dimen16))
 
-            EmailField(emailText)
+            EmailField(
+                emailText = emailText.value,
+                onEmailTextChange = { emailText.value = it },
+                wasEmailFieldFocused = wasEmailFieldFocused.value,
+                onEmailFieldFocusChange = { wasEmailFieldFocused.value = it },
+                emailHelper = viewModel.emailHelperText,
+                onEmailValidation = {
+                    viewModel.validateEmail(emailText.value.text, getString(R.string.invalid_email))
+                }
+            )
             PassField(passText)
 
             Image(
@@ -112,12 +123,10 @@ class LoginActivity : ComponentActivity() {
                 color = Color.Blue
             )
 
-
             LoginButton(emailText, passText)
             CheckLogin()
         }
     }
-
 
     @Composable
     private fun LoginButton(
@@ -126,16 +135,12 @@ class LoginActivity : ComponentActivity() {
     ) {
         Button(
             onClick = {
-                if (viewModel.validateEmail(emailText.value.text) && viewModel.validatePassword(
-                        passText.value.text
-                    )
-                ) {
+                if (viewModel.validateEmail(emailText.value.text, getString(R.string.invalid_email)) && viewModel.validatePassword(passText.value.text, getString(R.string.invalid_pass))) {
                     lifecycleScope.launch {
                         viewModel.login(emailText.value.text, passText.value.text)
                     }
                 } else {
-                    Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier
@@ -148,29 +153,33 @@ class LoginActivity : ComponentActivity() {
 
     @Composable
     private fun EmailField(
-        emailText: MutableState<TextFieldValue>
+        emailText: TextFieldValue,
+        onEmailTextChange: (TextFieldValue) -> Unit,
+        wasEmailFieldFocused: Boolean,
+        onEmailFieldFocusChange: (Boolean) -> Unit,
+        emailHelper: LiveData<String?>,
+        onEmailValidation: (String) -> Unit
     ) {
-        val emailHelper by viewModel.emailHelperText.observeAsState()
-        val wasEmailFieldFocused = remember { mutableStateOf(false) }
+        val emailHelperText by emailHelper.observeAsState(null)
         TextField(
-            value = emailText.value,
-            onValueChange = { emailText.value = it },
+            value = emailText,
+            onValueChange = onEmailTextChange,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = spacing16, vertical = spacing8)
                 .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
                 .onFocusChanged {
-                    if (wasEmailFieldFocused.value && !it.isFocused) {
-                        viewModel.validateEmail(emailText.value.text)
+                    if (wasEmailFieldFocused && !it.isFocused) {
+                        onEmailValidation(emailText.text)
                     }
-                    wasEmailFieldFocused.value = it.isFocused
+                    onEmailFieldFocusChange(it.isFocused)
                 },
             label = { Text(text = stringResource(id = R.string.email)) },
-            isError = !emailHelper.isNullOrEmpty(),
+            isError = !emailHelper.value.isNullOrEmpty(),
             singleLine = true
         )
 
-        if (!emailHelper.isNullOrEmpty()) {
+        if (!emailHelperText.isNullOrEmpty()) {
             Text(
                 text = stringResource(id = R.string.invalid_email),
                 modifier = Modifier
@@ -198,7 +207,7 @@ class LoginActivity : ComponentActivity() {
                 .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
                 .onFocusChanged {
                     if (wasPassFieldFocused.value && !it.isFocused) {
-                        viewModel.validatePassword(passText.value.text)
+                        viewModel.validatePassword(passText.value.text, getString(R.string.invalid_pass))
                     }
                     wasPassFieldFocused.value = it.isFocused
                 },
