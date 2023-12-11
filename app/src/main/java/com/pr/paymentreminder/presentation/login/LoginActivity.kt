@@ -45,7 +45,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.LiveData
+import com.pr.paymentreminder.presentation.paymentreminder.compose.EmailField
 import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
@@ -100,6 +100,7 @@ class LoginActivity : ComponentActivity() {
                     viewModel.validateEmail(emailText.value.text, getString(R.string.invalid_email))
                 }
             )
+
             PassField(passText)
 
             Image(
@@ -148,45 +149,6 @@ class LoginActivity : ComponentActivity() {
                 .padding(horizontal = spacing16)
         ) {
             Text(text = stringResource(id = R.string.login))
-        }
-    }
-
-    @Composable
-    private fun EmailField(
-        emailText: TextFieldValue,
-        onEmailTextChange: (TextFieldValue) -> Unit,
-        wasEmailFieldFocused: Boolean,
-        onEmailFieldFocusChange: (Boolean) -> Unit,
-        emailHelper: LiveData<String?>,
-        onEmailValidation: (String) -> Unit
-    ) {
-        val emailHelperText by emailHelper.observeAsState(null)
-        TextField(
-            value = emailText,
-            onValueChange = onEmailTextChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = spacing16, vertical = spacing8)
-                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-                .onFocusChanged {
-                    if (wasEmailFieldFocused && !it.isFocused) {
-                        onEmailValidation(emailText.text)
-                    }
-                    onEmailFieldFocusChange(it.isFocused)
-                },
-            label = { Text(text = stringResource(id = R.string.email)) },
-            isError = !emailHelper.value.isNullOrEmpty(),
-            singleLine = true
-        )
-
-        if (!emailHelperText.isNullOrEmpty()) {
-            Text(
-                text = stringResource(id = R.string.invalid_email),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = spacing20, end = spacing16, bottom = spacing8),
-                color = Color.Red
-            )
         }
     }
 

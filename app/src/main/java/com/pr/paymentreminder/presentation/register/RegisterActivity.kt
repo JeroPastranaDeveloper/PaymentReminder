@@ -48,6 +48,7 @@ import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.presentation.login.LoginActivity
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
+import com.pr.paymentreminder.presentation.paymentreminder.compose.EmailField
 import com.pr.paymentreminder.presentation.viewModels.RegisterViewModel
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
@@ -82,12 +83,22 @@ class RegisterActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Center
         ) {
             val emailText = remember { mutableStateOf(TextFieldValue()) }
+            val wasEmailFieldFocused = remember { mutableStateOf(false) }
             val passText = remember { mutableStateOf(TextFieldValue()) }
             val repeatPassText = remember { mutableStateOf(TextFieldValue()) }
 
             Spacer(modifier = Modifier.height(dimen16))
 
-            EmailField(emailText)
+            EmailField(
+                emailText = emailText.value,
+                onEmailTextChange = { emailText.value = it },
+                wasEmailFieldFocused = wasEmailFieldFocused.value,
+                onEmailFieldFocusChange = { wasEmailFieldFocused.value = it },
+                emailHelper = viewModel.emailHelperText,
+                onEmailValidation = {
+                    viewModel.validateEmail(emailText.value.text, getString(R.string.invalid_email))
+                }
+            )
             PassField(passText)
             PassRepeatField(passText, repeatPassText)
 
@@ -125,7 +136,10 @@ class RegisterActivity : ComponentActivity() {
     ) {
         Button(
             onClick = {
-                if ((viewModel.validateEmail(emailText.value.text)) && (viewModel.validatePassword(passText.value.text)) && (viewModel.validatePasswordMatch(passText.value.text, repeatPassText.value.text))) {
+                if ((viewModel.validateEmail(
+                        emailText.value.text,
+                        getString(R.string.invalid_email)
+                    )) && (viewModel.validatePassword(passText.value.text)) && (viewModel.validatePasswordMatch(passText.value.text, repeatPassText.value.text))) {
                     lifecycleScope.launch {
                         viewModel.register(emailText.value.text, passText.value.text)
                     }
@@ -139,41 +153,6 @@ class RegisterActivity : ComponentActivity() {
                 .padding(horizontal = spacing16)
         ) {
             Text(text = stringResource(id = R.string.register))
-        }
-    }
-
-    @Composable
-    private fun EmailField(
-        emailText: MutableState<TextFieldValue>
-    ) {
-        val emailHelper by viewModel.emailHelperText.observeAsState()
-        val wasEmailFieldFocused = remember { mutableStateOf(false) }
-        TextField(
-            value = emailText.value,
-            onValueChange = { emailText.value = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = spacing16, vertical = spacing8)
-                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-                .onFocusChanged {
-                    if (wasEmailFieldFocused.value && !it.isFocused) {
-                        viewModel.validateEmail(emailText.value.text)
-                    }
-                    wasEmailFieldFocused.value = it.isFocused
-                },
-            label = { Text(text = stringResource(id = R.string.email)) },
-            isError = !emailHelper.isNullOrEmpty(),
-            singleLine = true
-        )
-
-        if (!emailHelper.isNullOrEmpty()) {
-            Text(
-                text = stringResource(id = R.string.invalid_email),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = spacing20, end = spacing16, bottom = spacing8),
-                color = Color.Red
-            )
         }
     }
 

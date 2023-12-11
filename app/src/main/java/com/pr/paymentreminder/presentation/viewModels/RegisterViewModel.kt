@@ -30,40 +30,34 @@ class RegisterViewModel @Inject constructor(
     val isRegisterSuccessful: LiveData<Boolean>
         get() = _isRegisterSuccessful
 
-    fun validateEmail(email: String) : Boolean {
-        val isValid : Boolean
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() || email.isEmpty()) {
-            _emailHelperText.value = R.string.invalid_email.toString()
-            isValid = false
+    fun validateEmail(email: String, emailHelper: String) : Boolean {
+        return if (!Patterns.EMAIL_ADDRESS.matcher(email).matches() || email.isEmpty()) {
+            _emailHelperText.value = emailHelper
+            false
         } else {
             _emailHelperText.value = null
-            isValid = true
+            true
         }
-        return isValid
     }
 
     fun validatePasswordMatch(password: String, repeatPassword: String) : Boolean {
-        val isMatch : Boolean
-        if (password != repeatPassword) {
+        return if (password != repeatPassword) {
             _repeatPassHelperText.value = R.string.passwords_do_not_match.toString()
-            isMatch = false
+            false
         } else {
             _repeatPassHelperText.value = null
-            isMatch = true
+            true
         }
-        return isMatch
     }
 
     fun validatePassword(password: String) : Boolean {
-        val isValid : Boolean
-        if (password.length < 8 || !password.matches(".*[0-9].*".toRegex()) || password.isEmpty()) {
+        return if (password.length < 8 || !password.matches(".*[0-9].*".toRegex()) || password.isEmpty()) {
             _passHelperText.value = R.string.invalid_pass.toString()
-            isValid = false
+            false
         } else {
             _passHelperText.value = null
-            isValid = true
+            true
         }
-        return isValid
     }
 
     fun register(email: String, password: String) {
