@@ -122,6 +122,9 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
             .collect { onDismiss() }
     }
 
+    /*viewModel.serviceName = serviceName.text
+    viewModel.validateServiceName()*/
+
     ModalBottomSheetLayout(
         sheetShape = MaterialTheme.shapes.medium,
         sheetContent = {

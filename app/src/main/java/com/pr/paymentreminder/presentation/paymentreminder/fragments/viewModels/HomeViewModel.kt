@@ -77,10 +77,13 @@ class HomeViewModel @Inject constructor(
 
     fun getServices() {
         viewModelScope.launch {
-            _services.value = servicesUseCase.getServices().onEach {
-                it.updateDate()
-                alarmScheduler.scheduleAlarm(it)
-            }.sortedBy { it.getDate() }
+            servicesUseCase.getServices().collect { services ->
+                services.forEach { service ->
+                    service.updateDate()
+                    alarmScheduler.scheduleAlarm(service)
+                }
+                _services.value = services.sortedBy { it.getDate() }
+            }
         }
     }
 

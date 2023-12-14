@@ -26,14 +26,18 @@ class GraphicViewModel @Inject constructor(
 
     private fun getServices() {
         viewModelScope.launch {
-            _services.value = servicesUseCase.getServices()
-            _filteredServices.value = _services.value
+            servicesUseCase.getServices().collect { services ->
+                _services.value = services
+                _filteredServices.value = services
+            }
         }
     }
 
     fun filterServices(filter: String) {
         viewModelScope.launch {
-            _filteredServices.value = servicesUseCase.getFilteredServices(filter)
+            servicesUseCase.getFilteredServices(filter).collect { filteredServices ->
+                _filteredServices.value = filteredServices
+            }
         }
     }
 }

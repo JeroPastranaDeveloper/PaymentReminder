@@ -5,25 +5,30 @@ import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.repository.ServicesRepository
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ServicesUseCaseImpl @Inject constructor(
     private val repository: ServicesRepository
 ) : ServicesUseCase {
-    private var services: List<Service> = emptyList()
+    private var services: Flow<List<Service>> = emptyFlow()
 
-    override suspend fun getServices(): List<Service> {
+    override fun getServices(): Flow<List<Service>> {
         services = repository.getServices()
         return services
     }
 
-    override suspend fun getFilteredServices(filter: String): List<Service> {
-        return when (filter) {
-            Constants.ALL_SERVICES -> services
-            PaymentType.WEEKLY.type -> services.filter { it.type == PaymentType.WEEKLY.type }
-            PaymentType.MONTHLY.type -> services.filter { it.type == PaymentType.MONTHLY.type }
-            PaymentType.YEARLY.type -> services.filter { it.type == PaymentType.YEARLY.type }
-            else -> services
+    override fun getFilteredServices(filter: String): Flow<List<Service>> {
+        return services.map { serviceList ->
+            when (filter) {
+                Constants.ALL_SERVICES -> serviceList
+                PaymentType.WEEKLY.type -> serviceList.filter { it.type == PaymentType.WEEKLY.type }
+                PaymentType.MONTHLY.type -> serviceList.filter { it.type == PaymentType.MONTHLY.type }
+                PaymentType.YEARLY.type -> serviceList.filter { it.type == PaymentType.YEARLY.type }
+                else -> serviceList
+            }
         }
     }
 
