@@ -2,8 +2,6 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -15,6 +13,7 @@ import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
+import com.pr.paymentreminder.ui.theme.emptyString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,26 +34,32 @@ class HomeViewModel @Inject constructor(
     private val _serviceNameHelperText = MutableStateFlow<String?>(null)
     val serviceNameHelperText: StateFlow<String?>
         get() = _serviceNameHelperText
+    var serviceName: String = emptyString()
 
     private val _serviceCategoryHelperText = MutableStateFlow<String?>(null)
     val serviceCategoryHelperText: StateFlow<String?>
         get() = _serviceCategoryHelperText
+    var serviceCategory: String = emptyString()
 
     private val _serviceDateHelperText = MutableStateFlow<String?>(null)
     val serviceDateHelperText: StateFlow<String?>
         get() = _serviceDateHelperText
+    var serviceDate: String = emptyString()
 
     private val _serviceTypeHelperText = MutableStateFlow<String?>(null)
     val serviceTypesHelperText: StateFlow<String?>
         get() = _serviceTypeHelperText
+    var serviceType: String = emptyString()
 
     private val _servicePriceHelperText = MutableStateFlow<String?>(null)
     val servicePriceHelperText: StateFlow<String?>
         get() = _servicePriceHelperText
+    var servicePrice: String = emptyString()
 
     private val _serviceRememberHelperText = MutableStateFlow<String?>(null)
     val serviceRememberHelperText: StateFlow<String?>
         get() = _serviceRememberHelperText
+    var serviceRemember: String = emptyString()
 
     init {
         getServices()
@@ -114,31 +119,27 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun validateServiceName(serviceName: String): Boolean {
-        val isValid: Boolean
-        if (serviceName.isEmpty()) {
+    fun validateServiceName(): Boolean {
+        return if (serviceName.isEmpty()) {
             _serviceNameHelperText.value = R.string.invalid_service_name.toString()
-            isValid = false
+            false
         } else {
             _serviceNameHelperText.value = null
-            isValid = true
+            true
         }
-        return isValid
     }
 
-    fun validateServiceCategory(serviceCategory: String): Boolean {
-        val isValid: Boolean
-        if (serviceCategory.isEmpty()) {
+    fun validateServiceCategory(): Boolean {
+        return if (serviceCategory.isEmpty()) {
             _serviceCategoryHelperText.value = R.string.invalid_service_category.toString()
-            isValid = false
+            false
         } else {
             _serviceCategoryHelperText.value = null
-            isValid = true
+            true
         }
-        return isValid
     }
 
-    fun validateServiceDate(serviceDate: String): Boolean {
+    fun validateServiceDate(): Boolean {
         if (serviceDate.isNotEmpty()) {
             val formatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
             val selectedDate = LocalDate.parse(serviceDate, formatter)
@@ -157,39 +158,33 @@ class HomeViewModel @Inject constructor(
         return true
     }
 
-    fun validateServiceType(serviceType: String) : Boolean {
-        val isValid: Boolean
-        if (serviceType.isEmpty()) {
+    fun validateServiceType() : Boolean {
+        return if (serviceType.isEmpty()) {
             _serviceTypeHelperText.value = R.string.invalid_service_type.toString()
-            isValid = false
+            false
         } else {
             _serviceTypeHelperText.value = null
-            isValid = true
+            true
         }
-        return isValid
     }
 
-    fun validateServicePrice(servicePrice: String): Boolean {
-        val isValid: Boolean
-        if (servicePrice.isEmpty() || servicePrice.contains(Regex("[ -,]"))) {
+    fun validateServicePrice(): Boolean {
+        return if (servicePrice.isEmpty() || servicePrice.contains(Regex("[ -,]"))) {
             _servicePriceHelperText.value = R.string.invalid_service_price.toString()
-            isValid = false
+            false
         } else {
             _servicePriceHelperText.value = null
-            isValid = true
+            true
         }
-        return isValid
     }
 
-    fun validateServiceRemember(serviceRemember: String): Boolean {
-        val isValid: Boolean
-        if (serviceRemember.isEmpty()) {
+    fun validateServiceRemember(): Boolean {
+        return if (serviceRemember.isEmpty()) {
             _serviceRememberHelperText.value = R.string.invalid_service_remember.toString()
-            isValid = false
+            false
         } else {
             _serviceRememberHelperText.value = null
-            isValid = true
+            true
         }
-        return isValid
     }
 }
