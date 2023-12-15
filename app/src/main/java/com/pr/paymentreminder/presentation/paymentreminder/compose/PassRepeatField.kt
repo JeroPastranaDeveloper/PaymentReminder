@@ -12,8 +12,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -23,13 +23,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.lifecycle.LiveData
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun PassRepeatField(
@@ -37,10 +37,10 @@ fun PassRepeatField(
     onRepeatPassTextChange: (TextFieldValue) -> Unit,
     wasPassFieldFocused: Boolean,
     onPassFieldFocusChange: (Boolean) -> Unit,
-    passHelper: LiveData<String?>,
+    passHelper: StateFlow<String?>,
     onPassValidation: (String) -> Unit
 ) {
-    val passHelperText by passHelper.observeAsState(null)
+    val passHelperText by passHelper.collectAsState(null)
     val passwordVisibility = remember { mutableStateOf(false) }
 
     TextField(

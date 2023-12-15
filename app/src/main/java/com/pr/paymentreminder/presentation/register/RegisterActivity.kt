@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -70,26 +70,27 @@ class RegisterActivity : ComponentActivity() {
 
             EmailField(
                 emailText = emailText.value,
-                onEmailTextChange = { emailText.value = it },
+                onEmailTextChange = {
+                    emailText.value = it
+                    viewModel.email = it.text
+                },
                 wasEmailFieldFocused = wasEmailFieldFocused.value,
                 onEmailFieldFocusChange = { wasEmailFieldFocused.value = it },
                 emailHelper = viewModel.emailHelperText,
                 onEmailValidation = {
-                    viewModel.validateEmail(emailText.value.text, getString(R.string.invalid_email))
+                    viewModel.validateEmail()
                 }
             )
             PassField(
                 passText = passText.value,
-                onPassTextChange = { passText.value = it },
+                onPassTextChange = {
+                    passText.value = it
+                    viewModel.password = it.text
+                },
                 wasPassFieldFocused = wasPassFieldFocused.value,
                 onPassFieldFocusChange = { wasPassFieldFocused.value = it },
                 passHelper = viewModel.passHelperText,
-                onPassValidation = {
-                    viewModel.validatePassword(
-                        passText.value.text,
-                        getString(R.string.invalid_pass)
-                    )
-                }
+                onPassValidation = { viewModel.validatePassword() }
             )
 
             PassRepeatField(
@@ -99,11 +100,7 @@ class RegisterActivity : ComponentActivity() {
                 onPassFieldFocusChange = { wasRepeatPassFieldFocused.value = it },
                 passHelper = viewModel.repeatPassHelperText,
                 onPassValidation = {
-                    viewModel.validatePasswordMatch(
-                        repeatPassText.value.text,
-                        passText.value.text,
-                        getString(R.string.passwords_do_not_match)
-                    )
+                    viewModel.validatePasswordMatch()
                 }
             )
 
@@ -117,9 +114,9 @@ class RegisterActivity : ComponentActivity() {
             }
 
             LoginRegisterButton(R.string.register) {
-                if (isValidInput(emailText, passText, repeatPassText)) {
+                if (isValidInput()) {
                     lifecycleScope.launch {
-                        viewModel.register(emailText.value.text, passText.value.text)
+                        viewModel.register()
                     }
                 } else {
                     Toast.makeText(this@RegisterActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
@@ -130,25 +127,20 @@ class RegisterActivity : ComponentActivity() {
         }
     }
 
-    private fun isValidInput(
-        emailText: MutableState<TextFieldValue>,
-        passText: MutableState<TextFieldValue>,
-        repeatPassText: MutableState<TextFieldValue>
-    ): Boolean {
-        val isEmailValid = viewModel.validateEmail(emailText.value.text, getString(R.string.invalid_email))
-        val isPasswordValid = viewModel.validatePassword(passText.value.text, getString(R.string.invalid_pass))
-        val isPasswordMatch = viewModel.validatePasswordMatch(repeatPassText.value.text, passText.value.text, getString(R.string.passwords_do_not_match))
+    private fun isValidInput(): Boolean {
+        val isEmailValid = viewModel.validateEmail()
+        val isPasswordValid = viewModel.validatePassword()
+        val isPasswordMatch = viewModel.validatePasswordMatch()
 
         return isEmailValid && isPasswordValid && isPasswordMatch
     }
 
     @Composable
     private fun CheckRegister() {
-        viewModel.isRegisterSuccessful.observeAsState().value?.let { isRegisterSuccessful ->
-            if (isRegisterSuccessful) {
-                startActivity(Intent(this@RegisterActivity, PaymentReminderActivity::class.java))
-                finish()
-            }
+        val isRegisterSuccessful by viewModel.isRegisterSuccessful.collectAsState(false)
+        if (isRegisterSuccessful) {
+            startActivity(Intent(this@RegisterActivity, PaymentReminderActivity::class.java))
+            finish()
         }
     }
 }

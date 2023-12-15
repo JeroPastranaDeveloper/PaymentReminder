@@ -7,19 +7,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.lifecycle.LiveData
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun EmailField(
@@ -27,10 +27,10 @@ fun EmailField(
     onEmailTextChange: (TextFieldValue) -> Unit,
     wasEmailFieldFocused: Boolean,
     onEmailFieldFocusChange: (Boolean) -> Unit,
-    emailHelper: LiveData<String?>,
+    emailHelper: StateFlow<String?>,
     onEmailValidation: (String) -> Unit
 ) {
-    val emailHelperText by emailHelper.observeAsState(null)
+    val emailHelperText by emailHelper.collectAsState(null)
 
     TextField(
         value = emailText,
