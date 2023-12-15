@@ -70,7 +70,7 @@ fun PassRepeatField(
         }
     )
 
-    if (!passHelperText.isNullOrEmpty()) {
-        HelperText(R.string.passwords_do_not_match)
+    passHelperText?.let {
+        HelperText(it)
     }
 }

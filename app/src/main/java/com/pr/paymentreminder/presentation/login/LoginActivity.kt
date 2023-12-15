@@ -20,11 +20,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.pr.paymentreminder.presentation.paymentreminder.compose.EmailField
+import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
 import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ImageLogo
 import com.pr.paymentreminder.presentation.paymentreminder.compose.LoginRegisterButton
@@ -68,17 +70,20 @@ class LoginActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.height(dimen16))
 
-            EmailField(
-                emailText = emailText.value,
-                onEmailTextChange = {
-                    emailText.value = it
-                    viewModel.email = it.text
-                },
-                wasEmailFieldFocused = wasEmailFieldFocused.value,
-                onEmailFieldFocusChange = { wasEmailFieldFocused.value = it },
-                emailHelper = viewModel.emailHelperText,
-                onEmailValidation = { viewModel.validateEmail() }
-            )
+            DefaultTextField(
+                DefaultTextFieldParams(
+                    text = emailText.value,
+                    onTextChange = {
+                        emailText.value = it
+                        viewModel.email = it.text
+                    },
+                    wasTextFieldFocused = wasEmailFieldFocused.value,
+                    onTextFieldFocusChange = { wasEmailFieldFocused.value = it },
+                    placeHolder = stringResource(R.string.email),
+                    textHelper = viewModel.emailHelperText,
+                    textHelperText = stringResource(id = R.string.invalid_email)
+                )
+            ) { viewModel.validateEmail() }
 
             PassField(
                 passText = passText.value,

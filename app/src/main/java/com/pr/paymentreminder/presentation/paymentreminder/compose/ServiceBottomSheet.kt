@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -29,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,16 +37,14 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusState
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Categories
+import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
@@ -155,31 +151,21 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 Spacer(modifier = Modifier.height(dimen16))
 
-                TextField(
-                    value = serviceName,
-                    onValueChange = {
-                        serviceName = it
-                        viewModel.serviceName = it.text
-                    },
-                    label = { Text(stringResource(id = R.string.service_name)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = spacing8)
-                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-                        .onFocusChanged {
-                            checkServiceNameFocus(
-                                wasServiceNameFieldFocused,
-                                it,
-                                viewModel
-                            )
-                            wasServiceNameFieldFocused.value = it.isFocused
+                DefaultTextField(
+                    DefaultTextFieldParams(
+                        text = serviceName,
+                        onTextChange = {
+                            serviceName = it
+                            viewModel.serviceName = it.text
                         },
-                    isError = !serviceNameHelperText.isNullOrEmpty(),
-                    singleLine = true
-                )
+                        wasTextFieldFocused = wasServiceNameFieldFocused.value,
+                        onTextFieldFocusChange = { wasServiceNameFieldFocused.value = it },
+                        textHelper = viewModel.serviceNameHelperText,
+                        textHelperText = stringResource(id = R.string.invalid_service_name),
+                        placeHolder = stringResource(id = R.string.service_name)
+                    )
+                ) { viewModel.validateServiceName() }
 
-                HelperSeparator(serviceNameHelperText.orElse { emptyString() })
-                ServiceNameHelperText(serviceNameHelperText)
                 ServiceSeparator(serviceNameHelperText.orElse { emptyString() })
 
                 Text(stringResource(id = R.string.category, selectedCategory),
@@ -268,32 +254,21 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 ServiceTypesHelperText(serviceTypesHelperText, typesValidation)
                 ServiceSeparator(serviceTypesHelperText.orElse { emptyString() })
 
-                TextField(
-                    value = servicePrice,
-                    onValueChange = {
-                        servicePrice = it
-                        viewModel.servicePrice = it.text
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    label = { Text(stringResource(id = R.string.service_price)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = spacing8)
-                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-                        .onFocusChanged {
-                            checkServicePriceFocus(
-                                wasServicePriceFieldFocused,
-                                it,
-                                viewModel
-                            )
-                            wasServicePriceFieldFocused.value = it.isFocused
+                DefaultTextField(
+                    DefaultTextFieldParams(
+                        text = servicePrice,
+                        onTextChange = {
+                            servicePrice = it
+                            viewModel.servicePrice = it.text
                         },
-                    isError = !servicePriceHelperText.isNullOrEmpty(),
-                    singleLine = true
-                )
+                        wasTextFieldFocused = wasServicePriceFieldFocused.value,
+                        onTextFieldFocusChange = { wasServicePriceFieldFocused.value = it},
+                        textHelper = viewModel.servicePriceHelperText,
+                        textHelperText = stringResource(id = R.string.invalid_service_price),
+                        placeHolder = stringResource(id = R.string.service_price)
+                    )
+                ) { viewModel.validateServicePrice() }
 
-                HelperSeparator(servicePriceHelperText.orElse { emptyString() })
-                ServicePriceHelperText(servicePriceHelperText)
                 ServiceSeparator(servicePriceHelperText.orElse { emptyString() })
 
                 Row(verticalAlignment = Alignment.Top) {
@@ -401,26 +376,6 @@ private fun validateServiceCategory(viewModel: HomeViewModel) = viewModel.valida
 private fun validateServiceType(viewModel: HomeViewModel) = viewModel.validateServiceType()
 private fun validateServiceRemember(viewModel: HomeViewModel) = viewModel.validateServiceRemember()
 
-private fun checkServicePriceFocus(
-    wasServicePriceFieldFocused: MutableState<Boolean>,
-    it: FocusState,
-    viewModel: HomeViewModel
-) {
-    if (wasServicePriceFieldFocused.value && !it.isFocused) {
-        viewModel.validateServicePrice()
-    }
-}
-
-private fun checkServiceNameFocus(
-    wasServiceNameFieldFocused: MutableState<Boolean>,
-    it: FocusState,
-    viewModel: HomeViewModel
-) {
-    if (wasServiceNameFieldFocused.value && !it.isFocused) {
-        viewModel.validateServiceName()
-    }
-}
-
 @Composable
 private fun ServiceRememberHelperText(
     serviceRememberHelperText: String?,
@@ -435,21 +390,6 @@ private fun ServiceRememberHelperText(
             color = Color.Red
         )
         !rememberValidation
-    }
-}
-
-@Composable
-private fun ServicePriceHelperText(
-    servicePriceHelperText: String?
-) {
-    if (!servicePriceHelperText.isNullOrEmpty()) {
-        Text(
-            text = stringResource(id = R.string.invalid_service_price),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = spacing20, end = spacing16, bottom = spacing8),
-            color = Color.Red
-        )
     }
 }
 
@@ -499,21 +439,6 @@ private fun ServiceCategoriesHelperText(
             color = Color.Red
         )
         !categoriesValidation
-    }
-}
-
-@Composable
-private fun ServiceNameHelperText(
-    serviceNameHelperText: String?
-) {
-    if (!serviceNameHelperText.isNullOrEmpty()) {
-        Text(
-            text = stringResource(id = R.string.invalid_service_name),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = spacing20, end = spacing16, bottom = spacing8),
-            color = Color.Red
-        )
     }
 }
 

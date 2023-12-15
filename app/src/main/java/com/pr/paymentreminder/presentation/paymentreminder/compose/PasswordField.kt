@@ -71,7 +71,7 @@ fun PassField(
         }
     )
 
-    if (!passHelperText.isNullOrEmpty()) {
-        HelperText(R.string.invalid_pass)
+    passHelperText?.let {
+        HelperText(it)
     }
 }
