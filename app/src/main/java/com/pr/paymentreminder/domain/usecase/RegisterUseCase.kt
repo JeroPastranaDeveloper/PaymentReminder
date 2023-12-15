@@ -1,7 +1,7 @@
 package com.pr.paymentreminder.domain.usecase
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.StateFlow
 
-interface RegisterUseCase {
-    suspend fun register(email: String, password: String): LiveData<Boolean>
+fun interface RegisterUseCase {
+    suspend fun register(email: String, password: String): StateFlow<Boolean>
 }

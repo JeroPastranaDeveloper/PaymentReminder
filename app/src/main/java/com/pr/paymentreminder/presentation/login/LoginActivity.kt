@@ -6,58 +6,34 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.pr.paymentreminder.presentation.paymentreminder.compose.EmailField
 import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
+import com.pr.paymentreminder.presentation.paymentreminder.compose.ImageLogo
+import com.pr.paymentreminder.presentation.paymentreminder.compose.LoginRegisterButton
+import com.pr.paymentreminder.presentation.paymentreminder.compose.PassField
+import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
 import com.pr.paymentreminder.presentation.register.RegisterActivity
 import com.pr.paymentreminder.presentation.viewModels.LoginViewModel
-import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
-import com.pr.paymentreminder.ui.theme.dimen4
-import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing16
-import com.pr.paymentreminder.ui.theme.spacing20
-import com.pr.paymentreminder.ui.theme.spacing72
-import com.pr.paymentreminder.ui.theme.spacing8
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -85,155 +61,84 @@ class LoginActivity : ComponentActivity() {
         ) {
             val emailText = remember { mutableStateOf(TextFieldValue("cuentadepruebas@gmail.com")) }
             val passText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
+            val wasEmailFieldFocused = remember { mutableStateOf(false) }
+            val wasPassFieldFocused = remember { mutableStateOf(false) }
+
+            initialValidations(emailText, passText)
 
             Spacer(modifier = Modifier.height(dimen16))
 
-            EmailField(emailText)
-            PassField(passText)
-
-            Image(
-                painter = painterResource(id = R.drawable.logo_no_bg),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth().padding(vertical = spacing72)
+            EmailField(
+                emailText = emailText.value,
+                onEmailTextChange = {
+                    emailText.value = it
+                    viewModel.email = it.text
+                },
+                wasEmailFieldFocused = wasEmailFieldFocused.value,
+                onEmailFieldFocusChange = { wasEmailFieldFocused.value = it },
+                emailHelper = viewModel.emailHelperText,
+                onEmailValidation = { viewModel.validateEmail() }
             )
+
+            PassField(
+                passText = passText.value,
+                onPassTextChange =  {
+                    passText.value = it
+                    viewModel.password = it.text
+                },
+                wasPassFieldFocused = wasPassFieldFocused.value,
+                onPassFieldFocusChange = { wasPassFieldFocused.value = it },
+                passHelper = viewModel.passHelperText,
+                onPassValidation = { viewModel.validatePassword() }
+            )
+
+            ImageLogo(R.drawable.logo_no_bg)
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
-                        append(stringResource(id = R.string.register))
+            UnderlinedText(text = R.string.register) {
+                startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+                finish()
+            }
+
+            LoginRegisterButton(R.string.login) {
+                if (isValidInput()) {
+                    lifecycleScope.launch {
+                        viewModel.login()
                     }
-                },
-                modifier = Modifier.padding(bottom = spacing8).clickable {
-                    startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
-                    finish()
-                },
-                color = Color.Blue
-            )
+                } else {
+                    Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
+                }
+            }
 
-
-            LoginButton(emailText, passText)
             CheckLogin()
         }
     }
 
-
-    @Composable
-    private fun LoginButton(
+    private fun initialValidations(
         emailText: MutableState<TextFieldValue>,
         passText: MutableState<TextFieldValue>
     ) {
-        Button(
-            onClick = {
-                if (viewModel.validateEmail(emailText.value.text) && viewModel.validatePassword(
-                        passText.value.text
-                    )
-                ) {
-                    lifecycleScope.launch {
-                        viewModel.login(emailText.value.text, passText.value.text)
-                    }
-                } else {
-                    Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT)
-                        .show()
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = spacing16)
-        ) {
-            Text(text = stringResource(id = R.string.login))
-        }
+        viewModel.email = emailText.value.text
+        viewModel.validateEmail()
+
+        viewModel.password = passText.value.text
+        viewModel.validatePassword()
     }
 
-    @Composable
-    private fun EmailField(
-        emailText: MutableState<TextFieldValue>
-    ) {
-        val emailHelper by viewModel.emailHelperText.observeAsState()
-        val wasEmailFieldFocused = remember { mutableStateOf(false) }
-        TextField(
-            value = emailText.value,
-            onValueChange = { emailText.value = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = spacing16, vertical = spacing8)
-                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-                .onFocusChanged {
-                    if (wasEmailFieldFocused.value && !it.isFocused) {
-                        viewModel.validateEmail(emailText.value.text)
-                    }
-                    wasEmailFieldFocused.value = it.isFocused
-                },
-            label = { Text(text = stringResource(id = R.string.email)) },
-            isError = !emailHelper.isNullOrEmpty(),
-            singleLine = true
-        )
+    private fun isValidInput(): Boolean {
+        val isEmailValid = viewModel.validateEmail()
+        val isPasswordValid = viewModel.validatePassword()
 
-        if (!emailHelper.isNullOrEmpty()) {
-            Text(
-                text = stringResource(id = R.string.invalid_email),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = spacing20, end = spacing16, bottom = spacing8),
-                color = Color.Red
-            )
-        }
-    }
-
-    @Composable
-    private fun PassField(
-        passText: MutableState<TextFieldValue>
-    ) {
-        val passHelper by viewModel.passHelperText.observeAsState()
-        val wasPassFieldFocused = remember { mutableStateOf(false) }
-        val passwordVisibility = remember { mutableStateOf(false) }
-
-        TextField(
-            value = passText.value,
-            onValueChange = { passText.value = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = spacing16, vertical = spacing8)
-                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-                .onFocusChanged {
-                    if (wasPassFieldFocused.value && !it.isFocused) {
-                        viewModel.validatePassword(passText.value.text)
-                    }
-                    wasPassFieldFocused.value = it.isFocused
-                },
-            label = { Text(text = stringResource(id = R.string.password)) },
-            isError = !passHelper.isNullOrEmpty(),
-            visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
-            singleLine = true,
-            trailingIcon = {
-                IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
-                    Icon(
-                        imageVector = if (passwordVisibility.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                        contentDescription = emptyString()
-                    )
-                }
-            }
-        )
-
-        if (!passHelper.isNullOrEmpty()) {
-            Text(
-                text = stringResource(id = R.string.invalid_pass),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = spacing20, end = spacing16, bottom = spacing16),
-                color = Color.Red
-            )
-        }
+        return isEmailValid && isPasswordValid
     }
 
     @Composable
     private fun CheckLogin() {
-        viewModel.isLoginSuccessful.observeAsState().value?.let { isLoginSuccessful ->
-            if (isLoginSuccessful) {
-                startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
-                finish()
-            }
+        val isLoginSuccessful by viewModel.isLoginSuccessful.collectAsState(false)
+        if (isLoginSuccessful) {
+            startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
+            finish()
         }
     }
 }

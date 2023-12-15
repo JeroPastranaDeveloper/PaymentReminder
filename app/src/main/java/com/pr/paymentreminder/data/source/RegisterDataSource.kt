@@ -1,21 +1,20 @@
 package com.pr.paymentreminder.data.source
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class RegisterDataSource @Inject constructor() {
     private val auth = FirebaseAuth.getInstance()
 
-    fun register(email: String, password: String): LiveData<Boolean> {
-        val resultLiveData = MutableLiveData<Boolean>()
+    private val _registerState = MutableStateFlow(false)
+    val registerState: StateFlow<Boolean> = _registerState
 
+    fun register(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-                resultLiveData.value = task.isSuccessful
+                _registerState.value = task.isSuccessful
             }
-
-        return resultLiveData
     }
 }

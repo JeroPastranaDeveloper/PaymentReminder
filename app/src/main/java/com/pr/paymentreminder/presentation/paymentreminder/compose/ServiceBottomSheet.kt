@@ -30,8 +30,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -83,33 +83,33 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     }*/
 
     var serviceName by remember { mutableStateOf(TextFieldValue(service?.name ?: emptyString())) }
-    val serviceNameHelperText by viewModel.serviceNameHelperText.observeAsState()
+    val serviceNameHelperText by viewModel.serviceNameHelperText.collectAsState()
     val wasServiceNameFieldFocused = remember { mutableStateOf(false) }
 
     var servicePrice by remember { mutableStateOf(TextFieldValue(service?.price ?: emptyString())) }
-    val servicePriceHelperText by viewModel.servicePriceHelperText.observeAsState()
+    val servicePriceHelperText by viewModel.servicePriceHelperText.collectAsState()
     val wasServicePriceFieldFocused = remember { mutableStateOf(false) }
 
     var selectedCategory by remember { mutableStateOf(service?.category ?: emptyString()) }
     val categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS)
     var categoriesExpanded by remember { mutableStateOf(false) }
     var categoriesValidation by remember { mutableStateOf(false) }
-    val serviceCategoriesHelperText by viewModel.serviceCategoryHelperText.observeAsState()
+    val serviceCategoriesHelperText by viewModel.serviceCategoryHelperText.collectAsState()
 
     var serviceDate by remember { mutableStateOf(service?.date ?: emptyString()) }
-    val serviceDateHelperText by viewModel.serviceDateHelperText.observeAsState()
+    val serviceDateHelperText by viewModel.serviceDateHelperText.collectAsState()
 
     var selectedPaymentType by remember { mutableStateOf(service?.type ?: emptyString()) }
     val types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY)
     var typesExpanded by remember { mutableStateOf(false) }
     var typesValidation by remember { mutableStateOf(false) }
-    val serviceTypesHelperText by viewModel.serviceTypesHelperText.observeAsState()
+    val serviceTypesHelperText by viewModel.serviceTypesHelperText.collectAsState()
 
     var selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
     val daysRemember = listOf(1, 2, 3)
     var daysExpanded by remember { mutableStateOf(false) }
     var rememberValidation by remember { mutableStateOf(false) }
-    val serviceRememberHelperText by viewModel.serviceRememberHelperText.observeAsState()
+    val serviceRememberHelperText by viewModel.serviceRememberHelperText.collectAsState()
 
     val selectedColor by remember { mutableStateOf(Color.White) }
     var colorPickerDialogOpen by remember { mutableStateOf(false) }
@@ -120,6 +120,18 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
         snapshotFlow { sheetState.isVisible }
             .filter { isVisible -> !isVisible }
             .collect { onDismiss() }
+    }
+
+    if (service != null) {
+        initialValidations(
+            viewModel,
+            serviceName,
+            servicePrice,
+            selectedCategory,
+            serviceDate,
+            selectedPaymentType,
+            selectedRemember
+        )
     }
 
     ModalBottomSheetLayout(
@@ -145,7 +157,10 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 TextField(
                     value = serviceName,
-                    onValueChange = { serviceName = it },
+                    onValueChange = {
+                        serviceName = it
+                        viewModel.serviceName = it.text
+                    },
                     label = { Text(stringResource(id = R.string.service_name)) },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -155,8 +170,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             checkServiceNameFocus(
                                 wasServiceNameFieldFocused,
                                 it,
-                                viewModel,
-                                serviceName
+                                viewModel
                             )
                             wasServiceNameFieldFocused.value = it.isFocused
                         },
@@ -177,14 +191,15 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     onDismissRequest = {
                         categoriesExpanded = false
                         categoriesValidation = true
-                        validateServiceCategory(viewModel, selectedCategory)
+                        validateServiceCategory(viewModel)
                     }
                 ) {
                     categories.forEach { category ->
                         DropdownMenuItem(onClick = {
                             selectedCategory = category.category
+                            viewModel.serviceCategory = selectedCategory
                             categoriesExpanded = false
-                            validateServiceCategory(viewModel, selectedCategory)
+                            validateServiceCategory(viewModel)
                         }) {
                             Text(text = category.category)
                         }
@@ -204,7 +219,8 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             val dateFormat =
                                 SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
                             serviceDate = dateFormat.format(calendar.time)
-                            viewModel.validateServiceDate(serviceDate)
+                            viewModel.serviceDate = serviceDate
+                            viewModel.validateServiceDate()
                         },
                         Calendar.getInstance()[Calendar.YEAR],
                         Calendar.getInstance()[Calendar.MONTH],
@@ -233,14 +249,15 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     onDismissRequest = {
                         typesExpanded = false
                         typesValidation = true
-                        validateServiceType(viewModel, selectedPaymentType)
+                        validateServiceType(viewModel)
                     }
                 ) {
                     types.forEach { type ->
                         DropdownMenuItem(onClick = {
                             selectedPaymentType = type.type
+                            viewModel.serviceType = selectedPaymentType
                             typesExpanded = false
-                            validateServiceType(viewModel, selectedPaymentType)
+                            validateServiceType(viewModel)
                         }) {
                             Text(text = type.type)
                         }
@@ -253,7 +270,10 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 TextField(
                     value = servicePrice,
-                    onValueChange = { servicePrice = it },
+                    onValueChange = {
+                        servicePrice = it
+                        viewModel.servicePrice = it.text
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     label = { Text(stringResource(id = R.string.service_price)) },
                     modifier = Modifier
@@ -264,8 +284,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             checkServicePriceFocus(
                                 wasServicePriceFieldFocused,
                                 it,
-                                viewModel,
-                                servicePrice
+                                viewModel
                             )
                             wasServicePriceFieldFocused.value = it.isFocused
                         },
@@ -307,14 +326,15 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     onDismissRequest = {
                         daysExpanded = false
                         rememberValidation = false
-                        validateServiceRemember(viewModel, selectedRemember)
+                        validateServiceRemember(viewModel)
                     }
                 ) {
                     daysRemember.forEach { day ->
                         DropdownMenuItem(onClick = {
                             selectedRemember = day.toString()
+                            viewModel.serviceRemember = selectedRemember
                             daysExpanded = false
-                            validateServiceRemember(viewModel, selectedRemember)
+                            validateServiceRemember(viewModel)
                         }) {
                             Text(text = day.toString())
                         }
@@ -349,29 +369,55 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     )
 }
 
-private fun validateServiceCategory(viewModel: HomeViewModel, selectedCategory: String) = viewModel.validateServiceCategory(selectedCategory)
-private fun validateServiceType(viewModel: HomeViewModel, selectedPaymentType: String) = viewModel.validateServiceType(selectedPaymentType)
-private fun validateServiceRemember(viewModel: HomeViewModel, selectedRemember: String) = viewModel.validateServiceRemember(selectedRemember)
+private fun initialValidations(
+    viewModel: HomeViewModel,
+    serviceName: TextFieldValue,
+    servicePrice: TextFieldValue,
+    selectedCategory: String,
+    serviceDate: String,
+    selectedPaymentType: String,
+    selectedRemember: String
+) {
+    viewModel.serviceName = serviceName.text
+    viewModel.validateServiceName()
+
+    viewModel.servicePrice = servicePrice.text
+    viewModel.validateServicePrice()
+
+    viewModel.serviceCategory = selectedCategory
+    viewModel.validateServiceCategory()
+
+    viewModel.serviceDate = serviceDate
+    viewModel.validateServiceDate()
+
+    viewModel.serviceType = selectedPaymentType
+    viewModel.validateServiceType()
+
+    viewModel.serviceRemember = selectedRemember
+    viewModel.validateServiceRemember()
+}
+
+private fun validateServiceCategory(viewModel: HomeViewModel) = viewModel.validateServiceCategory()
+private fun validateServiceType(viewModel: HomeViewModel) = viewModel.validateServiceType()
+private fun validateServiceRemember(viewModel: HomeViewModel) = viewModel.validateServiceRemember()
 
 private fun checkServicePriceFocus(
     wasServicePriceFieldFocused: MutableState<Boolean>,
     it: FocusState,
-    viewModel: HomeViewModel,
-    servicePrice: TextFieldValue
+    viewModel: HomeViewModel
 ) {
     if (wasServicePriceFieldFocused.value && !it.isFocused) {
-        viewModel.validateServicePrice(servicePrice.text)
+        viewModel.validateServicePrice()
     }
 }
 
 private fun checkServiceNameFocus(
     wasServiceNameFieldFocused: MutableState<Boolean>,
     it: FocusState,
-    viewModel: HomeViewModel,
-    serviceName: TextFieldValue
+    viewModel: HomeViewModel
 ) {
     if (wasServiceNameFieldFocused.value && !it.isFocused) {
-        viewModel.validateServiceName(serviceName.text)
+        viewModel.validateServiceName()
     }
 }
 
@@ -520,21 +566,32 @@ private fun SaveButton(
     Button(
         onClick = {
             with(buttonFunctionality) {
+                initialValidations(
+                    viewModel,
+                    serviceName,
+                    servicePrice,
+                    selectedCategory,
+                    serviceDate,
+                    selectedPaymentType,
+                    selectedRemember
+                )
                 with(viewModel) {
-                    val isServiceNameValid = validateServiceName(serviceName.text)
-                    val isServiceCategoryValid = validateServiceCategory(selectedCategory)
-                    val isServiceDateValid = validateServiceDate(serviceDate)
-                    val isServiceTypeValid = validateServiceType(selectedPaymentType)
-                    val isServicePriceValid = validateServicePrice(servicePrice.text)
+                    val isServiceNameValid = validateServiceName()
+                    val isServiceCategoryValid = validateServiceCategory()
+                    val isServiceDateValid = validateServiceDate()
+                    val isServiceTypeValid = validateServiceType()
+                    val isServicePriceValid = validateServicePrice()
+
+
 
                     if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
                         val serviceData = Service(
                             id = serviceId.orElse { emptyString() },
                             category = selectedCategory,
-                            name = serviceName.text,
+                            name = serviceName,
                             color = emptyString(),
                             date = serviceDate,
-                            price = servicePrice.text,
+                            price = servicePrice,
                             remember = selectedRemember,
                             type = selectedPaymentType,
                             image = imageUri.text
@@ -549,12 +606,12 @@ private fun SaveButton(
                         onDismiss()
 
                     } else {
-                        validateServiceName(serviceName.text)
-                        validateServiceCategory(selectedCategory)
-                        validateServiceDate(serviceDate)
-                        validateServiceType(selectedPaymentType)
-                        validateServicePrice(servicePrice.text)
-                        validateServiceRemember(selectedRemember)
+                        validateServiceName()
+                        validateServiceCategory()
+                        validateServiceDate()
+                        validateServiceType()
+                        validateServicePrice()
+                        validateServiceRemember()
 
                         Toast.makeText(
                             context,
