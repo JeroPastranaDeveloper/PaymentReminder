@@ -30,8 +30,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -83,33 +83,33 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     }*/
 
     var serviceName by remember { mutableStateOf(TextFieldValue(service?.name ?: emptyString())) }
-    val serviceNameHelperText by viewModel.serviceNameHelperText.observeAsState()
+    val serviceNameHelperText by viewModel.serviceNameHelperText.collectAsState()
     val wasServiceNameFieldFocused = remember { mutableStateOf(false) }
 
     var servicePrice by remember { mutableStateOf(TextFieldValue(service?.price ?: emptyString())) }
-    val servicePriceHelperText by viewModel.servicePriceHelperText.observeAsState()
+    val servicePriceHelperText by viewModel.servicePriceHelperText.collectAsState()
     val wasServicePriceFieldFocused = remember { mutableStateOf(false) }
 
     var selectedCategory by remember { mutableStateOf(service?.category ?: emptyString()) }
     val categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS)
     var categoriesExpanded by remember { mutableStateOf(false) }
     var categoriesValidation by remember { mutableStateOf(false) }
-    val serviceCategoriesHelperText by viewModel.serviceCategoryHelperText.observeAsState()
+    val serviceCategoriesHelperText by viewModel.serviceCategoryHelperText.collectAsState()
 
     var serviceDate by remember { mutableStateOf(service?.date ?: emptyString()) }
-    val serviceDateHelperText by viewModel.serviceDateHelperText.observeAsState()
+    val serviceDateHelperText by viewModel.serviceDateHelperText.collectAsState()
 
     var selectedPaymentType by remember { mutableStateOf(service?.type ?: emptyString()) }
     val types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY)
     var typesExpanded by remember { mutableStateOf(false) }
     var typesValidation by remember { mutableStateOf(false) }
-    val serviceTypesHelperText by viewModel.serviceTypesHelperText.observeAsState()
+    val serviceTypesHelperText by viewModel.serviceTypesHelperText.collectAsState()
 
     var selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
     val daysRemember = listOf(1, 2, 3)
     var daysExpanded by remember { mutableStateOf(false) }
     var rememberValidation by remember { mutableStateOf(false) }
-    val serviceRememberHelperText by viewModel.serviceRememberHelperText.observeAsState()
+    val serviceRememberHelperText by viewModel.serviceRememberHelperText.collectAsState()
 
     val selectedColor by remember { mutableStateOf(Color.White) }
     var colorPickerDialogOpen by remember { mutableStateOf(false) }

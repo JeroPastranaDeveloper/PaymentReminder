@@ -16,6 +16,8 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -30,28 +32,28 @@ class HomeViewModel @Inject constructor(
     private val _services = mutableStateOf<List<Service>>(emptyList())
     val services: State<List<Service>> = _services
 
-    private val _serviceNameHelperText = MutableLiveData<String?>()
-    val serviceNameHelperText: LiveData<String?>
+    private val _serviceNameHelperText = MutableStateFlow<String?>(null)
+    val serviceNameHelperText: StateFlow<String?>
         get() = _serviceNameHelperText
 
-    private val _serviceCategoryHelperText = MutableLiveData<String?>()
-    val serviceCategoryHelperText: LiveData<String?>
+    private val _serviceCategoryHelperText = MutableStateFlow<String?>(null)
+    val serviceCategoryHelperText: StateFlow<String?>
         get() = _serviceCategoryHelperText
 
-    private val _serviceDateHelperText = MutableLiveData<String?>()
-    val serviceDateHelperText: LiveData<String?>
+    private val _serviceDateHelperText = MutableStateFlow<String?>(null)
+    val serviceDateHelperText: StateFlow<String?>
         get() = _serviceDateHelperText
 
-    private val _serviceTypeHelperText = MutableLiveData<String?>()
-    val serviceTypesHelperText: LiveData<String?>
+    private val _serviceTypeHelperText = MutableStateFlow<String?>(null)
+    val serviceTypesHelperText: StateFlow<String?>
         get() = _serviceTypeHelperText
 
-    private val _servicePriceHelperText = MutableLiveData<String?>()
-    val servicePriceHelperText: LiveData<String?>
+    private val _servicePriceHelperText = MutableStateFlow<String?>(null)
+    val servicePriceHelperText: StateFlow<String?>
         get() = _servicePriceHelperText
 
-    private val _serviceRememberHelperText = MutableLiveData<String?>()
-    val serviceRememberHelperText: LiveData<String?>
+    private val _serviceRememberHelperText = MutableStateFlow<String?>(null)
+    val serviceRememberHelperText: StateFlow<String?>
         get() = _serviceRememberHelperText
 
     init {
