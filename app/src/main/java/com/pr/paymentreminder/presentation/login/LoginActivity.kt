@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,16 +70,19 @@ class LoginActivity : ComponentActivity() {
                 wasEmailFieldFocused = wasEmailFieldFocused.value,
                 onEmailFieldFocusChange = { wasEmailFieldFocused.value = it },
                 emailHelper = viewModel.emailHelperText,
-                onEmailValidation = { viewModel.validateEmail(emailText.value.text, getString(R.string.invalid_email)) }
+                onEmailValidation = { viewModel.validateEmail() }
             )
 
             PassField(
                 passText = passText.value,
-                onPassTextChange =  { passText.value = it },
+                onPassTextChange =  {
+                    passText.value = it
+                    viewModel.password = passText.value.text
+                    },
                 wasPassFieldFocused = wasPassFieldFocused.value,
                 onPassFieldFocusChange = { wasPassFieldFocused.value = it },
                 passHelper = viewModel.passHelperText,
-                onPassValidation = { viewModel.validatePassword(passText.value.text, getString(R.string.invalid_pass)) }
+                onPassValidation = { viewModel.validatePassword() }
             )
 
             ImageLogo(R.drawable.logo_no_bg)
@@ -93,9 +95,9 @@ class LoginActivity : ComponentActivity() {
             }
 
             LoginRegisterButton(R.string.login) {
-                if (isValidInput(emailText, passText)) {
+                if (isValidInput()) {
                     lifecycleScope.launch {
-                        viewModel.login(emailText.value.text, passText.value.text)
+                        viewModel.login()
                     }
                 } else {
                     Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
@@ -106,12 +108,9 @@ class LoginActivity : ComponentActivity() {
         }
     }
 
-    private fun isValidInput(
-        emailText: MutableState<TextFieldValue>,
-        passText: MutableState<TextFieldValue>
-    ): Boolean {
-        val isEmailValid = viewModel.validateEmail(emailText.value.text, getString(R.string.invalid_email))
-        val isPasswordValid = viewModel.validatePassword(passText.value.text, getString(R.string.invalid_pass))
+    private fun isValidInput(): Boolean {
+        val isEmailValid = viewModel.validateEmail()
+        val isPasswordValid = viewModel.validatePassword()
 
         return isEmailValid && isPasswordValid
     }

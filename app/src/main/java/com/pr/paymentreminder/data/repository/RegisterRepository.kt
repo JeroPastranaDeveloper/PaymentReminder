@@ -1,7 +1,7 @@
 package com.pr.paymentreminder.data.repository
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.StateFlow
 
-interface RegisterRepository {
-    suspend fun register(email: String, password: String): LiveData<Boolean>
+fun interface RegisterRepository {
+    suspend fun register(email: String, password: String): StateFlow<Boolean>
 }
