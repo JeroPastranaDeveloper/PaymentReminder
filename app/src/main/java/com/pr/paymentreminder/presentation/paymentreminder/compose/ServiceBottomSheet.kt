@@ -122,12 +122,17 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
             .collect { onDismiss() }
     }
 
-    // TODO: SEGUIR CON LAS VALIDACIONES INICIALES
-    viewModel.serviceName = serviceName.text
-    viewModel.validateServiceName()
-
-    viewModel.servicePrice = servicePrice.text
-    viewModel.validateServicePrice()
+    if (service != null) {
+        initialValidations(
+            viewModel,
+            serviceName,
+            servicePrice,
+            selectedCategory,
+            serviceDate,
+            selectedPaymentType,
+            selectedRemember
+        )
+    }
 
     ModalBottomSheetLayout(
         sheetShape = MaterialTheme.shapes.medium,
@@ -364,6 +369,34 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     )
 }
 
+private fun initialValidations(
+    viewModel: HomeViewModel,
+    serviceName: TextFieldValue,
+    servicePrice: TextFieldValue,
+    selectedCategory: String,
+    serviceDate: String,
+    selectedPaymentType: String,
+    selectedRemember: String
+) {
+    viewModel.serviceName = serviceName.text
+    viewModel.validateServiceName()
+
+    viewModel.servicePrice = servicePrice.text
+    viewModel.validateServicePrice()
+
+    viewModel.serviceCategory = selectedCategory
+    viewModel.validateServiceCategory()
+
+    viewModel.serviceDate = serviceDate
+    viewModel.validateServiceDate()
+
+    viewModel.serviceType = selectedPaymentType
+    viewModel.validateServiceType()
+
+    viewModel.serviceRemember = selectedRemember
+    viewModel.validateServiceRemember()
+}
+
 private fun validateServiceCategory(viewModel: HomeViewModel) = viewModel.validateServiceCategory()
 private fun validateServiceType(viewModel: HomeViewModel) = viewModel.validateServiceType()
 private fun validateServiceRemember(viewModel: HomeViewModel) = viewModel.validateServiceRemember()
@@ -533,12 +566,23 @@ private fun SaveButton(
     Button(
         onClick = {
             with(buttonFunctionality) {
+                initialValidations(
+                    viewModel,
+                    serviceName,
+                    servicePrice,
+                    selectedCategory,
+                    serviceDate,
+                    selectedPaymentType,
+                    selectedRemember
+                )
                 with(viewModel) {
                     val isServiceNameValid = validateServiceName()
                     val isServiceCategoryValid = validateServiceCategory()
                     val isServiceDateValid = validateServiceDate()
                     val isServiceTypeValid = validateServiceType()
                     val isServicePriceValid = validateServicePrice()
+
+
 
                     if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
                         val serviceData = Service(
