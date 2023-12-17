@@ -19,58 +19,53 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import com.pr.paymentreminder.R
+import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing8
-import kotlinx.coroutines.flow.StateFlow
 
 
 @Composable
 fun PassField(
-    passText: TextFieldValue,
-    onPassTextChange: (TextFieldValue) -> Unit,
-    wasPassFieldFocused: Boolean,
-    onPassFieldFocusChange: (Boolean) -> Unit,
-    passHelper: StateFlow<String?>,
+    params: DefaultTextFieldParams,
     onPassValidation: (String) -> Unit
 ) {
-    val passHelperText by passHelper.collectAsState(null)
-    val passwordVisibility = remember { mutableStateOf(false) }
+    with(params) {
+        val hasHelperText by textHelper.collectAsState(null)
+        val passwordVisibility = remember { mutableStateOf(false) }
 
-    TextField(
-        value = passText,
-        onValueChange = onPassTextChange,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = spacing8)
-            .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-            .onFocusChanged {
-                if (wasPassFieldFocused && !it.isFocused) {
-                    onPassValidation(passText.text)
+        TextField(
+            value = text,
+            onValueChange = onTextChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = spacing8)
+                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
+                .onFocusChanged {
+                    if (wasTextFieldFocused && !it.isFocused) {
+                        onPassValidation(text.text)
+                    }
+                    onTextFieldFocusChange(it.isFocused)
+                },
+            label = { Text(text = placeHolder) },
+            isError = !textHelper.value.isNullOrEmpty(),
+            visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
+            singleLine = true,
+            trailingIcon = {
+                IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
+                    Icon(
+                        imageVector = if (passwordVisibility.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        contentDescription = emptyString()
+                    )
                 }
-                onPassFieldFocusChange(it.isFocused)
-            },
-        label = { Text(text = stringResource(id = R.string.password)) },
-        isError = !passHelper.value.isNullOrEmpty(),
-        visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
-        singleLine = true,
-        trailingIcon = {
-            IconButton(onClick = { passwordVisibility.value = !passwordVisibility.value }) {
-                Icon(
-                    imageVector = if (passwordVisibility.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                    contentDescription = emptyString()
-                )
             }
-        }
-    )
+        )
 
-    passHelperText?.let {
-        HelperText(it)
+        hasHelperText?.let {
+            HelperText(textHelperText)
+        }
     }
 }

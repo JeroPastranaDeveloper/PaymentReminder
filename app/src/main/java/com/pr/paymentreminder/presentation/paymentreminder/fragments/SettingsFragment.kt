@@ -2,6 +2,7 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import com.pr.paymentreminder.ui.theme.spacing4
 @Composable
 fun SettingsFragment(viewModel: SettingsViewModel) {
     val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,6 +49,7 @@ fun SettingsFragment(viewModel: SettingsViewModel) {
                     .setMessage(R.string.logout_question)
                     .setPositiveButton(R.string.yes) { _, _ ->
                         viewModel.signOut()
+                        sharedPreferences.edit().clear().apply()
                         val intent = Intent(context, LoginActivity::class.java)
                         context.startActivity(intent)
                         (context as Activity).finish()

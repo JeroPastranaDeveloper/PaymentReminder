@@ -1,6 +1,8 @@
 package com.pr.paymentreminder.presentation.login
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -42,6 +44,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels()
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +53,7 @@ class LoginActivity : ComponentActivity() {
         setContent {
             Content()
         }
+        sharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
     }
 
     @Composable
@@ -85,17 +89,20 @@ class LoginActivity : ComponentActivity() {
                 )
             ) { viewModel.validateEmail() }
 
-            PassField(
-                passText = passText.value,
-                onPassTextChange =  {
-                    passText.value = it
-                    viewModel.password = it.text
-                },
-                wasPassFieldFocused = wasPassFieldFocused.value,
-                onPassFieldFocusChange = { wasPassFieldFocused.value = it },
-                passHelper = viewModel.passHelperText,
-                onPassValidation = { viewModel.validatePassword() }
-            )
+           PassField(
+               DefaultTextFieldParams(
+                   text = passText.value,
+                   onTextChange = {
+                       passText.value = it
+                       viewModel.password = it.text
+                   },
+                   wasTextFieldFocused = wasPassFieldFocused.value,
+                   onTextFieldFocusChange = { wasPassFieldFocused.value = it },
+                   placeHolder = stringResource(R.string.password),
+                   textHelper = viewModel.passHelperText,
+                   textHelperText = stringResource(id = R.string.invalid_pass)
+               )
+           ) { viewModel.validatePassword() }
 
             ImageLogo(R.drawable.logo_no_bg)
 
@@ -110,6 +117,7 @@ class LoginActivity : ComponentActivity() {
                 if (isValidInput()) {
                     lifecycleScope.launch {
                         viewModel.login()
+                        sharedPreferences.edit().putBoolean("hasToLogin", true).apply()
                     }
                 } else {
                     Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
@@ -140,7 +148,7 @@ class LoginActivity : ComponentActivity() {
 
     @Composable
     private fun CheckLogin() {
-        val isLoginSuccessful by viewModel.isLoginSuccessful.collectAsState(false)
+        val isLoginSuccessful by viewModel.isLoginSuccessful.collectAsState(initial = sharedPreferences.getBoolean("hasToLogin", false))
         if (isLoginSuccessful) {
             startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
             finish()
