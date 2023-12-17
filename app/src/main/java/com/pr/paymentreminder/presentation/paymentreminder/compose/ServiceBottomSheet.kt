@@ -86,25 +86,25 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     val servicePriceHelperText by viewModel.servicePriceHelperText.collectAsState()
     val wasServicePriceFieldFocused = remember { mutableStateOf(false) }
 
-    var selectedCategory by remember { mutableStateOf(service?.category ?: emptyString()) }
+    val selectedCategory by remember { mutableStateOf(service?.category ?: emptyString()) }
     val categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS)
     var categoriesExpanded by remember { mutableStateOf(false) }
-    var categoriesValidation by remember { mutableStateOf(false) }
+    val categoriesValidation by remember { mutableStateOf(false) }
     val serviceCategoriesHelperText by viewModel.serviceCategoryHelperText.collectAsState()
 
     var serviceDate by remember { mutableStateOf(service?.date ?: emptyString()) }
     val serviceDateHelperText by viewModel.serviceDateHelperText.collectAsState()
 
-    var selectedPaymentType by remember { mutableStateOf(service?.type ?: emptyString()) }
+    val selectedPaymentType by remember { mutableStateOf(service?.type ?: emptyString()) }
     val types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY)
     var typesExpanded by remember { mutableStateOf(false) }
-    var typesValidation by remember { mutableStateOf(false) }
+    val typesValidation by remember { mutableStateOf(false) }
     val serviceTypesHelperText by viewModel.serviceTypesHelperText.collectAsState()
 
-    var selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
+    val selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
     val daysRemember = listOf(1, 2, 3)
     var daysExpanded by remember { mutableStateOf(false) }
-    var rememberValidation by remember { mutableStateOf(false) }
+    val rememberValidation by remember { mutableStateOf(false) }
     val serviceRememberHelperText by viewModel.serviceRememberHelperText.collectAsState()
 
     val selectedColor by remember { mutableStateOf(Color.White) }
@@ -168,15 +168,15 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 ServiceSeparator(serviceNameHelperText.orElse { emptyString() })
 
-                Text(stringResource(id = R.string.category, selectedCategory),
+                /*Text(stringResource(id = R.string.category, selectedCategory),
                     modifier = Modifier.clickable { categoriesExpanded = !categoriesExpanded }
-                )
+                )*/
 
-                DropdownMenu(
+                /*DropdownMenu(
                     expanded = categoriesExpanded,
                     onDismissRequest = {
                         categoriesExpanded = false
-                        categoriesValidation = true
+                        categoriesValidation = false
                         validateServiceCategory(viewModel)
                     }
                 ) {
@@ -190,6 +190,12 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             Text(text = category.category)
                         }
                     }
+                }*/
+
+                // TODO: NO VALIDA
+                CategoriesDropDownMenu(categories) {
+                    viewModel.serviceCategory = it
+                    validateServiceCategory(viewModel)
                 }
 
                 HelperSeparator(serviceCategoriesHelperText.orElse { emptyString() })
@@ -223,18 +229,23 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 ServiceDateHelperText(serviceDateHelperText)
                 ServiceSeparator(serviceDateHelperText.orElse { emptyString() })
 
-                Text(stringResource(id = R.string.payment_type, selectedPaymentType),
+                /*Text(stringResource(id = R.string.payment_type, selectedPaymentType),
                     modifier = Modifier
                         .clickable {
                             typesExpanded = !typesExpanded
                         }
-                )
+                )*/
 
-                DropdownMenu(
+                TypesDropDownMenu(types) {
+                    viewModel.serviceType = it
+                    validateServiceType(viewModel)
+                }
+
+                /*DropdownMenu(
                     expanded = typesExpanded,
                     onDismissRequest = {
                         typesExpanded = false
-                        typesValidation = true
+                        typesValidation = false
                         validateServiceType(viewModel)
                     }
                 ) {
@@ -248,7 +259,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             Text(text = type.type)
                         }
                     }
-                }
+                }*/
 
                 HelperSeparator(serviceTypesHelperText.orElse { emptyString() })
                 ServiceTypesHelperText(serviceTypesHelperText, typesValidation)
@@ -273,12 +284,18 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 Row(verticalAlignment = Alignment.Top) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(id = R.string.remember_days_before, selectedRemember),
+                        /*Text(stringResource(id = R.string.remember_days_before, selectedRemember),
                             modifier = Modifier
                                 .clickable {
                                     daysExpanded = !daysExpanded
                                 }
-                        )
+                        )*/
+
+                        RememberDropDownMenu(daysRemember) {
+                            viewModel.serviceDate = it
+                            validateServiceRemember(viewModel)
+                        }
+
                         HelperSeparator(serviceRememberHelperText.orElse { emptyString() })
                         ServiceRememberHelperText(serviceRememberHelperText, rememberValidation)
                     }
@@ -296,7 +313,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 }
                 Spacer(modifier = Modifier.height(dimen16))
 
-                DropdownMenu(
+                /*DropdownMenu(
                     expanded = daysExpanded,
                     onDismissRequest = {
                         daysExpanded = false
@@ -314,7 +331,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             Text(text = day.toString())
                         }
                     }
-                }
+                }*/
 
                 ServiceSeparator(serviceRememberHelperText.orElse { emptyString() })
 
@@ -398,7 +415,7 @@ private fun ServiceTypesHelperText(
     serviceTypesHelperText: String?,
     typesValidation: Boolean
 ) {
-    if (!serviceTypesHelperText.isNullOrEmpty() && typesValidation) {
+    if (!serviceTypesHelperText.isNullOrEmpty()) {
         Text(
             text = stringResource(id = R.string.invalid_service_type),
             modifier = Modifier
@@ -430,7 +447,7 @@ private fun ServiceCategoriesHelperText(
     serviceCategoriesHelperText: String?,
     categoriesValidation: Boolean
 ) {
-    if (!serviceCategoriesHelperText.isNullOrEmpty() && categoriesValidation) {
+    if (!serviceCategoriesHelperText.isNullOrEmpty()) {
         Text(
             text = stringResource(id = R.string.invalid_service_category),
             modifier = Modifier
@@ -469,20 +486,6 @@ private fun ImageBox(
     }
 }*/
 
-data class ButtonFunctionality(
-    val serviceName: TextFieldValue,
-    val selectedCategory: String,
-    val serviceDate: String,
-    val selectedPaymentType: String,
-    val servicePrice: TextFieldValue,
-    val serviceId: String?,
-    val selectedRemember: String,
-    val imageUri: TextFieldValue,
-    val service: Service?,
-    val onDismiss: () -> Unit,
-    val context: Context
-)
-
 @Composable
 private fun SaveButton(
     viewModel: HomeViewModel,
@@ -506,8 +509,6 @@ private fun SaveButton(
                     val isServiceDateValid = validateServiceDate()
                     val isServiceTypeValid = validateServiceType()
                     val isServicePriceValid = validateServicePrice()
-
-
 
                     if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
                         val serviceData = Service(
@@ -602,3 +603,17 @@ private fun createService(
     )
     viewModel.createService(newService)
 }
+
+data class ButtonFunctionality(
+    val serviceName: TextFieldValue,
+    val selectedCategory: String,
+    val serviceDate: String,
+    val selectedPaymentType: String,
+    val servicePrice: TextFieldValue,
+    val serviceId: String?,
+    val selectedRemember: String,
+    val imageUri: TextFieldValue,
+    val service: Service?,
+    val onDismiss: () -> Unit,
+    val context: Context
+)
