@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen4
-import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
 
 @Composable
@@ -31,7 +30,7 @@ fun DefaultTextField(
             onValueChange = onTextChange,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = spacing16, vertical = spacing8)
+                .padding(vertical = spacing8)
                 .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
                 .onFocusChanged {
                     if (wasTextFieldFocused && !it.isFocused) {

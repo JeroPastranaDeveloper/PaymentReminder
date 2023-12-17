@@ -27,7 +27,6 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.emptyString
-import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
 import kotlinx.coroutines.flow.StateFlow
 
@@ -49,7 +48,7 @@ fun PassField(
         onValueChange = onPassTextChange,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = spacing16, vertical = spacing8)
+            .padding(vertical = spacing8)
             .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
             .onFocusChanged {
                 if (wasPassFieldFocused && !it.isFocused) {

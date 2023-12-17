@@ -46,7 +46,6 @@ import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.SaveButtonFunctionality
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
-import com.pr.paymentreminder.ui.theme.dimen0
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen2
@@ -156,11 +155,11 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     )
                 ) { viewModel.validateServiceName() }
 
-                ServiceSeparator(serviceNameHelperText.orElse { emptyString() })
+                ServiceSeparator()
 
-                // TODO: PASAR CATEGORÍA POR PARÁMETRO SI EL SERVICIO NO ES NULO
                 CategoriesDropDownMenu(
                     categories = categories,
+                    initialSelectedCategory = selectedCategory,
                     textHelper = viewModel.serviceCategoryHelperText,
                     textHelperText = stringResource(id = R.string.invalid_service_category)
                 ) {
@@ -169,7 +168,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     viewModel.validateServiceCategory()
                 }
 
-                ServiceSeparator(serviceCategoriesHelperText.orElse { emptyString() })
+                ServiceSeparator()
 
                 val datePickerDialog = remember {
                     DatePickerDialog(
@@ -194,14 +193,16 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     modifier = Modifier.clickable { datePickerDialog.show() }
                 )
 
-                HelperSeparator(serviceDateHelperText.orElse { emptyString() })
                 serviceDateHelperText?.let {
+                    ServiceSeparator()
                     HelperText(stringResource(id = R.string.invalid_service_date))
                 }
-                ServiceSeparator(serviceDateHelperText.orElse { emptyString() })
+
+                ServiceSeparator()
 
                 TypesDropDownMenu(
                     types = types,
+                    initialSelectedType = selectedPaymentType,
                     textHelper = viewModel.serviceTypesHelperText,
                     textHelperText = stringResource(id = R.string.invalid_service_type)
                 ) {
@@ -210,7 +211,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     viewModel.validateServiceType()
                 }
 
-                ServiceSeparator(serviceTypesHelperText.orElse { emptyString() })
+                ServiceSeparator()
 
                 DefaultTextField(
                     DefaultTextFieldParams(
@@ -227,13 +228,14 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     )
                 ) { viewModel.validateServicePrice() }
 
-                ServiceSeparator(servicePriceHelperText.orElse { emptyString() })
+                ServiceSeparator()
 
                 Row(verticalAlignment = Alignment.Top) {
                     Column(modifier = Modifier.weight(1f)) {
 
                         RememberDropDownMenu(
                             rememberDays = daysRemember,
+                            initialSelectedDay = selectedRemember,
                             textHelper = viewModel.serviceRememberHelperText,
                             textHelperText = stringResource(id = R.string.invalid_service_remember)
                         ) {
@@ -241,8 +243,6 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             selectedRemember = it
                             viewModel.validateServiceRemember()
                         }
-
-                        HelperSeparator(serviceRememberHelperText.orElse { emptyString() })
                     }
 
                     Box(
@@ -258,7 +258,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 }
                 Spacer(modifier = Modifier.height(dimen16))
 
-                ServiceSeparator(serviceRememberHelperText.orElse { emptyString() })
+                ServiceSeparator()
 
                 val serviceId = service?.id
                 SaveButton(
@@ -411,13 +411,8 @@ private fun SaveButton(
 }
 
 @Composable
-private fun HelperSeparator(helperText: String) {
-    Spacer(modifier = Modifier.height(if (helperText.isEmpty()) dimen16 else dimen8))
-}
-
-@Composable
-fun ServiceSeparator(helperText: String) {
-    Spacer(modifier = Modifier.height(if (helperText.isEmpty()) dimen0 else dimen8))
+fun ServiceSeparator() {
+    Spacer(modifier = Modifier.height(dimen16))
 }
 
 private fun updateService(
