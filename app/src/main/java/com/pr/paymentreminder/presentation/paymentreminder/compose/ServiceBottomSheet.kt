@@ -158,6 +158,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 ServiceSeparator(serviceNameHelperText.orElse { emptyString() })
 
+                // TODO: PASAR CATEGORÍA POR PARÁMETRO SI EL SERVICIO NO ES NULO
                 CategoriesDropDownMenu(
                     categories = categories,
                     textHelper = viewModel.serviceCategoryHelperText,
