@@ -9,8 +9,7 @@ class LoginUseCaseImpl @Inject constructor(
     private val loginRepository: LoginRepository
 ) : LoginUseCase {
     override fun login(email: String, password: String): StateFlow<Boolean> = loginRepository.login(email, password)
-
     override fun isUserAuthenticated(): Boolean = loginRepository.isUserAuthenticated()
-
+    override fun hasToLogin(): Boolean = loginRepository.hasToLogin()
     override fun signOut() = loginRepository.signOut()
 }

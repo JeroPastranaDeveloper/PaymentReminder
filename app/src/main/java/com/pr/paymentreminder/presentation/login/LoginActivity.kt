@@ -44,7 +44,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels()
-    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +52,6 @@ class LoginActivity : ComponentActivity() {
         setContent {
             Content()
         }
-        sharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
     }
 
     @Composable
@@ -117,7 +115,6 @@ class LoginActivity : ComponentActivity() {
                 if (isValidInput()) {
                     lifecycleScope.launch {
                         viewModel.login()
-                        sharedPreferences.edit().putBoolean("hasToLogin", true).apply()
                     }
                 } else {
                     Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
@@ -146,9 +143,10 @@ class LoginActivity : ComponentActivity() {
         return isEmailValid && isPasswordValid
     }
 
+    // TODO: INTENTAR ARREGLAR LAS SHARED PREFERENCES DE MIERDA :)
     @Composable
     private fun CheckLogin() {
-        val isLoginSuccessful by viewModel.isLoginSuccessful.collectAsState(initial = sharedPreferences.getBoolean("hasToLogin", false))
+        val isLoginSuccessful by viewModel.isLoginSuccessful.collectAsState(viewModel.hasToLogin)
         if (isLoginSuccessful) {
             startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
             finish()
