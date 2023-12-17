@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.pr.paymentreminder.R
-import com.pr.paymentreminder.data.model.Categories
 import com.pr.paymentreminder.ui.theme.emptyString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

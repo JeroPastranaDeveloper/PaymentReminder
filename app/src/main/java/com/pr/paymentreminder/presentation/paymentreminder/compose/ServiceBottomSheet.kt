@@ -51,7 +51,6 @@ import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen2
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen56
-import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.orElse
 import com.pr.paymentreminder.ui.theme.spacing8
@@ -74,27 +73,22 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     }*/
 
     var serviceName by remember { mutableStateOf(TextFieldValue(service?.name ?: emptyString())) }
-    val serviceNameHelperText by viewModel.serviceNameHelperText.collectAsState()
     val wasServiceNameFieldFocused = remember { mutableStateOf(false) }
 
     var servicePrice by remember { mutableStateOf(TextFieldValue(service?.price ?: emptyString())) }
-    val servicePriceHelperText by viewModel.servicePriceHelperText.collectAsState()
     val wasServicePriceFieldFocused = remember { mutableStateOf(false) }
 
     var selectedCategory by remember { mutableStateOf(service?.category ?: emptyString()) }
     val categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS)
-    val serviceCategoriesHelperText by viewModel.serviceCategoryHelperText.collectAsState()
 
     var serviceDate by remember { mutableStateOf(service?.date ?: emptyString()) }
     val serviceDateHelperText by viewModel.serviceDateHelperText.collectAsState()
 
     var selectedPaymentType by remember { mutableStateOf(service?.type ?: emptyString()) }
     val types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY)
-    val serviceTypesHelperText by viewModel.serviceTypesHelperText.collectAsState()
 
     var selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
     val daysRemember = listOf(1, 2, 3)
-    val serviceRememberHelperText by viewModel.serviceRememberHelperText.collectAsState()
 
     val selectedColor by remember { mutableStateOf(Color.White) }
     var colorPickerDialogOpen by remember { mutableStateOf(false) }
