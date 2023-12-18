@@ -388,11 +388,7 @@ private fun SaveButton(
                         validateServicePrice()
                         validateServiceRemember()
 
-                        Toast.makeText(
-                            context,
-                            R.string.invalid_data,
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toast.makeText(context, R.string.invalid_data, Toast.LENGTH_LONG).show()
                     }
                 }
             }
