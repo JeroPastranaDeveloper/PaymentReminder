@@ -31,6 +31,9 @@ class HomeViewModel @Inject constructor(
     private val _services = mutableStateOf<List<Service>>(emptyList())
     val services: State<List<Service>> = _services
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     private val _serviceNameHelperText = MutableStateFlow<String?>(null)
     val serviceNameHelperText: StateFlow<String?>
         get() = _serviceNameHelperText
@@ -84,12 +87,14 @@ class HomeViewModel @Inject constructor(
 
     fun getServices() {
         viewModelScope.launch {
+            _isLoading.value = true
             servicesUseCase.getServices().collect { services ->
                 services.forEach { service ->
                     service.updateDate()
                     alarmScheduler.scheduleAlarm(service)
                 }
                 _services.value = services.sortedBy { it.getDate() }
+                _isLoading.value = false
             }
         }
     }
