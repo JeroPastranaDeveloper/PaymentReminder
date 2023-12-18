@@ -43,7 +43,7 @@ fun GraphicFragment(graphicViewModel: GraphicViewModel) {
 
     Column(
         modifier = Modifier
-            .padding(spacing16)
+            .padding(start = spacing16, end = spacing16, bottom = spacing16)
             .fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(dimen64))
