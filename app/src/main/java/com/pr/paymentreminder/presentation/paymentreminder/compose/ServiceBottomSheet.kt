@@ -1,7 +1,6 @@
 package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.app.DatePickerDialog
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,20 +15,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,30 +34,25 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusState
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Categories
+import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.data.model.PaymentType
+import com.pr.paymentreminder.data.model.SaveButtonFunctionality
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
-import com.pr.paymentreminder.ui.theme.dimen0
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen2
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen56
-import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.orElse
-import com.pr.paymentreminder.ui.theme.spacing16
-import com.pr.paymentreminder.ui.theme.spacing20
 import com.pr.paymentreminder.ui.theme.spacing8
 import kotlinx.coroutines.flow.filter
 import java.text.SimpleDateFormat
@@ -83,33 +73,22 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     }*/
 
     var serviceName by remember { mutableStateOf(TextFieldValue(service?.name ?: emptyString())) }
-    val serviceNameHelperText by viewModel.serviceNameHelperText.collectAsState()
     val wasServiceNameFieldFocused = remember { mutableStateOf(false) }
 
     var servicePrice by remember { mutableStateOf(TextFieldValue(service?.price ?: emptyString())) }
-    val servicePriceHelperText by viewModel.servicePriceHelperText.collectAsState()
     val wasServicePriceFieldFocused = remember { mutableStateOf(false) }
 
     var selectedCategory by remember { mutableStateOf(service?.category ?: emptyString()) }
     val categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS)
-    var categoriesExpanded by remember { mutableStateOf(false) }
-    var categoriesValidation by remember { mutableStateOf(false) }
-    val serviceCategoriesHelperText by viewModel.serviceCategoryHelperText.collectAsState()
 
     var serviceDate by remember { mutableStateOf(service?.date ?: emptyString()) }
     val serviceDateHelperText by viewModel.serviceDateHelperText.collectAsState()
 
     var selectedPaymentType by remember { mutableStateOf(service?.type ?: emptyString()) }
     val types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY)
-    var typesExpanded by remember { mutableStateOf(false) }
-    var typesValidation by remember { mutableStateOf(false) }
-    val serviceTypesHelperText by viewModel.serviceTypesHelperText.collectAsState()
 
     var selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
     val daysRemember = listOf(1, 2, 3)
-    var daysExpanded by remember { mutableStateOf(false) }
-    var rememberValidation by remember { mutableStateOf(false) }
-    val serviceRememberHelperText by viewModel.serviceRememberHelperText.collectAsState()
 
     val selectedColor by remember { mutableStateOf(Color.White) }
     var colorPickerDialogOpen by remember { mutableStateOf(false) }
@@ -155,60 +134,35 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 Spacer(modifier = Modifier.height(dimen16))
 
-                TextField(
-                    value = serviceName,
-                    onValueChange = {
-                        serviceName = it
-                        viewModel.serviceName = it.text
-                    },
-                    label = { Text(stringResource(id = R.string.service_name)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = spacing8)
-                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-                        .onFocusChanged {
-                            checkServiceNameFocus(
-                                wasServiceNameFieldFocused,
-                                it,
-                                viewModel
-                            )
-                            wasServiceNameFieldFocused.value = it.isFocused
+                DefaultTextField(
+                    DefaultTextFieldParams(
+                        text = serviceName,
+                        onTextChange = {
+                            serviceName = it
+                            viewModel.serviceName = it.text
                         },
-                    isError = !serviceNameHelperText.isNullOrEmpty(),
-                    singleLine = true
-                )
+                        wasTextFieldFocused = wasServiceNameFieldFocused.value,
+                        onTextFieldFocusChange = { wasServiceNameFieldFocused.value = it },
+                        textHelper = viewModel.serviceNameHelperText,
+                        textHelperText = stringResource(id = R.string.invalid_service_name),
+                        placeHolder = stringResource(id = R.string.service_name)
+                    )
+                ) { viewModel.validateServiceName() }
 
-                HelperSeparator(serviceNameHelperText.orElse { emptyString() })
-                ServiceNameHelperText(serviceNameHelperText)
-                ServiceSeparator(serviceNameHelperText.orElse { emptyString() })
+                ServiceSeparator()
 
-                Text(stringResource(id = R.string.category, selectedCategory),
-                    modifier = Modifier.clickable { categoriesExpanded = !categoriesExpanded }
-                )
-
-                DropdownMenu(
-                    expanded = categoriesExpanded,
-                    onDismissRequest = {
-                        categoriesExpanded = false
-                        categoriesValidation = true
-                        validateServiceCategory(viewModel)
-                    }
+                CategoriesDropDownMenu(
+                    categories = categories,
+                    initialSelectedCategory = selectedCategory,
+                    textHelper = viewModel.serviceCategoryHelperText,
+                    textHelperText = stringResource(id = R.string.invalid_service_category)
                 ) {
-                    categories.forEach { category ->
-                        DropdownMenuItem(onClick = {
-                            selectedCategory = category.category
-                            viewModel.serviceCategory = selectedCategory
-                            categoriesExpanded = false
-                            validateServiceCategory(viewModel)
-                        }) {
-                            Text(text = category.category)
-                        }
-                    }
+                    viewModel.serviceCategory = it
+                    selectedCategory = it
+                    viewModel.validateServiceCategory()
                 }
 
-                HelperSeparator(serviceCategoriesHelperText.orElse { emptyString() })
-                ServiceCategoriesHelperText(serviceCategoriesHelperText, categoriesValidation)
-                ServiceSeparator(serviceCategoriesHelperText.orElse { emptyString() })
+                ServiceSeparator()
 
                 val datePickerDialog = remember {
                     DatePickerDialog(
@@ -233,79 +187,56 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     modifier = Modifier.clickable { datePickerDialog.show() }
                 )
 
-                HelperSeparator(serviceDateHelperText.orElse { emptyString() })
-                ServiceDateHelperText(serviceDateHelperText)
-                ServiceSeparator(serviceDateHelperText.orElse { emptyString() })
-
-                Text(stringResource(id = R.string.payment_type, selectedPaymentType),
-                    modifier = Modifier
-                        .clickable {
-                            typesExpanded = !typesExpanded
-                        }
-                )
-
-                DropdownMenu(
-                    expanded = typesExpanded,
-                    onDismissRequest = {
-                        typesExpanded = false
-                        typesValidation = true
-                        validateServiceType(viewModel)
-                    }
-                ) {
-                    types.forEach { type ->
-                        DropdownMenuItem(onClick = {
-                            selectedPaymentType = type.type
-                            viewModel.serviceType = selectedPaymentType
-                            typesExpanded = false
-                            validateServiceType(viewModel)
-                        }) {
-                            Text(text = type.type)
-                        }
-                    }
+                serviceDateHelperText?.let {
+                    ServiceSeparator()
+                    HelperText(stringResource(id = R.string.invalid_service_date))
                 }
 
-                HelperSeparator(serviceTypesHelperText.orElse { emptyString() })
-                ServiceTypesHelperText(serviceTypesHelperText, typesValidation)
-                ServiceSeparator(serviceTypesHelperText.orElse { emptyString() })
+                ServiceSeparator()
 
-                TextField(
-                    value = servicePrice,
-                    onValueChange = {
-                        servicePrice = it
-                        viewModel.servicePrice = it.text
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    label = { Text(stringResource(id = R.string.service_price)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = spacing8)
-                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-                        .onFocusChanged {
-                            checkServicePriceFocus(
-                                wasServicePriceFieldFocused,
-                                it,
-                                viewModel
-                            )
-                            wasServicePriceFieldFocused.value = it.isFocused
+                TypesDropDownMenu(
+                    types = types,
+                    initialSelectedType = selectedPaymentType,
+                    textHelper = viewModel.serviceTypesHelperText,
+                    textHelperText = stringResource(id = R.string.invalid_service_type)
+                ) {
+                    viewModel.serviceType = it
+                    selectedPaymentType = it
+                    viewModel.validateServiceType()
+                }
+
+                ServiceSeparator()
+
+                DefaultTextField(
+                    DefaultTextFieldParams(
+                        text = servicePrice,
+                        onTextChange = {
+                            servicePrice = it
+                            viewModel.servicePrice = it.text
                         },
-                    isError = !servicePriceHelperText.isNullOrEmpty(),
-                    singleLine = true
-                )
+                        wasTextFieldFocused = wasServicePriceFieldFocused.value,
+                        onTextFieldFocusChange = { wasServicePriceFieldFocused.value = it},
+                        textHelper = viewModel.servicePriceHelperText,
+                        textHelperText = stringResource(id = R.string.invalid_service_price),
+                        placeHolder = stringResource(id = R.string.service_price)
+                    )
+                ) { viewModel.validateServicePrice() }
 
-                HelperSeparator(servicePriceHelperText.orElse { emptyString() })
-                ServicePriceHelperText(servicePriceHelperText)
-                ServiceSeparator(servicePriceHelperText.orElse { emptyString() })
+                ServiceSeparator()
 
                 Row(verticalAlignment = Alignment.Top) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(stringResource(id = R.string.remember_days_before, selectedRemember),
-                            modifier = Modifier
-                                .clickable {
-                                    daysExpanded = !daysExpanded
-                                }
-                        )
-                        HelperSeparator(serviceRememberHelperText.orElse { emptyString() })
-                        ServiceRememberHelperText(serviceRememberHelperText, rememberValidation)
+
+                        RememberDropDownMenu(
+                            rememberDays = daysRemember,
+                            initialSelectedDay = selectedRemember,
+                            textHelper = viewModel.serviceRememberHelperText,
+                            textHelperText = stringResource(id = R.string.invalid_service_remember)
+                        ) {
+                            viewModel.serviceRemember = it
+                            selectedRemember = it
+                            viewModel.validateServiceRemember()
+                        }
                     }
 
                     Box(
@@ -321,32 +252,12 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 }
                 Spacer(modifier = Modifier.height(dimen16))
 
-                DropdownMenu(
-                    expanded = daysExpanded,
-                    onDismissRequest = {
-                        daysExpanded = false
-                        rememberValidation = false
-                        validateServiceRemember(viewModel)
-                    }
-                ) {
-                    daysRemember.forEach { day ->
-                        DropdownMenuItem(onClick = {
-                            selectedRemember = day.toString()
-                            viewModel.serviceRemember = selectedRemember
-                            daysExpanded = false
-                            validateServiceRemember(viewModel)
-                        }) {
-                            Text(text = day.toString())
-                        }
-                    }
-                }
-
-                ServiceSeparator(serviceRememberHelperText.orElse { emptyString() })
+                ServiceSeparator()
 
                 val serviceId = service?.id
                 SaveButton(
                     viewModel,
-                    buttonFunctionality = ButtonFunctionality(
+                    saveButtonFunctionality = SaveButtonFunctionality(
                         serviceName = serviceName,
                         selectedCategory = selectedCategory,
                         serviceDate = serviceDate,
@@ -397,126 +308,6 @@ private fun initialValidations(
     viewModel.validateServiceRemember()
 }
 
-private fun validateServiceCategory(viewModel: HomeViewModel) = viewModel.validateServiceCategory()
-private fun validateServiceType(viewModel: HomeViewModel) = viewModel.validateServiceType()
-private fun validateServiceRemember(viewModel: HomeViewModel) = viewModel.validateServiceRemember()
-
-private fun checkServicePriceFocus(
-    wasServicePriceFieldFocused: MutableState<Boolean>,
-    it: FocusState,
-    viewModel: HomeViewModel
-) {
-    if (wasServicePriceFieldFocused.value && !it.isFocused) {
-        viewModel.validateServicePrice()
-    }
-}
-
-private fun checkServiceNameFocus(
-    wasServiceNameFieldFocused: MutableState<Boolean>,
-    it: FocusState,
-    viewModel: HomeViewModel
-) {
-    if (wasServiceNameFieldFocused.value && !it.isFocused) {
-        viewModel.validateServiceName()
-    }
-}
-
-@Composable
-private fun ServiceRememberHelperText(
-    serviceRememberHelperText: String?,
-    rememberValidation: Boolean
-) {
-    if (!serviceRememberHelperText.isNullOrEmpty()) {
-        Text(
-            text = stringResource(id = R.string.invalid_service_remember),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = spacing20, end = spacing16, bottom = spacing8),
-            color = Color.Red
-        )
-        !rememberValidation
-    }
-}
-
-@Composable
-private fun ServicePriceHelperText(
-    servicePriceHelperText: String?
-) {
-    if (!servicePriceHelperText.isNullOrEmpty()) {
-        Text(
-            text = stringResource(id = R.string.invalid_service_price),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = spacing20, end = spacing16, bottom = spacing8),
-            color = Color.Red
-        )
-    }
-}
-
-@Composable
-private fun ServiceTypesHelperText(
-    serviceTypesHelperText: String?,
-    typesValidation: Boolean
-) {
-    if (!serviceTypesHelperText.isNullOrEmpty() && typesValidation) {
-        Text(
-            text = stringResource(id = R.string.invalid_service_type),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = spacing20, end = spacing16, bottom = spacing8),
-            color = Color.Red
-        )
-        !typesValidation
-    }
-}
-
-@Composable
-private fun ServiceDateHelperText(
-    serviceDateHelperText: String?
-) {
-    if (!serviceDateHelperText.isNullOrEmpty()) {
-        Text(
-            text = stringResource(id = R.string.invalid_service_date),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = spacing20, end = spacing16, bottom = spacing8),
-            color = Color.Red
-        )
-    }
-}
-
-@Composable
-private fun ServiceCategoriesHelperText(
-    serviceCategoriesHelperText: String?,
-    categoriesValidation: Boolean
-) {
-    if (!serviceCategoriesHelperText.isNullOrEmpty() && categoriesValidation) {
-        Text(
-            text = stringResource(id = R.string.invalid_service_category),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = spacing20, end = spacing16, bottom = spacing8),
-            color = Color.Red
-        )
-        !categoriesValidation
-    }
-}
-
-@Composable
-private fun ServiceNameHelperText(
-    serviceNameHelperText: String?
-) {
-    if (!serviceNameHelperText.isNullOrEmpty()) {
-        Text(
-            text = stringResource(id = R.string.invalid_service_name),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = spacing20, end = spacing16, bottom = spacing8),
-            color = Color.Red
-        )
-    }
-}
-
 /*@Composable
 private fun ImageBox(
     launcher: ManagedActivityResultLauncher<String, Uri?>,
@@ -544,28 +335,14 @@ private fun ImageBox(
     }
 }*/
 
-data class ButtonFunctionality(
-    val serviceName: TextFieldValue,
-    val selectedCategory: String,
-    val serviceDate: String,
-    val selectedPaymentType: String,
-    val servicePrice: TextFieldValue,
-    val serviceId: String?,
-    val selectedRemember: String,
-    val imageUri: TextFieldValue,
-    val service: Service?,
-    val onDismiss: () -> Unit,
-    val context: Context
-)
-
 @Composable
 private fun SaveButton(
     viewModel: HomeViewModel,
-    buttonFunctionality: ButtonFunctionality
+    saveButtonFunctionality: SaveButtonFunctionality
 ) {
     Button(
         onClick = {
-            with(buttonFunctionality) {
+            with(saveButtonFunctionality) {
                 initialValidations(
                     viewModel,
                     serviceName,
@@ -581,8 +358,6 @@ private fun SaveButton(
                     val isServiceDateValid = validateServiceDate()
                     val isServiceTypeValid = validateServiceType()
                     val isServicePriceValid = validateServicePrice()
-
-
 
                     if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
                         val serviceData = Service(
@@ -613,11 +388,7 @@ private fun SaveButton(
                         validateServicePrice()
                         validateServiceRemember()
 
-                        Toast.makeText(
-                            context,
-                            R.string.invalid_data,
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toast.makeText(context, R.string.invalid_data, Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -630,13 +401,8 @@ private fun SaveButton(
 }
 
 @Composable
-private fun HelperSeparator(helperText: String) {
-    Spacer(modifier = Modifier.height(if (helperText.isEmpty()) dimen16 else dimen8))
-}
-
-@Composable
-fun ServiceSeparator(helperText: String) {
-    Spacer(modifier = Modifier.height(if (helperText.isEmpty()) dimen0 else dimen8))
+fun ServiceSeparator() {
+    Spacer(modifier = Modifier.height(dimen16))
 }
 
 private fun updateService(

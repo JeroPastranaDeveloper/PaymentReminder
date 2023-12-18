@@ -3,7 +3,9 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Chip
@@ -25,6 +27,7 @@ import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.presentation.paymentreminder.compose.DonutChart
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.GraphicViewModel
+import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing4
 
@@ -40,9 +43,10 @@ fun GraphicFragment(graphicViewModel: GraphicViewModel) {
 
     Column(
         modifier = Modifier
-            .padding(spacing16)
+            .padding(start = spacing16, end = spacing16, bottom = spacing16)
             .fillMaxSize()
     ) {
+        Spacer(modifier = Modifier.height(dimen64))
         Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
             ServicesChip(
                 title = stringResource(id = R.string.all_services),

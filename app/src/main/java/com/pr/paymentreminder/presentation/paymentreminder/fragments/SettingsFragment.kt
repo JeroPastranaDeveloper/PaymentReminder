@@ -2,6 +2,7 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,16 +21,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.login.LoginActivity
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.SettingsViewModel
 import com.pr.paymentreminder.ui.theme.dimen56
-import com.pr.paymentreminder.ui.theme.dimen8
+import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing4
 
 @Composable
 fun SettingsFragment(viewModel: SettingsViewModel) {
     val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -37,9 +40,9 @@ fun SettingsFragment(viewModel: SettingsViewModel) {
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        Spacer(modifier = Modifier.height(dimen8))
+        Spacer(modifier = Modifier.height(dimen64))
+        /* Content here */
         Spacer(modifier = Modifier.weight(1f))
-
         OutlinedButton(
             onClick = {
                 val dialog = AlertDialog.Builder(context)
@@ -47,6 +50,7 @@ fun SettingsFragment(viewModel: SettingsViewModel) {
                     .setMessage(R.string.logout_question)
                     .setPositiveButton(R.string.yes) { _, _ ->
                         viewModel.signOut()
+                        sharedPreferences.edit().clear().apply()
                         val intent = Intent(context, LoginActivity::class.java)
                         context.startActivity(intent)
                         (context as Activity).finish()

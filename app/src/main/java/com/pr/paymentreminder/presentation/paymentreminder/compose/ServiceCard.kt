@@ -86,8 +86,8 @@ fun ServiceCard(
         val scope = rememberCoroutineScope()
 
         if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-            deleteService(service.id)
             scope.launch {
+                deleteService(service.id)
                 dismissState.reset()
                 viewModel.getServices()
             }

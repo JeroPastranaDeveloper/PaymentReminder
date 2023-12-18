@@ -1,6 +1,5 @@
 package com.pr.paymentreminder.data.source
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,13 +22,11 @@ class ServicesDataSource @Inject constructor() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
 
-        // TODO: BORRAR SERVICIOS EXPLOTA
         return callbackFlow {
             val listener = servicesRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val services = mutableListOf<Service>()
                     for (serviceSnapshot in snapshot.children) {
-                        Log.d("Hola", services.toString())
                         val imageUriString = serviceSnapshot.child(Constants.IMAGE).value as? String? ?: emptyString()
                         val service = Service(
                             serviceSnapshot.key.orElse { emptyString() },
@@ -53,29 +50,6 @@ class ServicesDataSource @Inject constructor() {
             awaitClose { servicesRef.removeEventListener(listener) }
         }
     }
-
-    /*servicesRef.addListenerForSingleValueEvent(object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            for (serviceSnapshot in snapshot.children) {
-                val imageUriString = serviceSnapshot.child(Constants.IMAGE).value as String?
-                val service = Service(
-                    serviceSnapshot.key.orElse { emptyString() } ,
-                    serviceSnapshot.child(Constants.CATEGORY).value as String,
-                    serviceSnapshot.child(Constants.COLOR).value as String,
-                    serviceSnapshot.child(Constants.DATE).value as String,
-                    serviceSnapshot.child(Constants.NAME).value as String,
-                    serviceSnapshot.child(Constants.PRICE).value as String,
-                    serviceSnapshot.child(Constants.REMEMBER).value as String,
-                    serviceSnapshot.child(Constants.TYPE).value as String,
-                    imageUriString,
-                )
-                services.add(service)
-            }
-            continuation.resume(Unit)
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {*//* nothing *//*}
-    })*/
 
     fun createService(id: String, service: Service) {
         val database = Firebase.database

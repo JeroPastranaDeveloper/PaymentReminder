@@ -13,22 +13,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.presentation.login.LoginActivity
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
-import com.pr.paymentreminder.presentation.paymentreminder.compose.EmailField
+import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ImageLogo
 import com.pr.paymentreminder.presentation.paymentreminder.compose.LoginRegisterButton
 import com.pr.paymentreminder.presentation.paymentreminder.compose.PassField
-import com.pr.paymentreminder.presentation.paymentreminder.compose.PassRepeatField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
 import com.pr.paymentreminder.presentation.viewModels.RegisterViewModel
 import com.pr.paymentreminder.ui.theme.dimen16
@@ -68,41 +67,52 @@ class RegisterActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.height(dimen16))
 
-            EmailField(
-                emailText = emailText.value,
-                onEmailTextChange = {
-                    emailText.value = it
-                    viewModel.email = it.text
-                },
-                wasEmailFieldFocused = wasEmailFieldFocused.value,
-                onEmailFieldFocusChange = { wasEmailFieldFocused.value = it },
-                emailHelper = viewModel.emailHelperText,
-                onEmailValidation = {
-                    viewModel.validateEmail()
-                }
-            )
-            PassField(
-                passText = passText.value,
-                onPassTextChange = {
-                    passText.value = it
-                    viewModel.password = it.text
-                },
-                wasPassFieldFocused = wasPassFieldFocused.value,
-                onPassFieldFocusChange = { wasPassFieldFocused.value = it },
-                passHelper = viewModel.passHelperText,
-                onPassValidation = { viewModel.validatePassword() }
-            )
+            DefaultTextField(
+                DefaultTextFieldParams(
+                    text = emailText.value,
+                    onTextChange = {
+                        emailText.value = it
+                        viewModel.email = it.text
+                    },
+                    wasTextFieldFocused = wasEmailFieldFocused.value,
+                    onTextFieldFocusChange = { wasEmailFieldFocused.value = it },
+                    placeHolder = stringResource(R.string.email),
+                    textHelper = viewModel.emailHelperText,
+                    textHelperText = stringResource(id = R.string.invalid_email)
+                )
+            ) {
+                viewModel.validateEmail()
+            }
 
-            PassRepeatField(
-                repeatPassText = repeatPassText.value,
-                onRepeatPassTextChange = { repeatPassText.value = it },
-                wasPassFieldFocused = wasRepeatPassFieldFocused.value,
-                onPassFieldFocusChange = { wasRepeatPassFieldFocused.value = it },
-                passHelper = viewModel.repeatPassHelperText,
-                onPassValidation = {
-                    viewModel.validatePasswordMatch()
-                }
-            )
+            PassField(
+                DefaultTextFieldParams(
+                    text = passText.value,
+                    onTextChange = {
+                        passText.value = it
+                        viewModel.password = it.text
+                    },
+                    wasTextFieldFocused = wasPassFieldFocused.value,
+                    onTextFieldFocusChange = { wasPassFieldFocused.value = it },
+                    placeHolder = stringResource(R.string.password),
+                    textHelper = viewModel.passHelperText,
+                    textHelperText = stringResource(id = R.string.invalid_pass)
+                )
+            ) { viewModel.validatePassword() }
+
+            PassField(
+                DefaultTextFieldParams(
+                    text = repeatPassText.value,
+                    onTextChange = {
+                        repeatPassText.value = it
+                        viewModel.repeatPassword = it.text
+                    },
+                    wasTextFieldFocused = wasRepeatPassFieldFocused.value,
+                    onTextFieldFocusChange = { wasRepeatPassFieldFocused.value = it },
+                    placeHolder = stringResource(R.string.repeat_password),
+                    textHelper = viewModel.repeatPassHelperText,
+                    textHelperText = stringResource(id = R.string.passwords_do_not_match)
+                )
+            ) { viewModel.validatePasswordMatch() }
 
             ImageLogo(R.drawable.logo_no_bg)
 
@@ -117,13 +127,13 @@ class RegisterActivity : ComponentActivity() {
                 if (isValidInput()) {
                     lifecycleScope.launch {
                         viewModel.register()
+                        startActivity(Intent(this@RegisterActivity, PaymentReminderActivity::class.java))
+                        finish()
                     }
                 } else {
                     Toast.makeText(this@RegisterActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
                 }
             }
-
-            CheckRegister()
         }
     }
 
@@ -133,14 +143,5 @@ class RegisterActivity : ComponentActivity() {
         val isPasswordMatch = viewModel.validatePasswordMatch()
 
         return isEmailValid && isPasswordValid && isPasswordMatch
-    }
-
-    @Composable
-    private fun CheckRegister() {
-        val isRegisterSuccessful by viewModel.isRegisterSuccessful.collectAsState(false)
-        if (isRegisterSuccessful) {
-            startActivity(Intent(this@RegisterActivity, PaymentReminderActivity::class.java))
-            finish()
-        }
     }
 }

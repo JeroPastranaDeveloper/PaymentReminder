@@ -34,7 +34,7 @@ class LoginViewModel @Inject constructor(
     var password: String = emptyString()
 
     init {
-        checkIfUserIsAuthenticated()
+        autoLogin()
     }
 
     fun validateEmail(): Boolean {
@@ -65,10 +65,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun checkIfUserIsAuthenticated() {
+    private fun autoLogin() {
         viewModelScope.launch {
-            val isUserAuthenticated = loginUseCase.isUserAuthenticated()
-            _isLoginSuccessful.emit(isUserAuthenticated)
+            val hasToLogin = loginUseCase.hasToLogin()
+            _isLoginSuccessful.emit(hasToLogin)
         }
     }
 }
