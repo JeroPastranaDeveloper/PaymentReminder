@@ -35,6 +35,11 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import androidx.annotation.RequiresApi
+import androidx.compose.material.Surface
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment
@@ -43,6 +48,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFra
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.GraphicViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.SettingsViewModel
+import com.pr.paymentreminder.ui.theme.dimen4
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -96,6 +102,7 @@ class PaymentReminderActivity : AppCompatActivity() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
     private fun Content() {
@@ -108,6 +115,13 @@ class PaymentReminderActivity : AppCompatActivity() {
         )
 
         Scaffold(
+            topBar = {
+                Surface (elevation = dimen4) {
+                    TopAppBar(
+                        title = { Text(stringResource(id = R.string.app_name)) }
+                    )
+                }
+            },
             bottomBar = {
                 BottomNavigationBar(navController, screens)
             }
