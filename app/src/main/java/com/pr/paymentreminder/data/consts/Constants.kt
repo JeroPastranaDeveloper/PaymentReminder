@@ -32,5 +32,7 @@ class Constants {
         const val NOTIFICATION_CHANNEL_ID = "ServiceChannel"
         const val NOTIFICATION_CHANNEL_NAME = "Service Channel"
         const val ALL_SERVICES = "Todos"
+        const val PREFERENCES = "MyPreferences"
+        const val HAS_TO_LOGIN = "hasToLogin"
     }
 }

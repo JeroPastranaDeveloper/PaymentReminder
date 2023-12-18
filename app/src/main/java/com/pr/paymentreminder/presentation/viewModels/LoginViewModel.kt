@@ -30,15 +30,11 @@ class LoginViewModel @Inject constructor(
     val isLoginSuccessful: SharedFlow<Boolean>
         get() = _isLoginSuccessful
 
-    private val _hasToLogin = MutableSharedFlow<Boolean>()
-    val hasToLogin: SharedFlow<Boolean>
-        get() = _hasToLogin
-
     var email: String = emptyString()
     var password: String = emptyString()
 
     init {
-        checkIfUserIsAuthenticated()
+        autoLogin()
     }
 
     fun validateEmail(): Boolean {
@@ -69,11 +65,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun checkIfUserIsAuthenticated() {
+    private fun autoLogin() {
         viewModelScope.launch {
-            val isUserAuthenticated = loginUseCase.isUserAuthenticated()
-            _isLoginSuccessful.emit(isUserAuthenticated && loginUseCase.hasToLogin())
-            _hasToLogin.emit(isUserAuthenticated && loginUseCase.hasToLogin())
+            val hasToLogin = loginUseCase.hasToLogin()
+            _isLoginSuccessful.emit(hasToLogin)
         }
     }
 }

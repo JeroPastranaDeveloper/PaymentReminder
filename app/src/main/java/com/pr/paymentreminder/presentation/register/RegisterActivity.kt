@@ -1,8 +1,6 @@
 package com.pr.paymentreminder.presentation.register
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -15,15 +13,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.presentation.login.LoginActivity
@@ -42,14 +40,13 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class RegisterActivity : ComponentActivity() {
     private val viewModel: RegisterViewModel by viewModels()
-    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkRegister()
         setContent {
             Content()
         }
-        sharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE)
     }
 
     @Composable
@@ -133,14 +130,11 @@ class RegisterActivity : ComponentActivity() {
                 if (isValidInput()) {
                     lifecycleScope.launch {
                         viewModel.register()
-                        sharedPreferences.edit().putBoolean("hasToLogin", true).apply()
                     }
                 } else {
                     Toast.makeText(this@RegisterActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
                 }
             }
-
-            CheckRegister()
         }
     }
 
@@ -152,12 +146,16 @@ class RegisterActivity : ComponentActivity() {
         return isEmailValid && isPasswordValid && isPasswordMatch
     }
 
-    @Composable
-    private fun CheckRegister() {
-        val isRegisterSuccessful by viewModel.isRegisterSuccessful.collectAsState(initial = sharedPreferences.getBoolean("hasToLogin", false))
-        if (isRegisterSuccessful) {
-            startActivity(Intent(this@RegisterActivity, PaymentReminderActivity::class.java))
-            finish()
+    private fun checkRegister() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isRegisterSuccessful.collect { isSuccessful ->
+                    if (isSuccessful) {
+                        startActivity(Intent(this@RegisterActivity, PaymentReminderActivity::class.java))
+                        finish()
+                    }
+                }
+            }
         }
     }
 }

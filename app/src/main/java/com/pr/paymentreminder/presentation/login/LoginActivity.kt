@@ -1,8 +1,6 @@
 package com.pr.paymentreminder.presentation.login
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -16,8 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,8 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
 import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
@@ -48,7 +46,7 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-        viewModel.checkIfUserIsAuthenticated()
+        checkLogin()
         setContent {
             Content()
         }
@@ -120,8 +118,6 @@ class LoginActivity : ComponentActivity() {
                     Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
                 }
             }
-
-            CheckLogin()
         }
     }
 
@@ -143,13 +139,16 @@ class LoginActivity : ComponentActivity() {
         return isEmailValid && isPasswordValid
     }
 
-    // TODO: INTENTAR ARREGLAR LAS SHARED PREFERENCES DE MIERDA :)
-    @Composable
-    private fun CheckLogin() {
-        val isLoginSuccessful by viewModel.isLoginSuccessful.collectAsState(viewModel.hasToLogin)
-        if (isLoginSuccessful) {
-            startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
-            finish()
+    private fun checkLogin() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isLoginSuccessful.collect { isSuccessful ->
+                    if (isSuccessful) {
+                        startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
+                        finish()
+                    }
+                }
+            }
         }
     }
 }
