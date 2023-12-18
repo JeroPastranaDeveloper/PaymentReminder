@@ -19,9 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.presentation.login.LoginActivity
@@ -43,7 +41,6 @@ class RegisterActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkRegister()
         setContent {
             Content()
         }
@@ -130,6 +127,8 @@ class RegisterActivity : ComponentActivity() {
                 if (isValidInput()) {
                     lifecycleScope.launch {
                         viewModel.register()
+                        startActivity(Intent(this@RegisterActivity, PaymentReminderActivity::class.java))
+                        finish()
                     }
                 } else {
                     Toast.makeText(this@RegisterActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
@@ -144,18 +143,5 @@ class RegisterActivity : ComponentActivity() {
         val isPasswordMatch = viewModel.validatePasswordMatch()
 
         return isEmailValid && isPasswordValid && isPasswordMatch
-    }
-
-    private fun checkRegister() {
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isRegisterSuccessful.collect { isSuccessful ->
-                    if (isSuccessful) {
-                        startActivity(Intent(this@RegisterActivity, PaymentReminderActivity::class.java))
-                        finish()
-                    }
-                }
-            }
-        }
     }
 }
