@@ -358,8 +358,9 @@ private fun SaveButton(
                     val isServiceDateValid = validateServiceDate()
                     val isServiceTypeValid = validateServiceType()
                     val isServicePriceValid = validateServicePrice()
+                    val isServiceRememberValid = validateServiceRemember()
 
-                    if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
+                    if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid && isServiceRememberValid) {
                         val serviceData = Service(
                             id = serviceId.orElse { emptyString() },
                             category = selectedCategory,
