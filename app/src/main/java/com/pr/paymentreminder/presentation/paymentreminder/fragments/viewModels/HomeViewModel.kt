@@ -75,7 +75,7 @@ class HomeViewModel @Inject constructor(
 
     private fun Service.updateDate() {
         val today = LocalDate.now()
-        if (this.getDate().isEqual(today)) {
+        if (this.getDate().isEqual(today) || this.getDate().isBefore(today)) {
             when (this.type) {
                 PaymentType.WEEKLY.type -> this.date = this.getDate().plus(1, ChronoUnit.WEEKS).format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
                 PaymentType.MONTHLY.type -> this.date = this.getDate().plus(1, ChronoUnit.MONTHS).format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
