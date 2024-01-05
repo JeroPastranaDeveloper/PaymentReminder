@@ -1,6 +1,9 @@
 package com.pr.paymentreminder.presentation.paymentreminder.compose
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,19 +64,27 @@ fun ServiceDialog(
                         modifier = Modifier.padding(spacing16),
                         verticalArrangement = Arrangement.spacedBy(dimen10)
                     ) {
-                        Image(
-                            painter = image,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(dimen200)
-                                .clip(RoundedCornerShape(percent = 5)),
-                            contentScale = ContentScale.Fit
-                        )
-                        Text(text = stringResource(id = R.string.dialog_name, service.name))
-                        Text(text = stringResource(id = R.string.dialog_date, service.date))
-                        Text(text = stringResource(id = R.string.dialog_type, service.type))
-                        Text(text = stringResource(id = R.string.dialog_pryce, service.price + "€"))
+                        with(it) {
+                            Image(
+                                painter = image,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(dimen200)
+                                    .clip(RoundedCornerShape(percent = 5))
+                                    .clickable {
+                                        url?.takeIf { it.isNotEmpty() }?.let { url ->
+                                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                            context.startActivity(intent)
+                                        }
+                                    },
+                                contentScale = ContentScale.Fit
+                            )
+                            Text(text = stringResource(id = R.string.dialog_name, name))
+                            Text(text = stringResource(id = R.string.dialog_date, date))
+                            Text(text = stringResource(id = R.string.dialog_type, type))
+                            Text(text = stringResource(id = R.string.dialog_pryce, price + "€"))
+                        }
                     }
                     IconButton(onClick = onEdit, modifier = Modifier.align(Alignment.BottomEnd)) {
                         Icon(Icons.Filled.Edit, contentDescription = null)
