@@ -23,7 +23,7 @@
         <activity
             android:name=".presentation.login.LoginActivity"
             android:exported="true"
-            android:theme="@style/Theme.PaymentReminder.Splash" >
+            android:theme="@style/Theme.PaymentReminder" >
             <intent-filter android:priority="1">
                 <action android:name="android.intent.action.MAIN" />
 
