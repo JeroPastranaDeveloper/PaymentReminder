@@ -31,6 +31,7 @@
     <string name="payment_date">Fecha de pago: %s</string>
     <string name="payment_type">Tipo de pago: %s</string>
     <string name="remember_days_before">Recordar %1$s días antes</string>
+    <string name="remember_day_before">Recordar %1$s día antes</string>
     <string name="select_category">Selecciona categoría</string>
     <string name="btn_save">Guardar</string>
     <string name="logout">Cerrar sesión</string>
