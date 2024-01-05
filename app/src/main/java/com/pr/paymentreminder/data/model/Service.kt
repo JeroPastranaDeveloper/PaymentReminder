@@ -9,5 +9,6 @@ data class Service(
     val price: String,
     val remember: String,
     val type: String,
-    val image: String?
+    val image: String,
+    val url: String?
 )

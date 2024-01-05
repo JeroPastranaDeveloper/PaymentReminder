@@ -28,6 +28,7 @@ class ServicesDataSource @Inject constructor() {
                     val services = mutableListOf<Service>()
                     for (serviceSnapshot in snapshot.children) {
                         val imageUriString = serviceSnapshot.child(Constants.IMAGE).value as? String? ?: emptyString()
+                        val url = serviceSnapshot.child(Constants.URL).value as? String? ?: emptyString()
                         val service = Service(
                             serviceSnapshot.key.orElse { emptyString() },
                             serviceSnapshot.child(Constants.CATEGORY).value as? String ?: emptyString(),
@@ -38,6 +39,7 @@ class ServicesDataSource @Inject constructor() {
                             serviceSnapshot.child(Constants.REMEMBER).value as? String ?: emptyString(),
                             serviceSnapshot.child(Constants.TYPE).value as? String ?: emptyString(),
                             imageUriString,
+                            url
                         )
                         services.add(service)
                     }

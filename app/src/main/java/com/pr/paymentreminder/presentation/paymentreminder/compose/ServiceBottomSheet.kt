@@ -2,18 +2,14 @@ package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.app.DatePickerDialog
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -33,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -48,7 +43,6 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
-import com.pr.paymentreminder.ui.theme.dimen2
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.emptyString
@@ -65,6 +59,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     val context = LocalContext.current
 
     var imageUrl by remember { mutableStateOf(TextFieldValue(service?.image ?: emptyString())) }
+    var serviceUrl by remember { mutableStateOf(TextFieldValue(service?.url ?: emptyString())) }
 
     /*val imageUriString = service?.image
     val imageUri = remember { mutableStateOf(imageUriString?.let { Uri.parse(it) }) }
@@ -90,8 +85,8 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     var selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
     val daysRemember = listOf(1, 2, 3)
 
-    val selectedColor by remember { mutableStateOf(Color.White) }
-    var colorPickerDialogOpen by remember { mutableStateOf(false) }
+    /*val selectedColor by remember { mutableStateOf(Color.White) }
+    var colorPickerDialogOpen by remember { mutableStateOf(false) }*/
 
     // TODO: ARREGLAR VISIBILIDAD DE LOS COJONES
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
@@ -125,6 +120,19 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     value = imageUrl,
                     onValueChange = { imageUrl = it },
                     label = { Text(stringResource(id = R.string.service_image_url)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = spacing8)
+                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.height(dimen16))
+
+                TextField(
+                    value = serviceUrl,
+                    onValueChange = { serviceUrl = it },
+                    label = { Text(stringResource(id = R.string.service_url)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = spacing8)
@@ -239,7 +247,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         }
                     }
 
-                    Box(
+                    /*Box(
                         modifier = Modifier
                             .size(dimen56)
                             .clip(CircleShape)
@@ -248,9 +256,8 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             .clickable {
                                 colorPickerDialogOpen = true
                             }
-                    )
+                    )*/
                 }
-                Spacer(modifier = Modifier.height(dimen16))
 
                 ServiceSeparator()
 
@@ -266,6 +273,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         serviceId = serviceId,
                         selectedRemember = selectedRemember,
                         imageUri = imageUrl,
+                        serviceUrl = serviceUrl,
                         service = service,
                         onDismiss = onDismiss,
                         context = context
@@ -369,7 +377,8 @@ private fun SaveButton(
                             price = servicePrice,
                             remember = selectedRemember,
                             type = selectedPaymentType,
-                            image = imageUri.text
+                            image = imageUri.text,
+                            url = serviceUrl.text
                         )
 
                         if (service != null) {
@@ -418,7 +427,8 @@ private fun updateService(
         price = service.price,
         remember = service.remember,
         type = service.type,
-        image = service.image
+        image = service.image,
+        url = service.url
     )
     viewModel.updateService(
         service.id.orElse { emptyString() },
@@ -439,7 +449,8 @@ private fun createService(
         price = serviceData.price,
         remember = serviceData.remember,
         type = serviceData.type,
-        image = serviceData.image.toString()
+        image = serviceData.image,
+        url = serviceData.url
     )
     viewModel.createService(newService)
 }
