@@ -2,6 +2,7 @@ package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.content.Intent
 import android.net.Uri
+import android.webkit.URLUtil
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -74,8 +75,10 @@ fun ServiceDialog(
                                     .clip(RoundedCornerShape(percent = 5))
                                     .clickable {
                                         url?.takeIf { it.isNotEmpty() }?.let { url ->
-                                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                                            context.startActivity(intent)
+                                            if (URLUtil.isValidUrl(url)) {
+                                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                                context.startActivity(intent)
+                                            }
                                         }
                                     },
                                 contentScale = ContentScale.Fit
