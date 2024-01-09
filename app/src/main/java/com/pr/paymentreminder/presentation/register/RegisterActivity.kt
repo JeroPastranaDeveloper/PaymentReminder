@@ -26,7 +26,7 @@ import com.pr.paymentreminder.presentation.login.LoginActivity
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
 import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ImageLogo
-import com.pr.paymentreminder.presentation.paymentreminder.compose.LoginRegisterButton
+import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLoginButton
 import com.pr.paymentreminder.presentation.paymentreminder.compose.PassField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
 import com.pr.paymentreminder.presentation.viewModels.RegisterViewModel
@@ -123,7 +123,7 @@ class RegisterActivity : ComponentActivity() {
                 finish()
             }
 
-            LoginRegisterButton(R.string.register) {
+            RegisterLoginButton(R.string.register) {
                 if (isValidInput()) {
                     lifecycleScope.launch {
                         viewModel.register()

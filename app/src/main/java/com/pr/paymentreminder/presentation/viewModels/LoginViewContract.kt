@@ -7,8 +7,8 @@ class LoginViewContract : BaseViewContract() {
     data class UiState(
         val email: String = emptyString(),
         val password: String = emptyString(),
-        val emailHelperText: String? = emptyString(),
-        val passwordHelperText: String? = emptyString(),
+        val hasEmailHelperText: Boolean = false,
+        val hasPasswordHelperText: Boolean = false,
         val isLoginSuccessful: Boolean = false
     )
 
