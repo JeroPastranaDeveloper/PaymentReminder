@@ -1,19 +1,19 @@
-package com.pr.paymentreminder.presentation.viewModels
+package com.pr.paymentreminder.presentation.viewModels.login
 
 import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseHeaderComposeViewModelWithActions
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
-import com.pr.paymentreminder.presentation.viewModels.LoginViewContract.UiState
-import com.pr.paymentreminder.presentation.viewModels.LoginViewContract.UiIntent
-import com.pr.paymentreminder.presentation.viewModels.LoginViewContract.UiAction
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginNewViewModel @Inject constructor(
+class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase
 ) : BaseHeaderComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
 
@@ -23,37 +23,35 @@ class LoginNewViewModel @Inject constructor(
     override suspend fun manageIntent(intent: UiIntent) {
         when (intent) {
             is UiIntent.ValidatePassword -> validatePassword(intent.password)
-            UiIntent.DoLogin -> dispatchAction(UiAction.Login(state.value.email, state.value.password))
             is UiIntent.ValidateEmail -> validateEmail(intent.email)
+            is UiIntent.DoLogin -> login(intent.email, intent.password)
+            UiIntent.AutoLogin -> autoLogin()
+            UiIntent.GoRegister -> dispatchAction(UiAction.GoRegister)
         }
     }
+
+    private fun login(email: String, password: String) {
+        viewModelScope.launch {
+            loginUseCase.login(email, password)
+        }
+        dispatchAction(UiAction.Login)
+    }
+
     init {
         autoLogin()
     }
 
     private fun validateEmail(email: String?) {
-        if (!Patterns.EMAIL_ADDRESS.matcher(email.orEmpty()).matches() || email?.isEmpty() == true) {
-            setState {
-                copy(
-                    hasEmailHelperText = true
-                )
-            }
+        val isEmailInvalid = !Patterns.EMAIL_ADDRESS.matcher(email.orEmpty()).matches() || email?.isEmpty() == true
+        setState {
+            copy(hasEmailHelperText = isEmailInvalid)
         }
     }
 
     private fun validatePassword(password: String?) {
-        if (password.isNullOrEmpty() || password.length < 8 || !password.matches(".*[0-9].*".toRegex())) {
-            setState {
-                copy(
-                    hasPasswordHelperText = true
-                )
-            }
-        } else {
-            setState {
-                copy(
-                    hasPasswordHelperText = false
-                )
-            }
+        val isPasswordInvalid = password.isNullOrEmpty() || password.length < 8 || !password.matches(".*[0-9].*".toRegex())
+        setState {
+            copy(hasPasswordHelperText = isPasswordInvalid)
         }
     }
 

@@ -34,10 +34,10 @@ import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLogin
 import com.pr.paymentreminder.presentation.paymentreminder.compose.NewPassField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
 import com.pr.paymentreminder.presentation.register.RegisterActivity
-import com.pr.paymentreminder.presentation.viewModels.LoginNewViewModel
-import com.pr.paymentreminder.presentation.viewModels.LoginViewContract.UiState
-import com.pr.paymentreminder.presentation.viewModels.LoginViewContract.UiIntent
-import com.pr.paymentreminder.presentation.viewModels.LoginViewContract.UiAction
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewModel
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiAction
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.spacing16
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,12 +45,18 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : BaseActivity() {
-    private val viewModel: LoginNewViewModel by viewModels()
+    private val viewModel: LoginViewModel by viewModels()
 
     private fun handleAction(action: UiAction) {
         when(action) {
-            is UiAction.Login -> doLogin()
+            UiAction.Login -> doLogin()
+            UiAction.GoRegister -> goRegister()
         }
+    }
+
+    private fun goRegister() {
+        startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+        finish()
     }
 
     private fun doLogin() {
@@ -105,19 +111,17 @@ class LoginActivity : BaseActivity() {
             Spacer(modifier = Modifier.weight(1f))
 
             UnderlinedText(text = R.string.register) {
-                startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
-                finish()
+                viewModel.sendIntent(UiIntent.GoRegister)
             }
 
             RegisterLoginButton(R.string.login) {
-                initialValidations(emailText, passText)
+                viewModel.sendIntent(UiIntent.DoLogin(emailText.value.text, passText.value.text))
+                /*initialValidations(emailText, passText)
                 if (isValidInput(state)) {
-                    lifecycleScope.launch {
-                        viewModel.sendIntent(UiIntent.DoLogin)
-                    }
+                    viewModel.sendIntent(UiIntent.DoLogin(emailText.value.text, passText.value.text))
                 } else {
                     Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
-                }
+                }*/
             }
         }
     }
@@ -141,7 +145,7 @@ class LoginActivity : BaseActivity() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 if (viewModel.state.value.isLoginSuccessful) {
-                    viewModel.sendIntent(UiIntent.DoLogin)
+                    viewModel.sendIntent(UiIntent.AutoLogin)
                 }
             }
         }
