@@ -26,7 +26,7 @@ import com.pr.paymentreminder.ui.theme.spacing8
 
 
 @Composable
-fun PassField(
+fun PasswordField(
     params: DefaultTextFieldParams,
 ) {
     with(params) {

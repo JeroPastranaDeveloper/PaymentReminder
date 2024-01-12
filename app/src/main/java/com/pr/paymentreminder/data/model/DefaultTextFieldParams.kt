@@ -9,11 +9,3 @@ data class DefaultTextFieldParams(
     val textHelperText: String,
     val placeHolder: String
 )
-
-data class EmailTextFieldParams(
-    val text: TextFieldValue,
-    val onTextChange: (TextFieldValue) -> Unit,
-    val hasHelperText: Boolean,
-    val textHelperText: String,
-    val placeHolder: String
-)

@@ -26,12 +26,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.base.BaseActivity
 import com.pr.paymentreminder.base.addRepeatingJob
-import com.pr.paymentreminder.data.model.EmailTextFieldParams
+import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
-import com.pr.paymentreminder.presentation.paymentreminder.compose.EmailTextField
+import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ImageLogo
 import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLoginButton
-import com.pr.paymentreminder.presentation.paymentreminder.compose.NewPassField
+import com.pr.paymentreminder.presentation.paymentreminder.compose.PasswordField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
 import com.pr.paymentreminder.presentation.register.RegisterActivity
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewModel
@@ -80,8 +80,8 @@ class LoginActivity : BaseActivity() {
 
             Spacer(modifier = Modifier.height(dimen16))
 
-            EmailTextField(
-                EmailTextFieldParams(
+            DefaultTextField(
+                DefaultTextFieldParams(
                     text = emailText.value,
                     onTextChange = {
                         emailText.value = it
@@ -93,8 +93,8 @@ class LoginActivity : BaseActivity() {
                 )
             )
 
-            NewPassField(
-                EmailTextFieldParams(
+            PasswordField(
+                DefaultTextFieldParams(
                     text = passText.value,
                     onTextChange = {
                         passText.value = it

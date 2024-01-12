@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,12 +24,12 @@ import androidx.lifecycle.Lifecycle
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.base.BaseActivity
 import com.pr.paymentreminder.base.addRepeatingJob
-import com.pr.paymentreminder.data.model.EmailTextFieldParams
+import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.presentation.login.LoginActivity
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
-import com.pr.paymentreminder.presentation.paymentreminder.compose.EmailTextField
+import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ImageLogo
-import com.pr.paymentreminder.presentation.paymentreminder.compose.NewPassField
+import com.pr.paymentreminder.presentation.paymentreminder.compose.PasswordField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLoginButton
 import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
 import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiAction
@@ -82,8 +83,8 @@ class RegisterActivity : BaseActivity() {
 
             Spacer(modifier = Modifier.height(dimen16))
 
-            EmailTextField(
-                EmailTextFieldParams(
+            DefaultTextField(
+                DefaultTextFieldParams(
                     text = emailText.value,
                     onTextChange = {
                         emailText.value = it
@@ -95,8 +96,8 @@ class RegisterActivity : BaseActivity() {
                 )
             )
 
-            NewPassField(
-                EmailTextFieldParams(
+            PasswordField(
+                DefaultTextFieldParams(
                     text = passText.value,
                     onTextChange = {
                         passText.value = it
@@ -108,8 +109,8 @@ class RegisterActivity : BaseActivity() {
                 )
             )
 
-            NewPassField(
-                EmailTextFieldParams(
+            PasswordField(
+                DefaultTextFieldParams(
                     text = repeatPassText.value,
                     onTextChange = {
                         repeatPassText.value = it
@@ -130,9 +131,7 @@ class RegisterActivity : BaseActivity() {
             }
 
             RegisterLoginButton(R.string.register) {
-                viewModel.sendIntent(UiIntent.ValidateEmail(emailText.value.text))
-                viewModel.sendIntent(UiIntent.ValidatePassword(passText.value.text))
-                viewModel.sendIntent(UiIntent.ValidatePasswordValidation(passText.value.text, repeatPassText.value.text))
+                validations(emailText, passText, repeatPassText)
                 if (isValidInput(state)) {
                     viewModel.sendIntent(UiIntent.Register(emailText.value.text, passText.value.text))
                 } else {
@@ -141,6 +140,22 @@ class RegisterActivity : BaseActivity() {
             }
         }
     }
+
+    private fun validations(
+        emailText: MutableState<TextFieldValue>,
+        passText: MutableState<TextFieldValue>,
+        repeatPassText: MutableState<TextFieldValue>
+    ) {
+        viewModel.sendIntent(UiIntent.ValidateEmail(emailText.value.text))
+        viewModel.sendIntent(UiIntent.ValidatePassword(passText.value.text))
+        viewModel.sendIntent(
+            UiIntent.ValidatePasswordValidation(
+                passText.value.text,
+                repeatPassText.value.text
+            )
+        )
+    }
+
     private fun goLogin() {
         startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
         finish()
