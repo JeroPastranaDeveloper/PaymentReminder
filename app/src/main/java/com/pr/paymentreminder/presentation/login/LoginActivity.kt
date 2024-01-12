@@ -66,6 +66,7 @@ class LoginActivity : BaseActivity() {
 
     @Composable
     private fun Content(state: UiState) {
+        val hasEmailHelperText = state.hasEmailHelperText
         Column(
             modifier = Modifier
                 .padding(spacing16)
@@ -88,7 +89,7 @@ class LoginActivity : BaseActivity() {
                         viewModel.sendIntent(UiIntent.ValidateEmail(it.text))
                     },
                     placeHolder = stringResource(R.string.email),
-                    hasHelperText = state.hasEmailHelperText,
+                    hasHelperText = hasEmailHelperText,
                     textHelperText = stringResource(id = R.string.invalid_email)
                 )
             )
@@ -140,10 +141,10 @@ class LoginActivity : BaseActivity() {
         return isEmailValid && isPasswordValid
     }
 
-    private fun checkLogin() {
+    private fun checkLogin(state: UiState) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                if (viewModel.state.value.isLoginSuccessful) {
+                if (state.isLoginSuccessful) {
                     viewModel.sendIntent(UiIntent.AutoLogin)
                 }
             }
@@ -154,8 +155,8 @@ class LoginActivity : BaseActivity() {
     override fun ComposableContent() {
         // installSplashScreen()
         addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect(::handleAction) }
-        checkLogin()
         val state by viewModel.state.collectAsState(UiState())
+        checkLogin(state)
         setContent {
             Content(state)
         }
