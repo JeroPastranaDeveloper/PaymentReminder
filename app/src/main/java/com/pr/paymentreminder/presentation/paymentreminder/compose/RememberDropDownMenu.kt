@@ -28,7 +28,7 @@ fun RememberDropDownMenu(
     var daysExpanded by remember { mutableStateOf(false) }
 
     Text(
-        text = stringResource(id = R.string.remember_days_before, selectedDay),
+        text = stringResource(id = if (selectedDay == rememberDays[0].toString()) R.string.remember_day_before else R.string.remember_days_before, selectedDay),
         modifier = Modifier.clickable { daysExpanded = !daysExpanded }
     )
 
