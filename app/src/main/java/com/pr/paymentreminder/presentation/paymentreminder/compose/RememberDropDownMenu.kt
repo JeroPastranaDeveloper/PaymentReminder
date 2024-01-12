@@ -6,7 +6,6 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,21 +15,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.ui.theme.emptyString
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun RememberDropDownMenu(
     rememberDays: List<Int> = listOf(1, 2, 3),
     initialSelectedDay: String = emptyString(),
-    textHelper: StateFlow<String?>,
+    hasHelperText: Boolean,
     textHelperText: String,
     onDaySelected: (String) -> Unit
 ) {
     var selectedDay by remember { mutableStateOf(initialSelectedDay) }
     var daysExpanded by remember { mutableStateOf(false) }
-
-    val hasHelperText by textHelper.collectAsState(null)
 
     Text(
         text = stringResource(id = R.string.remember_days_before, selectedDay),
@@ -39,9 +34,7 @@ fun RememberDropDownMenu(
 
     ServiceSeparator()
 
-    hasHelperText?.let {
-        HelperText(textHelperText)
-    }
+    if (hasHelperText) HelperText(textHelperText)
 
     DropdownMenu(
         expanded = daysExpanded,
@@ -68,7 +61,7 @@ private fun RememberDropDownMenuPreview() {
         RememberDropDownMenu(
             rememberDays = listOf(1, 2, 3),
             initialSelectedDay = "2",
-            textHelper = MutableStateFlow<String?>(null),
+            hasHelperText = false,
             textHelperText = stringResource(id = R.string.invalid_service_remember)
         ) { /* Nothing */ }
     }
@@ -81,7 +74,7 @@ private fun RememberDropDownMenuHelperTextPreview() {
         RememberDropDownMenu(
             rememberDays = listOf(1, 2, 3),
             initialSelectedDay = "2",
-            textHelper = MutableStateFlow(emptyString()),
+            hasHelperText = true,
             textHelperText = stringResource(id = R.string.invalid_service_remember)
         ) { /* Nothing */ }
     }

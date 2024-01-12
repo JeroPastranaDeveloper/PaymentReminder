@@ -2,7 +2,7 @@ package com.pr.paymentreminder.presentation.viewModels.register
 
 import android.util.Patterns
 import androidx.lifecycle.viewModelScope
-import com.pr.paymentreminder.base.BaseHeaderComposeViewModelWithActions
+import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.domain.usecase.RegisterUseCase
 import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiIntent
 import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiAction
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase
-) : BaseHeaderComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
+) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
 
     private val _isRegisterSuccessful = MutableSharedFlow<Boolean>()

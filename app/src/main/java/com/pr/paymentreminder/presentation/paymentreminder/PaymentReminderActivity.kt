@@ -46,8 +46,8 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFrag
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.GraphicViewModel
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.SettingsViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewModel
 import com.pr.paymentreminder.ui.theme.dimen4
 import dagger.hilt.android.AndroidEntryPoint
 

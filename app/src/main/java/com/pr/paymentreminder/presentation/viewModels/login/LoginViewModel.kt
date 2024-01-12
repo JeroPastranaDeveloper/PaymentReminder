@@ -2,7 +2,7 @@ package com.pr.paymentreminder.presentation.viewModels.login
 
 import android.util.Patterns
 import androidx.lifecycle.viewModelScope
-import com.pr.paymentreminder.base.BaseHeaderComposeViewModelWithActions
+import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase
-) : BaseHeaderComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
+) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
 
     override val initialViewState = UiState()
     private val _isLoginSuccessful = MutableSharedFlow<Boolean>()

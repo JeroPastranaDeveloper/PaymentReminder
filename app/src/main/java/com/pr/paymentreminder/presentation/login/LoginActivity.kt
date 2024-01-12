@@ -115,13 +115,12 @@ class LoginActivity : BaseActivity() {
             }
 
             RegisterLoginButton(R.string.login) {
-                viewModel.sendIntent(UiIntent.DoLogin(emailText.value.text, passText.value.text))
-                /*initialValidations(emailText, passText)
+                initialValidations(emailText, passText)
                 if (isValidInput(state)) {
                     viewModel.sendIntent(UiIntent.DoLogin(emailText.value.text, passText.value.text))
                 } else {
                     Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
-                }*/
+                }
             }
         }
     }

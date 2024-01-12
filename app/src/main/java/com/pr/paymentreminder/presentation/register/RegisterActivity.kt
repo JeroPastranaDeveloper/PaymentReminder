@@ -20,22 +20,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.base.BaseActivity
 import com.pr.paymentreminder.base.addRepeatingJob
-import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.data.model.EmailTextFieldParams
 import com.pr.paymentreminder.presentation.login.LoginActivity
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
-import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.EmailTextField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ImageLogo
 import com.pr.paymentreminder.presentation.paymentreminder.compose.NewPassField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLoginButton
-import com.pr.paymentreminder.presentation.paymentreminder.compose.PassField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract
 import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiAction
 import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiState
 import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiIntent
@@ -43,7 +38,6 @@ import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewModel
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.spacing16
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RegisterActivity : BaseActivity() {
@@ -136,6 +130,9 @@ class RegisterActivity : BaseActivity() {
             }
 
             RegisterLoginButton(R.string.register) {
+                viewModel.sendIntent(UiIntent.ValidateEmail(emailText.value.text))
+                viewModel.sendIntent(UiIntent.ValidatePassword(passText.value.text))
+                viewModel.sendIntent(UiIntent.ValidatePasswordValidation(passText.value.text, repeatPassText.value.text))
                 if (isValidInput(state)) {
                     viewModel.sendIntent(UiIntent.Register(emailText.value.text, passText.value.text))
                 } else {

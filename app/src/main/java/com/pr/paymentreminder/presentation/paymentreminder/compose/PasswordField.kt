@@ -12,12 +12,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -31,10 +28,8 @@ import com.pr.paymentreminder.ui.theme.spacing8
 @Composable
 fun PassField(
     params: DefaultTextFieldParams,
-    onPassValidation: (String) -> Unit
 ) {
     with(params) {
-        val hasHelperText by textHelper.collectAsState(null)
         val passwordVisibility = remember { mutableStateOf(false) }
 
         TextField(
@@ -43,15 +38,9 @@ fun PassField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = spacing8)
-                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4))
-                .onFocusChanged {
-                    if (wasTextFieldFocused && !it.isFocused) {
-                        onPassValidation(text.text)
-                    }
-                    onTextFieldFocusChange(it.isFocused)
-                },
+                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
             label = { Text(text = placeHolder) },
-            isError = !textHelper.value.isNullOrEmpty(),
+            isError = hasHelperText,
             visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
             singleLine = true,
             trailingIcon = {
@@ -64,8 +53,6 @@ fun PassField(
             }
         )
 
-        hasHelperText?.let {
-            HelperText(textHelperText)
-        }
+        if (hasHelperText) HelperText(textHelperText)
     }
 }
