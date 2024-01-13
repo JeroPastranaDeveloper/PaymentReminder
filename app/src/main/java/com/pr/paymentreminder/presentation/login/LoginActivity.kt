@@ -47,6 +47,17 @@ import kotlinx.coroutines.launch
 class LoginActivity : BaseActivity() {
     private val viewModel: LoginViewModel by viewModels()
 
+    @Composable
+    override fun ComposableContent() {
+        // installSplashScreen()
+        addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect(::handleAction) }
+        val state by viewModel.state.collectAsState(UiState())
+        checkLogin(state)
+        setContent {
+            Content(state)
+        }
+    }
+
     private fun handleAction(action: UiAction) {
         when(action) {
             UiAction.Login -> doLogin()
@@ -54,19 +65,8 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    private fun goRegister() {
-        startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
-        finish()
-    }
-
-    private fun doLogin() {
-        startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
-        finish()
-    }
-
     @Composable
     private fun Content(state: UiState) {
-        val hasEmailHelperText = state.hasEmailHelperText
         Column(
             modifier = Modifier
                 .padding(spacing16)
@@ -89,7 +89,7 @@ class LoginActivity : BaseActivity() {
                         viewModel.sendIntent(UiIntent.ValidateEmail(it.text))
                     },
                     placeHolder = stringResource(R.string.email),
-                    hasHelperText = hasEmailHelperText,
+                    hasHelperText = state.hasEmailHelperText,
                     textHelperText = stringResource(id = R.string.invalid_email)
                 )
             )
@@ -135,8 +135,8 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun isValidInput(state: UiState): Boolean {
-        val isEmailValid = state.hasEmailHelperText
-        val isPasswordValid = state.hasPasswordHelperText
+        val isEmailValid = !state.hasEmailHelperText
+        val isPasswordValid = !state.hasPasswordHelperText
 
         return isEmailValid && isPasswordValid
     }
@@ -151,14 +151,13 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    @Composable
-    override fun ComposableContent() {
-        // installSplashScreen()
-        addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect(::handleAction) }
-        val state by viewModel.state.collectAsState(UiState())
-        checkLogin(state)
-        setContent {
-            Content(state)
-        }
+    private fun goRegister() {
+        startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+        finish()
+    }
+
+    private fun doLogin() {
+        startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
+        finish()
     }
 }
