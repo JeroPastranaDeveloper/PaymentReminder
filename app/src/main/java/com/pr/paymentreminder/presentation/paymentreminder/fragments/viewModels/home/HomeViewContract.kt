@@ -25,10 +25,10 @@ class HomeViewContract : BaseViewContract() {
         data class ValidateServiceDate(val serviceDate: String) : UiIntent()
         data class ValidateServiceType(val selectedPaymentType: String) : UiIntent()
         data class ValidateServiceRemember(val selectedRemember: String) : UiIntent()
-        object GetServices : UiIntent()
+        data object GetServices : UiIntent()
     }
 
     sealed class UiAction {
-        object RemoveService : UiAction()
+        data object RemoveService : UiAction()
     }
 }

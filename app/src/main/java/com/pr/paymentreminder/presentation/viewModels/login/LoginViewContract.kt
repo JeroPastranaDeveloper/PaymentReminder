@@ -16,12 +16,12 @@ class LoginViewContract : BaseViewContract() {
         data class ValidateEmail(val email: String?) : UiIntent()
         data class ValidatePassword(val password: String?) : UiIntent()
         data class DoLogin(val email: String, val password: String) : UiIntent()
-        object AutoLogin : UiIntent()
-        object GoRegister : UiIntent()
+        data object AutoLogin : UiIntent()
+        data object GoRegister : UiIntent()
     }
 
     sealed class UiAction {
-        object Login : UiAction()
-        object GoRegister : UiAction()
+        data object Login : UiAction()
+        data object GoRegister : UiAction()
     }
 }

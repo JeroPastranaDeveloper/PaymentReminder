@@ -19,11 +19,11 @@ class RegisterViewContract : BaseViewContract() {
         data class ValidatePassword(val password: String?) : UiIntent()
         data class ValidatePasswordValidation(val password: String?, val passwordValidation: String?) : UiIntent()
         data class Register(val email: String?, val password: String?) : UiIntent()
-        object GoLogin : UiIntent()
+        data object GoLogin : UiIntent()
     }
 
     sealed class UiAction {
-        object Register : UiAction()
-        object GoLogin : UiAction()
+        data object Register : UiAction()
+        data object GoLogin : UiAction()
     }
 }

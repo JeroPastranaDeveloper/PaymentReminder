@@ -9,11 +9,11 @@ class SettingsViewContract : BaseViewContract() {
     )
 
     sealed class UiIntent {
-        object SignOut : UiIntent()
-        object ShowSignOutDialog : UiIntent()
+        data object SignOut : UiIntent()
+        data object ShowSignOutDialog : UiIntent()
     }
 
     sealed class UiAction {
-        object SignOut : UiAction()
+        data object SignOut : UiAction()
     }
 }
