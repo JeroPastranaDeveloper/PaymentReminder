@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.Chip
-import androidx.compose.material.ChipDefaults
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,26 +18,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.presentation.paymentreminder.compose.DonutChart
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.GraphicViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.compose.ServicesChip
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewModel
 import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.spacing16
-import com.pr.paymentreminder.ui.theme.spacing4
 
 @Composable
-fun GraphicFragment(graphicViewModel: GraphicViewModel) {
-    val services by graphicViewModel.filteredServices.collectAsState()
+fun GraphicFragment(viewModel: GraphicViewModel) {
 
+    val state by viewModel.state.collectAsState(UiState())
     var selectedChip by remember { mutableStateOf(Constants.ALL_SERVICES) }
 
     val paymentWeekly = PaymentType.WEEKLY.type
     val paymentMonthly = PaymentType.MONTHLY.type
     val paymentYearly = PaymentType.YEARLY.type
+
+    fun handleAction(action: UiAction) {
+        when (action) {
+            else -> {}
+        }
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.actions.collect { action ->
+            handleAction(action)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -50,52 +62,34 @@ fun GraphicFragment(graphicViewModel: GraphicViewModel) {
         Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
             ServicesChip(
                 title = stringResource(id = R.string.all_services),
-                onClick = { graphicViewModel.filterServices(Constants.ALL_SERVICES) },
+                onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(Constants.ALL_SERVICES)) },
                 selected = selectedChip == Constants.ALL_SERVICES,
                 onSelectedChange = { selectedChip = it }
             )
             ServicesChip(
                 title = stringResource(id = R.string.weekly_services),
-                onClick = { graphicViewModel.filterServices(paymentWeekly) },
+                onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(paymentWeekly)) },
                 selected = selectedChip == paymentWeekly,
                 onSelectedChange = { selectedChip = it }
             )
             ServicesChip(
                 title = stringResource(id = R.string.monthly_services),
-                onClick = { graphicViewModel.filterServices(paymentMonthly) },
+                onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(paymentMonthly)) },
                 selected = selectedChip == paymentMonthly,
                 onSelectedChange = { selectedChip = it }
             )
             ServicesChip(
                 title = stringResource(id = R.string.yearly_services),
-                onClick = { graphicViewModel.filterServices(paymentYearly) },
+                onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(paymentYearly)) },
                 selected = selectedChip == paymentYearly,
                 onSelectedChange = { selectedChip = it }
             )
         }
 
-        if (services.isEmpty()) {
+        if (state.services.isEmpty()) {
             Text(stringResource(id = R.string.no_services), modifier = Modifier.padding(top = spacing16).align(Alignment.CenterHorizontally))
         } else {
-            DonutChart(services)
+            DonutChart(state.services)
         }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun ServicesChip(title: String, onClick: () -> Unit, selected: Boolean, onSelectedChange: (String) -> Unit) {
-    Chip(
-        onClick = {
-            onClick()
-            onSelectedChange(title)
-        },
-        modifier = Modifier.padding(end = spacing4),
-        colors = ChipDefaults.chipColors(
-            contentColor = if (selected) Color.White else Color.Black,
-            backgroundColor = if (selected) Color.Gray else Color.LightGray
-        )
-    ) {
-        Text(title)
     }
 }
