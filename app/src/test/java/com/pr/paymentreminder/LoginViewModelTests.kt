@@ -4,8 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewModel
-import com.pr.paymentreminder.ui.theme.emptyString
-import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
