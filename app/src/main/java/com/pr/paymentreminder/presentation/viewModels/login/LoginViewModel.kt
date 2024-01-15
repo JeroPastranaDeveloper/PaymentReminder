@@ -42,7 +42,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun validateEmail(email: String?) {
-        val isEmailInvalid = !Patterns.EMAIL_ADDRESS.matcher(email.orEmpty()).matches() || email?.isEmpty() == true
+        val isEmailInvalid = /*!Patterns.EMAIL_ADDRESS.matcher(email.orEmpty()).matches() || */ email?.isEmpty() == true
         setState {
             copy(hasEmailHelperText = isEmailInvalid)
         }
