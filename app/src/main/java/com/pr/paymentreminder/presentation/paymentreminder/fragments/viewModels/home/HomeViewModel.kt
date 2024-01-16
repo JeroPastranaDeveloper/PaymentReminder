@@ -8,6 +8,7 @@ import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.data.model.ServiceItem
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
@@ -31,12 +32,7 @@ class HomeViewModel @Inject constructor(
             is UiIntent.RemoveService -> removeService(intent.serviceId)
             is UiIntent.CreateService -> createService(intent.service)
             is UiIntent.UpdateService -> updateService(intent.serviceId, intent.service)
-            is UiIntent.ValidateServiceCategory -> validateServiceCategory(intent.selectedCategory)
-            is UiIntent.ValidateServiceDate -> validateServiceDate(intent.serviceDate)
-            is UiIntent.ValidateServiceName -> validateServiceName(intent.serviceName)
-            is UiIntent.ValidateServicePrice -> validateServicePrice(intent.servicePrice)
-            is UiIntent.ValidateServiceRemember -> validateServiceRemember(intent.selectedRemember)
-            is UiIntent.ValidateServiceType -> validateServiceType(intent.selectedPaymentType)
+            is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)
             UiIntent.GetServices -> getServices()
         }
     }
@@ -115,51 +111,15 @@ class HomeViewModel @Inject constructor(
         dispatchAction(UiAction.RemoveService)
     }
 
-    private fun validateServiceCategory(category: String) {
-        setState {
-            copy(
-                serviceCategoryHelperText = category.isEmpty()
-            )
-        }
-    }
-
-    private fun validateServiceDate(date: String) {
-        setState {
-            copy(
-                serviceDateHelperText = date.isEmpty()
-            )
-        }
-    }
-
-    private fun validateServiceName(name: String) {
-        setState {
-            copy(
-                serviceNameHelperText = name.isEmpty()
-            )
-        }
-    }
-
-    private fun validateServicePrice(price: String) {
-        setState {
-            copy(
-                servicePriceHelperText = price.isEmpty()
-            )
-        }
-    }
-
-    private fun validateServiceRemember(remember: String) {
-        setState {
-            copy(
-                serviceRememberHelperText = remember.isEmpty()
-            )
-        }
-    }
-
-    private fun validateServiceType(type: String) {
-        setState {
-            copy(
-                serviceTypeHelperText = type.isEmpty()
-            )
+    private fun validateServiceItem(item: ServiceItem, value: String) {
+        val isEmpty = value.isEmpty()
+        when (item) {
+            ServiceItem.NAME -> setState { copy(serviceNameHelperText = isEmpty) }
+            ServiceItem.CATEGORY -> setState { copy(serviceCategoryHelperText = isEmpty) }
+            ServiceItem.DATE -> setState { copy(serviceDateHelperText = isEmpty) }
+            ServiceItem.TYPE -> setState { copy(serviceTypeHelperText = isEmpty) }
+            ServiceItem.PRICE -> setState { copy(servicePriceHelperText = isEmpty) }
+            ServiceItem.REMEMBER -> setState { copy(serviceRememberHelperText = isEmpty) }
         }
     }
 }

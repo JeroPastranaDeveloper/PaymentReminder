@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModelWithActions<S, I, A> : BaseViewModel<S, I>() {
 
-    protected final override val _state: MutableStateFlow<S> by lazy { MutableStateFlow(initialViewState) }
+    final override val _state: MutableStateFlow<S> by lazy { MutableStateFlow(initialViewState) }
     final override val state: StateFlow<S> get() = _state
 
     private val pendingActions: MutableList<A> = mutableListOf()
