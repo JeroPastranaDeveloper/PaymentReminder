@@ -95,11 +95,3 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
-
-kotlin {
-    sourceSets.all {
-        languageSettings {
-            languageVersion = "1.9"
-        }
-    }
-}
