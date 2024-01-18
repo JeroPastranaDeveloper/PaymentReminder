@@ -8,7 +8,6 @@ import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.Ui
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiAction
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,12 +17,11 @@ class LoginViewModel @Inject constructor(
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
 
     override val initialViewState = UiState()
-    private val _isLoginSuccessful = MutableSharedFlow<Boolean>()
 
     override suspend fun manageIntent(intent: UiIntent) {
         when (intent) {
-            is UiIntent.ValidatePassword -> validatePassword(intent.password)
             is UiIntent.ValidateEmail -> validateEmail(intent.email)
+            is UiIntent.ValidatePassword -> validatePassword(intent.password)
             is UiIntent.DoLogin -> login(intent.email, intent.password)
             UiIntent.AutoLogin -> autoLogin()
             UiIntent.GoRegister -> dispatchAction(UiAction.GoRegister)
@@ -41,15 +39,15 @@ class LoginViewModel @Inject constructor(
         autoLogin()
     }
 
-    private fun validateEmail(email: String?) {
-        val isEmailInvalid = /*!Patterns.EMAIL_ADDRESS.matcher(email.orEmpty()).matches() || */ email?.isEmpty() == true
+    private fun validateEmail(email: String) {
+        val isEmailInvalid = !Patterns.EMAIL_ADDRESS.matcher(email).matches() || email.isEmpty()
         setState {
             copy(hasEmailHelperText = isEmailInvalid)
         }
     }
 
-    private fun validatePassword(password: String?) {
-        val isPasswordInvalid = password.isNullOrEmpty() || password.length < 8 || !password.matches(".*[0-9].*".toRegex())
+    private fun validatePassword(password: String) {
+        val isPasswordInvalid = password.isEmpty() || password.length < 8 || !password.matches(".*[0-9].*".toRegex())
         setState {
             copy(hasPasswordHelperText = isPasswordInvalid)
         }
@@ -58,18 +56,11 @@ class LoginViewModel @Inject constructor(
     private fun autoLogin() {
         viewModelScope.launch {
             val hasToLogin = loginUseCase.hasToLogin()
-            _isLoginSuccessful.emit(hasToLogin)
             setState {
                 copy(
                     isLoginSuccessful = hasToLogin
                 )
             }
-        }
-
-        setState {
-            copy(
-                isLoginSuccessful = false
-            )
         }
 
         if (state.value.isLoginSuccessful) {

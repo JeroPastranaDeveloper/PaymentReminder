@@ -48,9 +48,7 @@ class RegisterActivity : BaseActivity() {
     override fun ComposableContent() {
         addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect(::handleAction) }
         val state by viewModel.state.collectAsState(UiState())
-        setContent {
-            Content(state)
-        }
+        Content(state)
     }
 
     private fun handleAction(action: UiAction) {

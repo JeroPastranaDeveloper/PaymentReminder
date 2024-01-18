@@ -2,7 +2,8 @@ package com.pr.paymentreminder
 
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewModel
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,11 +33,10 @@ class LoginViewModelTests {
         )
     }
 
-    // Not working, check loginViewModel state
      @Test
      fun `WHEN email is not valid THEN has helper text`() {
          setUpViewModel()
-         val stateChannel = Channel<LoginViewContract.UiState>()
+         val stateChannel = Channel<UiState>()
 
          val job = vm.viewModelScope.launch {
              vm.state.collect { state ->
@@ -44,7 +44,7 @@ class LoginViewModelTests {
              }
          }
 
-         vm.sendIntent(LoginViewContract.UiIntent.ValidateEmail(""))
+         vm.sendIntent(UiIntent.ValidateEmail(""))
 
          runBlocking {
              val state = stateChannel.receive()

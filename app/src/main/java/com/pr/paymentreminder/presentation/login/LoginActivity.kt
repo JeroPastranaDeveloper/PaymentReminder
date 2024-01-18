@@ -16,8 +16,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.Lifecycle
@@ -50,12 +52,11 @@ class LoginActivity : BaseActivity() {
     @Composable
     override fun ComposableContent() {
         // installSplashScreen()
+
         addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect(::handleAction) }
         val state by viewModel.state.collectAsState(UiState())
         checkLogin(state)
-        setContent {
-            Content(state)
-        }
+        Content(state)
     }
 
     private fun handleAction(action: UiAction) {
@@ -74,7 +75,7 @@ class LoginActivity : BaseActivity() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            val emailText = remember { mutableStateOf(TextFieldValue("cuentadepruebas@gmail.com")) }
+            val emailText = remember { mutableStateOf(TextFieldValue("jeropastrana@gmail.com")) }
             val passText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
 
             initialValidations(emailText, passText)
