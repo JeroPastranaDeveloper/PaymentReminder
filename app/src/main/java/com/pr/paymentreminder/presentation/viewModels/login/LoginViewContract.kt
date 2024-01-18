@@ -1,7 +1,6 @@
 package com.pr.paymentreminder.presentation.viewModels.login
 
 import com.pr.paymentreminder.base.BaseViewContract
-import com.pr.paymentreminder.ui.theme.emptyString
 
 class LoginViewContract : BaseViewContract() {
     data class UiState(

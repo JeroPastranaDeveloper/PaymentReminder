@@ -2,7 +2,6 @@ package com.pr.paymentreminder.presentation.register
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
