@@ -33,6 +33,7 @@ class ServicesDataSource @Inject constructor() {
         return callbackFlow {
             val listener = servicesRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    services.clear()
                     for (serviceSnapshot in snapshot.children) {
                         val service = snapshotToService(serviceSnapshot)
                         services.add(service)
