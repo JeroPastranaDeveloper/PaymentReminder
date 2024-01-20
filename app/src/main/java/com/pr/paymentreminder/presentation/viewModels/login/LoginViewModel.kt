@@ -66,5 +66,11 @@ class LoginViewModel @Inject constructor(
         if (state.value.isLoginSuccessful) {
             dispatchAction(UiAction.Login)
         }
+
+        setState {
+            copy(
+                isLoginSuccessful = false
+            )
+        }
     }
 }

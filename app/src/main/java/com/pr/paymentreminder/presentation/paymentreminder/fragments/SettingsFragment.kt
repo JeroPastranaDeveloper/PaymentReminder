@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,11 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
-import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.login.LoginActivity
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewModel
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewModel
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.spacing16
@@ -36,12 +34,11 @@ import com.pr.paymentreminder.ui.theme.spacing4
 @Composable
 fun SettingsFragment(viewModel: SettingsViewModel) {
     val context = LocalContext.current
-    val sharedPreferences = context.getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE)
 
     fun handleAction(action: UiAction) {
         when (action) {
             is UiAction.SignOut -> {
-                signOutDialog(context = context, viewModel = viewModel, sharedPreferences = sharedPreferences)
+                signOutDialog(context = context, viewModel = viewModel)
             }
         }
     }
@@ -79,15 +76,13 @@ fun SettingsFragment(viewModel: SettingsViewModel) {
 
 private fun signOutDialog(
     context: Context,
-    viewModel: SettingsViewModel,
-    sharedPreferences: SharedPreferences
+    viewModel: SettingsViewModel
 ) {
     val dialog = AlertDialog.Builder(context)
         .setTitle(R.string.logout)
         .setMessage(R.string.logout_question)
         .setPositiveButton(R.string.yes) { _, _ ->
             viewModel.sendIntent(UiIntent.SignOut)
-            sharedPreferences.edit().clear().apply()
             val intent = Intent(context, LoginActivity::class.java)
             context.startActivity(intent)
             (context as Activity).finish()

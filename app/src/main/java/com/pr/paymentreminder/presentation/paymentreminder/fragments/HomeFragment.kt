@@ -46,11 +46,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeFragment(viewModel: HomeViewModel) {
+    val state by viewModel.state.collectAsState(UiState())
     var selectedService by remember { mutableStateOf<Service?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
-    val state by viewModel.state.collectAsState(UiState())
     val scope = rememberCoroutineScope()
 
     fun handleAction(action: UiAction) {

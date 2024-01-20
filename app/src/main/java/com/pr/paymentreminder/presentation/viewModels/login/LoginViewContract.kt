@@ -4,7 +4,7 @@ import com.pr.paymentreminder.base.BaseViewContract
 
 class LoginViewContract : BaseViewContract() {
     data class UiState(
-        val hasEmailHelperText: Boolean = true,
+        val hasEmailHelperText: Boolean = false,
         val hasPasswordHelperText: Boolean = false,
         val isLoginSuccessful: Boolean = false
     )
