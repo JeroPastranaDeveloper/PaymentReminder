@@ -40,7 +40,15 @@ import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.SaveButtonFunctionality
 import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
+import com.pr.paymentreminder.data.model.categoryItem
+import com.pr.paymentreminder.data.model.dateItem
+import com.pr.paymentreminder.data.model.nameItem
+import com.pr.paymentreminder.data.model.priceItem
+import com.pr.paymentreminder.data.model.rememberItem
+import com.pr.paymentreminder.data.model.typeItem
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
@@ -57,6 +65,7 @@ import java.util.Locale
 @Composable
 fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: () -> Unit) {
     val context = LocalContext.current
+    val state by viewModel.state.collectAsState(UiState())
 
     var imageUrl by remember { mutableStateOf(TextFieldValue(service?.image ?: emptyString())) }
     var serviceUrl by remember { mutableStateOf(TextFieldValue(service?.url ?: emptyString())) }
@@ -68,18 +77,15 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
     }*/
 
     var serviceName by remember { mutableStateOf(TextFieldValue(service?.name ?: emptyString())) }
-    val wasServiceNameFieldFocused = remember { mutableStateOf(false) }
 
     var servicePrice by remember { mutableStateOf(TextFieldValue(service?.price ?: emptyString())) }
-    val wasServicePriceFieldFocused = remember { mutableStateOf(false) }
 
     var selectedCategory by remember { mutableStateOf(service?.category ?: emptyString()) }
     val categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS)
 
     var serviceDate by remember { mutableStateOf(service?.date ?: emptyString()) }
-    val serviceDateHelperText by viewModel.serviceDateHelperText.collectAsState()
 
-    var selectedPaymentType by remember { mutableStateOf(service?.type ?: emptyString()) }
+    var selectedType by remember { mutableStateOf(service?.type ?: emptyString()) }
     val types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY)
 
     var selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
@@ -103,7 +109,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
             servicePrice,
             selectedCategory,
             serviceDate,
-            selectedPaymentType,
+            selectedType,
             selectedRemember
         )
     }
@@ -147,27 +153,24 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         text = serviceName,
                         onTextChange = {
                             serviceName = it
-                            viewModel.serviceName = it.text
+                            viewModel.sendIntent(UiIntent.ValidateService(nameItem, it.text))
                         },
-                        wasTextFieldFocused = wasServiceNameFieldFocused.value,
-                        onTextFieldFocusChange = { wasServiceNameFieldFocused.value = it },
-                        textHelper = viewModel.serviceNameHelperText,
+                        hasHelperText = state.serviceNameHelperText,
                         textHelperText = stringResource(id = R.string.invalid_service_name),
                         placeHolder = stringResource(id = R.string.service_name)
                     )
-                ) { viewModel.validateServiceName() }
+                )
 
                 ServiceSeparator()
 
                 CategoriesDropDownMenu(
                     categories = categories,
                     initialSelectedCategory = selectedCategory,
-                    textHelper = viewModel.serviceCategoryHelperText,
+                    hasHelperText = state.serviceCategoryHelperText,
                     textHelperText = stringResource(id = R.string.invalid_service_category)
                 ) {
-                    viewModel.serviceCategory = it
                     selectedCategory = it
-                    viewModel.validateServiceCategory()
+                    viewModel.sendIntent(UiIntent.ValidateService(categoryItem, selectedCategory))
                 }
 
                 ServiceSeparator()
@@ -178,16 +181,17 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         { _, year, month, dayOfMonth ->
                             val calendar = Calendar.getInstance()
                             calendar.set(year, month, dayOfMonth)
-                            val dateFormat =
-                                SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
+                            val dateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
                             serviceDate = dateFormat.format(calendar.time)
-                            viewModel.serviceDate = serviceDate
-                            viewModel.validateServiceDate()
                         },
                         Calendar.getInstance()[Calendar.YEAR],
                         Calendar.getInstance()[Calendar.MONTH],
                         Calendar.getInstance()[Calendar.DAY_OF_MONTH]
-                    )
+                    ).apply {
+                        setOnDismissListener {
+                            viewModel.sendIntent(UiIntent.ValidateService(dateItem, serviceDate))
+                        }
+                    }
                 }
 
                 Text(
@@ -195,7 +199,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     modifier = Modifier.clickable { datePickerDialog.show() }
                 )
 
-                serviceDateHelperText?.let {
+                if (state.serviceDateHelperText) {
                     ServiceSeparator()
                     HelperText(stringResource(id = R.string.invalid_service_date))
                 }
@@ -204,13 +208,12 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
 
                 TypesDropDownMenu(
                     types = types,
-                    initialSelectedType = selectedPaymentType,
-                    textHelper = viewModel.serviceTypesHelperText,
+                    initialSelectedType = selectedType,
+                    hasHelperText = state.serviceTypeHelperText,
                     textHelperText = stringResource(id = R.string.invalid_service_type)
                 ) {
-                    viewModel.serviceType = it
-                    selectedPaymentType = it
-                    viewModel.validateServiceType()
+                    selectedType = it
+                    viewModel.sendIntent(UiIntent.ValidateService(typeItem, selectedType))
                 }
 
                 ServiceSeparator()
@@ -220,15 +223,13 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         text = servicePrice,
                         onTextChange = {
                             servicePrice = it
-                            viewModel.servicePrice = it.text
+                            viewModel.sendIntent(UiIntent.ValidateService(priceItem, it.text))
                         },
-                        wasTextFieldFocused = wasServicePriceFieldFocused.value,
-                        onTextFieldFocusChange = { wasServicePriceFieldFocused.value = it},
-                        textHelper = viewModel.servicePriceHelperText,
+                        hasHelperText = state.servicePriceHelperText,
                         textHelperText = stringResource(id = R.string.invalid_service_price),
                         placeHolder = stringResource(id = R.string.service_price)
                     )
-                ) { viewModel.validateServicePrice() }
+                )
 
                 ServiceSeparator()
 
@@ -238,12 +239,11 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         RememberDropDownMenu(
                             rememberDays = daysRemember,
                             initialSelectedDay = selectedRemember,
-                            textHelper = viewModel.serviceRememberHelperText,
+                            hasHelperText = state.serviceRememberHelperText,
                             textHelperText = stringResource(id = R.string.invalid_service_remember)
                         ) {
-                            viewModel.serviceRemember = it
                             selectedRemember = it
-                            viewModel.validateServiceRemember()
+                            viewModel.sendIntent(UiIntent.ValidateService(rememberItem, it))
                         }
                     }
 
@@ -268,7 +268,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         serviceName = serviceName,
                         selectedCategory = selectedCategory,
                         serviceDate = serviceDate,
-                        selectedPaymentType = selectedPaymentType,
+                        selectedPaymentType = selectedType,
                         servicePrice = servicePrice,
                         serviceId = serviceId,
                         selectedRemember = selectedRemember,
@@ -294,26 +294,15 @@ private fun initialValidations(
     servicePrice: TextFieldValue,
     selectedCategory: String,
     serviceDate: String,
-    selectedPaymentType: String,
+    selectedType: String,
     selectedRemember: String
 ) {
-    viewModel.serviceName = serviceName.text
-    viewModel.validateServiceName()
-
-    viewModel.servicePrice = servicePrice.text
-    viewModel.validateServicePrice()
-
-    viewModel.serviceCategory = selectedCategory
-    viewModel.validateServiceCategory()
-
-    viewModel.serviceDate = serviceDate
-    viewModel.validateServiceDate()
-
-    viewModel.serviceType = selectedPaymentType
-    viewModel.validateServiceType()
-
-    viewModel.serviceRemember = selectedRemember
-    viewModel.validateServiceRemember()
+    viewModel.sendIntent(UiIntent.ValidateService(nameItem, serviceName.text))
+    viewModel.sendIntent(UiIntent.ValidateService(priceItem, servicePrice.text))
+    viewModel.sendIntent(UiIntent.ValidateService(categoryItem, selectedCategory))
+    viewModel.sendIntent(UiIntent.ValidateService(dateItem, serviceDate))
+    viewModel.sendIntent(UiIntent.ValidateService(typeItem, selectedType))
+    viewModel.sendIntent(UiIntent.ValidateService(rememberItem, selectedRemember))
 }
 
 /*@Composable
@@ -361,20 +350,21 @@ private fun SaveButton(
                     selectedRemember
                 )
                 with(viewModel) {
-                    val isServiceNameValid = validateServiceName()
-                    val isServiceCategoryValid = validateServiceCategory()
-                    val isServiceDateValid = validateServiceDate()
-                    val isServiceTypeValid = validateServiceType()
-                    val isServicePriceValid = validateServicePrice()
+                    val isServiceNameValid = !state.value.serviceNameHelperText
+                    val isServiceCategoryValid = !state.value.serviceCategoryHelperText
+                    val isServiceDateValid = !state.value.serviceDateHelperText
+                    val isServiceTypeValid = !state.value.serviceTypeHelperText
+                    val isServicePriceValid = !state.value.servicePriceHelperText
+                    val isServiceRememberValid = !state.value.serviceRememberHelperText
 
-                    if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid) {
+                    if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid && isServiceRememberValid) {
                         val serviceData = Service(
                             id = serviceId.orElse { emptyString() },
                             category = selectedCategory,
-                            name = serviceName,
+                            name = serviceName.text,
                             color = emptyString(),
                             date = serviceDate,
-                            price = servicePrice,
+                            price = servicePrice.text,
                             remember = selectedRemember,
                             type = selectedPaymentType,
                             image = imageUri.text,
@@ -386,16 +376,19 @@ private fun SaveButton(
                         } else {
                             createService(serviceData, viewModel)
                         }
-                        viewModel.getServices()
+                        viewModel.sendIntent(UiIntent.GetServices)
                         onDismiss()
 
                     } else {
-                        validateServiceName()
-                        validateServiceCategory()
-                        validateServiceDate()
-                        validateServiceType()
-                        validateServicePrice()
-                        validateServiceRemember()
+                        /*initialValidations(
+                            viewModel,
+                            serviceName,
+                            servicePrice,
+                            selectedCategory,
+                            serviceDate,
+                            selectedPaymentType,
+                            selectedRemember
+                        )*/
 
                         Toast.makeText(context, R.string.invalid_data, Toast.LENGTH_LONG).show()
                     }
@@ -430,10 +423,10 @@ private fun updateService(
         image = service.image,
         url = service.url
     )
-    viewModel.updateService(
+    viewModel.sendIntent(UiIntent.UpdateService(
         service.id.orElse { emptyString() },
         updatedServiceData
-    )
+    ))
 }
 
 private fun createService(
@@ -452,5 +445,5 @@ private fun createService(
         image = serviceData.image,
         url = serviceData.url
     )
-    viewModel.createService(newService)
+    viewModel.sendIntent(UiIntent.CreateService(newService))
 }

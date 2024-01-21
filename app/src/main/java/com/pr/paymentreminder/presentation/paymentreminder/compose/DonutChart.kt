@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.mikephil.charting.animation.Easing
@@ -15,18 +16,18 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.ui.theme.dimen500
 import kotlin.random.Random
 
 @Composable
 fun DonutChart(services: List<Service>) {
     val context = LocalContext.current
     val servicesString = stringResource(id = R.string.services)
+    val sizeInDp = dimen500
+    val sizeInPx = with(LocalDensity.current) { sizeInDp.roundToPx() }
     val pieChart = remember {
         PieChart(context).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
+            layoutParams = ViewGroup.LayoutParams(sizeInPx, sizeInPx)
         }
     }
 

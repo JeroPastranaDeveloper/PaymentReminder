@@ -1,5 +1,6 @@
 package com.pr.paymentreminder.presentation.paymentreminder.compose
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,7 +38,6 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
 import com.pr.paymentreminder.ui.theme.dimen100
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen8
@@ -46,16 +45,15 @@ import com.pr.paymentreminder.ui.theme.orElse
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
-import kotlinx.coroutines.launch
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ServiceCard(
     service: Service,
     onClick: () -> Unit,
     dismissState: DismissState,
-    deleteService: (String) -> Unit,
-    viewModel: HomeViewModel
+    deleteService: (String) -> Unit
 ) {
     val context = LocalContext.current
     val dismissThresholds = { _: DismissDirection -> FractionalThreshold(0.2f) }
@@ -83,15 +81,7 @@ fun ServiceCard(
         },
         directions = setOf(DismissDirection.EndToStart)
     ) {
-        val scope = rememberCoroutineScope()
-
-        if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-            scope.launch {
-                deleteService(service.id)
-                dismissState.reset()
-                viewModel.getServices()
-            }
-        }
+        deleteService(service.id)
 
         Card(
             modifier = Modifier
@@ -132,7 +122,7 @@ fun ServiceCard(
                     }
                     .build()
 
-                val imageUrl = service.image.takeIf { !it.isNullOrEmpty() }.orElse{ Constants.DEFAULT_IMAGE }
+                val imageUrl = service.image.takeIf { it.isNotEmpty() }.orElse{ Constants.DEFAULT_IMAGE }
                 val image = rememberAsyncImagePainter(model = imageUrl, imageLoader = imageLoader)
 
                 Image(

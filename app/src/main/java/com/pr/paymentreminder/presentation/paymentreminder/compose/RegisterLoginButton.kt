@@ -7,10 +7,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.pr.paymentreminder.R
 import com.pr.paymentreminder.ui.theme.spacing16
 
 @Composable
-fun LoginRegisterButton(
+fun RegisterLoginButton(
     text: Int,
     onClick: () -> Unit
 ) {
@@ -22,4 +24,10 @@ fun LoginRegisterButton(
     ) {
         Text(text = stringResource(id = text))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LoginRegisterButtonPreview() {
+    RegisterLoginButton(text = R.string.login) {}
 }

@@ -6,7 +6,6 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,28 +16,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.Categories
 import com.pr.paymentreminder.ui.theme.emptyString
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun CategoriesDropDownMenu(
     categories: List<Categories>,
     initialSelectedCategory: String = emptyString(),
-    textHelper: StateFlow<String?>,
+    hasHelperText: Boolean = false,
     textHelperText: String,
     onCategorySelected: (String) -> Unit
 ) {
     var selectedCategory by remember { mutableStateOf(initialSelectedCategory) }
     var categoryExpanded by remember { mutableStateOf(false) }
 
-    val hasHelperText by textHelper.collectAsState(null)
-
     Text(
         text = stringResource(id = R.string.category, selectedCategory),
         modifier = Modifier.clickable { categoryExpanded = !categoryExpanded }
     )
 
-    hasHelperText?.let {
+    if (hasHelperText) {
         ServiceSeparator()
         HelperText(textHelperText)
     }
@@ -68,7 +63,7 @@ private fun CategoriesDropDownMenuPreview() {
         CategoriesDropDownMenu(
             categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS),
             initialSelectedCategory = Categories.HOBBY.category,
-            textHelper = MutableStateFlow<String?>(null),
+            hasHelperText = false,
             textHelperText = stringResource(id = R.string.invalid_service_category)
         ) { /* Nothing */ }
     }
@@ -80,7 +75,7 @@ private fun CategoriesDropDownMenuHelperTextPreview() {
     Column {
         CategoriesDropDownMenu(
             categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS),
-            textHelper = MutableStateFlow(emptyString()),
+            hasHelperText = true,
             textHelperText = stringResource(id = R.string.invalid_service_category)
         ) { /* Nothing */ }
     }

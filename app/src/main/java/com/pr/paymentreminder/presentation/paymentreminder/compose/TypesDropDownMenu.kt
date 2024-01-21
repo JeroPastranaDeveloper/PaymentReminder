@@ -6,7 +6,6 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,21 +16,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.ui.theme.emptyString
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun TypesDropDownMenu(
     types: List<PaymentType>,
     initialSelectedType: String = emptyString(),
-    textHelper: StateFlow<String?>,
+    hasHelperText: Boolean,
     textHelperText: String,
     onCategorySelected: (String) -> Unit
 ) {
     var selectedPaymentType by remember { mutableStateOf(initialSelectedType) }
     var typesExpanded by remember { mutableStateOf(false) }
-
-    val hasHelperText by textHelper.collectAsState(null)
 
     Text(
         text = stringResource(id = R.string.payment_type, selectedPaymentType),
@@ -40,9 +35,7 @@ fun TypesDropDownMenu(
 
     ServiceSeparator()
 
-    hasHelperText?.let {
-        HelperText(textHelperText)
-    }
+    if (hasHelperText) HelperText(textHelperText)
 
     DropdownMenu(
         expanded = typesExpanded,
@@ -69,7 +62,7 @@ private fun TypesDropDownMenuPreview() {
         TypesDropDownMenu(
             types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY),
             initialSelectedType = PaymentType.MONTHLY.type,
-            textHelper = MutableStateFlow<String?>(null),
+            hasHelperText = false,
             textHelperText = stringResource(id = R.string.invalid_service_type)
         ) { /* Nothing */ }
     }
@@ -82,7 +75,7 @@ private fun TypesDropDownMenuHelperTextPreview() {
         TypesDropDownMenu(
             types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY),
             initialSelectedType = PaymentType.MONTHLY.type,
-            textHelper = MutableStateFlow(emptyString()),
+            hasHelperText = true,
             textHelperText = stringResource(id = R.string.invalid_service_type)
         ) { /* Nothing */ }
     }

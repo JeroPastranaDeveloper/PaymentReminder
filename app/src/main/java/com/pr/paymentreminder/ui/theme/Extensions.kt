@@ -27,3 +27,8 @@ fun Float.scaledSp(): TextUnit {
 fun emptyString(): String = ""
 
 fun <T> T?.orElse(result: () -> T): T = this ?: result()
+
+fun Double.showTwoDecimals(): String {
+    val number = this.toFloat()
+    return String.format("%.2f", number)
+}

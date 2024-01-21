@@ -1,28 +1,38 @@
 package com.pr.paymentreminder.presentation.paymentreminder
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import androidx.activity.OnBackPressedCallback
-import androidx.compose.material.BottomNavigation
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
@@ -30,24 +40,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import android.Manifest
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-import androidx.annotation.RequiresApi
-import androidx.compose.material.Surface
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.androidVersions.hasS31
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.GraphicViewModel
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.SettingsViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewModel
 import com.pr.paymentreminder.ui.theme.dimen4
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -85,8 +86,7 @@ class PaymentReminderActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun checkNotificationPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        if (hasS31() && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
         }
     }
@@ -164,8 +164,8 @@ class PaymentReminderActivity : AppCompatActivity() {
     }
 
     sealed class CurrentScreen(val route: String, val icon: ImageVector) {
-        object Home : CurrentScreen(Constants.HOME, Icons.Filled.Home)
-        object Graphic : CurrentScreen(Constants.GRAPHIC, Icons.Filled.Info)
-        object Settings : CurrentScreen(Constants.SETTINGS, Icons.Filled.Settings)
+        data object Home : CurrentScreen(Constants.HOME, Icons.Filled.Home)
+        data object Graphic : CurrentScreen(Constants.GRAPHIC, Icons.Filled.Info)
+        data object Settings : CurrentScreen(Constants.SETTINGS, Icons.Filled.Settings)
     }
 }

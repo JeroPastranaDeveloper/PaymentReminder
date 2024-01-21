@@ -19,6 +19,7 @@ val dimen64: Dp @Composable get() = dimensionResource(id = R.dimen.dimen64)
 val dimen100: Dp @Composable get() = dimensionResource(id = R.dimen.dimen100)
 val dimen150: Dp @Composable get() = dimensionResource(id = R.dimen.dimen150)
 val dimen200: Dp @Composable get() = dimensionResource(id = R.dimen.dimen200)
+val dimen500: Dp @Composable get() = dimensionResource(id = R.dimen.dimen500)
 
 /* Spacing */
 val spacing4: Dp @Composable get() = dimensionResource(id = R.dimen.spacing_4)

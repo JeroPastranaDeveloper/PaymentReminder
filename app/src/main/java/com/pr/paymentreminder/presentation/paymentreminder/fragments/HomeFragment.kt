@@ -18,6 +18,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,27 +31,44 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceBottomSheet
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceCard
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceDialog
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.HomeViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing72
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeFragment(viewModel: HomeViewModel) {
+    val state by viewModel.state.collectAsState(UiState())
     var selectedService by remember { mutableStateOf<Service?>(null) }
-    val isLoading by viewModel.isLoading.collectAsState()
     var showBottomSheet by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
+
+    fun handleAction(action: UiAction) {
+        when (action) {
+            UiAction.RemoveService -> removeService(scope, viewModel)
+        }
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.actions.collect { action ->
+            handleAction(action)
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        if (isLoading) {
+        if (state.isLoading) {
             CircularProgressIndicator(Modifier.align(Alignment.Center))
         } else {
             Column(
@@ -60,8 +78,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Spacer(modifier = Modifier.height(dimen64))
-                val scope = rememberCoroutineScope()
-                viewModel.services.value.map { service ->
+                state.services.map { service ->
                     val dismissState = rememberDismissState()
                     ServiceCard(
                         service = service,
@@ -72,14 +89,9 @@ fun HomeFragment(viewModel: HomeViewModel) {
                         dismissState = dismissState,
                         deleteService = {
                             if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                                scope.launch {
-                                    viewModel.deleteService(service.id)
-                                    dismissState.reset()
-                                    viewModel.getServices()
-                                }
+                                viewModel.sendIntent(UiIntent.RemoveService(service.id))
                             }
-                        },
-                        viewModel = viewModel
+                        }
                     )
                 }
                 Spacer(modifier = Modifier.height(dimen56))
@@ -122,5 +134,14 @@ fun HomeFragment(viewModel: HomeViewModel) {
                 )
             }
         }
+    }
+}
+
+private fun removeService(
+    scope: CoroutineScope,
+    viewModel: HomeViewModel
+) {
+    scope.launch {
+        viewModel.sendIntent(UiIntent.GetServices)
     }
 }

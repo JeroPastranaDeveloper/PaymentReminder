@@ -1,10 +1,7 @@
 package com.pr.paymentreminder.presentation.login
 
 import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,46 +11,60 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
-import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.base.BaseActivity
+import com.pr.paymentreminder.base.addRepeatingJob
 import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
+import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ImageLogo
-import com.pr.paymentreminder.presentation.paymentreminder.compose.LoginRegisterButton
-import com.pr.paymentreminder.presentation.paymentreminder.compose.PassField
+import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLoginButton
+import com.pr.paymentreminder.presentation.paymentreminder.compose.PasswordField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
 import com.pr.paymentreminder.presentation.register.RegisterActivity
-import com.pr.paymentreminder.presentation.viewModels.LoginViewModel
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewModel
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
+import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiAction
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.spacing16
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class LoginActivity : ComponentActivity() {
+class LoginActivity : BaseActivity() {
     private val viewModel: LoginViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        installSplashScreen()
-        checkLogin()
-        setContent {
-            Content()
+    @Composable
+    override fun ComposableContent() {
+        // installSplashScreen()
+
+        addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect(::handleAction) }
+        val state by viewModel.state.collectAsState(UiState())
+        checkLogin(state)
+        Content(state)
+    }
+
+    private fun handleAction(action: UiAction) {
+        when(action) {
+            UiAction.Login -> doLogin()
+            UiAction.GoRegister -> goRegister()
         }
     }
 
     @Composable
-    private fun Content() {
+    private fun Content(state: UiState) {
         Column(
             modifier = Modifier
                 .padding(spacing16)
@@ -63,8 +74,6 @@ class LoginActivity : ComponentActivity() {
         ) {
             val emailText = remember { mutableStateOf(TextFieldValue("cuentadepruebas@gmail.com")) }
             val passText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
-            val wasEmailFieldFocused = remember { mutableStateOf(false) }
-            val wasPassFieldFocused = remember { mutableStateOf(false) }
 
             initialValidations(emailText, passText)
 
@@ -75,45 +84,39 @@ class LoginActivity : ComponentActivity() {
                     text = emailText.value,
                     onTextChange = {
                         emailText.value = it
-                        viewModel.email = it.text
+                        viewModel.sendIntent(UiIntent.ValidateEmail(it.text))
                     },
-                    wasTextFieldFocused = wasEmailFieldFocused.value,
-                    onTextFieldFocusChange = { wasEmailFieldFocused.value = it },
                     placeHolder = stringResource(R.string.email),
-                    textHelper = viewModel.emailHelperText,
+                    hasHelperText = state.hasEmailHelperText,
                     textHelperText = stringResource(id = R.string.invalid_email)
                 )
-            ) { viewModel.validateEmail() }
+            )
 
-           PassField(
-               DefaultTextFieldParams(
-                   text = passText.value,
-                   onTextChange = {
-                       passText.value = it
-                       viewModel.password = it.text
-                   },
-                   wasTextFieldFocused = wasPassFieldFocused.value,
-                   onTextFieldFocusChange = { wasPassFieldFocused.value = it },
-                   placeHolder = stringResource(R.string.password),
-                   textHelper = viewModel.passHelperText,
-                   textHelperText = stringResource(id = R.string.invalid_pass)
-               )
-           ) { viewModel.validatePassword() }
+            PasswordField(
+                DefaultTextFieldParams(
+                    text = passText.value,
+                    onTextChange = {
+                        passText.value = it
+                        viewModel.sendIntent(UiIntent.ValidatePassword(it.text))
+                    },
+                    placeHolder = stringResource(R.string.password),
+                    hasHelperText = state.hasPasswordHelperText,
+                    textHelperText = stringResource(id = R.string.invalid_pass)
+                )
+            )
 
             ImageLogo(R.drawable.logo_no_bg)
 
             Spacer(modifier = Modifier.weight(1f))
 
             UnderlinedText(text = R.string.register) {
-                startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
-                finish()
+                viewModel.sendIntent(UiIntent.GoRegister)
             }
 
-            LoginRegisterButton(R.string.login) {
-                if (isValidInput()) {
-                    lifecycleScope.launch {
-                        viewModel.login()
-                    }
+            RegisterLoginButton(R.string.login) {
+                initialValidations(emailText, passText)
+                if (isValidInput(state)) {
+                    viewModel.sendIntent(UiIntent.DoLogin(emailText.value.text, passText.value.text))
                 } else {
                     Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
                 }
@@ -125,30 +128,34 @@ class LoginActivity : ComponentActivity() {
         emailText: MutableState<TextFieldValue>,
         passText: MutableState<TextFieldValue>
     ) {
-        viewModel.email = emailText.value.text
-        viewModel.validateEmail()
-
-        viewModel.password = passText.value.text
-        viewModel.validatePassword()
+        viewModel.sendIntent(UiIntent.ValidateEmail(emailText.value.text))
+        viewModel.sendIntent(UiIntent.ValidatePassword(passText.value.text))
     }
 
-    private fun isValidInput(): Boolean {
-        val isEmailValid = viewModel.validateEmail()
-        val isPasswordValid = viewModel.validatePassword()
+    private fun isValidInput(state: UiState): Boolean {
+        val isEmailValid = !state.hasEmailHelperText
+        val isPasswordValid = !state.hasPasswordHelperText
 
         return isEmailValid && isPasswordValid
     }
 
-    private fun checkLogin() {
+    private fun checkLogin(state: UiState) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isLoginSuccessful.collect { isSuccessful ->
-                    if (isSuccessful) {
-                        startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
-                        finish()
-                    }
+                if (state.isLoginSuccessful) {
+                    viewModel.sendIntent(UiIntent.AutoLogin)
                 }
             }
         }
+    }
+
+    private fun goRegister() {
+        startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+        finish()
+    }
+
+    private fun doLogin() {
+        startActivity(Intent(this@LoginActivity, PaymentReminderActivity::class.java))
+        finish()
     }
 }
