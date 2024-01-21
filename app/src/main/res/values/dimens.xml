@@ -14,6 +14,7 @@
     <dimen name="dimen100">100dp</dimen>
     <dimen name="dimen150">150dp</dimen>
     <dimen name="dimen200">200dp</dimen>
+    <dimen name="dimen500">500dp</dimen>
 
     <!-- Paddings -->
     <dimen name="spacing_4">4dp</dimen>

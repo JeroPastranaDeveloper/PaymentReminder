@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +54,13 @@ fun GraphicFragment(viewModel: GraphicViewModel) {
         }
     }
 
+    val serviceTypes = listOf(
+        Pair(R.string.all_services, Constants.ALL_SERVICES),
+        Pair(R.string.weekly_services, paymentWeekly),
+        Pair(R.string.monthly_services, paymentMonthly),
+        Pair(R.string.yearly_services, paymentYearly)
+    )
+
     Column(
         modifier = Modifier
             .padding(start = spacing16, end = spacing16, bottom = spacing16)
@@ -60,36 +68,36 @@ fun GraphicFragment(viewModel: GraphicViewModel) {
     ) {
         Spacer(modifier = Modifier.height(dimen64))
         Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-            ServicesChip(
-                title = stringResource(id = R.string.all_services),
-                onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(Constants.ALL_SERVICES)) },
-                selected = selectedChip == Constants.ALL_SERVICES,
-                onSelectedChange = { selectedChip = it }
-            )
-            ServicesChip(
-                title = stringResource(id = R.string.weekly_services),
-                onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(paymentWeekly)) },
-                selected = selectedChip == paymentWeekly,
-                onSelectedChange = { selectedChip = it }
-            )
-            ServicesChip(
-                title = stringResource(id = R.string.monthly_services),
-                onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(paymentMonthly)) },
-                selected = selectedChip == paymentMonthly,
-                onSelectedChange = { selectedChip = it }
-            )
-            ServicesChip(
-                title = stringResource(id = R.string.yearly_services),
-                onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(paymentYearly)) },
-                selected = selectedChip == paymentYearly,
-                onSelectedChange = { selectedChip = it }
-            )
+            serviceTypes.forEach { (stringId, serviceType) ->
+                ServicesChip(
+                    title = stringResource(id = stringId),
+                    onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(serviceType)) },
+                    selected = selectedChip == serviceType,
+                    onSelectedChange = { selectedChip = it }
+                )
+            }
         }
 
-        if (state.services.isEmpty()) {
-            Text(stringResource(id = R.string.no_services), modifier = Modifier.padding(top = spacing16).align(Alignment.CenterHorizontally))
-        } else {
-            DonutChart(state.services)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            if (state.services.isEmpty()) {
+                Text(
+                    stringResource(id = R.string.no_services), modifier = Modifier
+                        .padding(top = spacing16)
+                        .align(Alignment.CenterHorizontally)
+                )
+            } else {
+                DonutChart(state.services)
+            }
+
+            Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Text(text = stringResource(id = R.string.weekly_expenditure, state.weeklyExpenditure.orEmpty()))
+                Text(text = stringResource(id = R.string.monthly_expenditure, state.monthlyExpenditure.orEmpty()))
+                Text(text = stringResource(id = R.string.yearly_expenditure, state.yearlyExpenditure.orEmpty()))
+            }
         }
     }
 }

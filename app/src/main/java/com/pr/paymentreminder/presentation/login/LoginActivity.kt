@@ -72,7 +72,7 @@ class LoginActivity : BaseActivity() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            val emailText = remember { mutableStateOf(TextFieldValue("jeropastrana@gmail.com")) }
+            val emailText = remember { mutableStateOf(TextFieldValue("cuentadepruebas@gmail.com")) }
             val passText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
 
             initialValidations(emailText, passText)
