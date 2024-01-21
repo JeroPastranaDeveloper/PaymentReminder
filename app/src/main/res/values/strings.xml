@@ -3,26 +3,26 @@
     <string name="invalid_email">Email inválido</string>
     <string name="invalid_pass">Contraseña inválida</string>
     <string name="passwords_do_not_match">Las contraseñas no coinciden</string>
-    <string name="hint_email">Email</string>
-    <string name="login">Login</string>
+    <string name="hint_email" translatable="false">Email</string>
+    <string name="login" translatable="false">Login</string>
     <string name="register">Registrarse</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="password" translatable="false">Password</string>
     <string name="repeat_password">Repite la contraseña</string>
-    <string name="title_activity_payment_reminder">PaymentReminderActivity</string>
+    <string name="title_activity_payment_reminder" translatable="false">PaymentReminderActivity</string>
     <string name="invalid_data">Datos inválidos</string>
     <string name="error_login">Error al iniciar sesión</string>
     <string name="exit_question">¿Salir de la aplicación?</string>
     <string name="exit_confirmation">¿Estás seguro de que quieres salir de la aplicación?</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
-    <string name="next">next</string>
-    <string name="home_route">com.pr.paymentreminder.presentation.paymentreminder.fragments.Homefragment</string>
-    <string name="settings_route">com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment</string>
-    <string name="graphic_route">com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment</string>
-    <string name="title_home">home</string>
-    <string name="title_settings">settings</string>
-    <string name="title_graphic">graphic</string>
+    <string name="next" translatable="false">next</string>
+    <string name="home_route" translatable="false">com.pr.paymentreminder.presentation.paymentreminder.fragments.Homefragment</string>
+    <string name="settings_route" translatable="false">com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment</string>
+    <string name="graphic_route" translatable="false">com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment</string>
+    <string name="title_home" translatable="false">home</string>
+    <string name="title_settings" translatable="false">settings</string>
+    <string name="title_graphic" translatable="false">graphic</string>
     <string name="category">Categoría: %s</string>
     <string name="service_name">Nombre del servicio</string>
     <string name="service_price">Precio del servicio</string>
@@ -30,8 +30,8 @@
     <string name="service_url">URL del servicio</string>
     <string name="payment_date">Fecha de pago: %s</string>
     <string name="payment_type">Tipo de pago: %s</string>
-    <string name="remember_days_before">Recordar %1$s días antes</string>
-    <string name="remember_day_before">Recordar %1$s día antes</string>
+    <string name="remember_days_before">Recordar %s días antes</string>
+    <string name="remember_day_before">Recordar %s día antes</string>
     <string name="select_category">Selecciona categoría</string>
     <string name="btn_save">Guardar</string>
     <string name="logout">Cerrar sesión</string>
