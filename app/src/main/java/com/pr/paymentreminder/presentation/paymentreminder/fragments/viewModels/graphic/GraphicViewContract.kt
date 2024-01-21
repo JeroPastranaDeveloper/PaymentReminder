@@ -9,7 +9,9 @@ class GraphicViewContract : BaseViewContract() {
         val services: List<Service> = emptyList(),
         val weeklyExpenditure: String? = emptyString(),
         val monthlyExpenditure: String? = emptyString(),
+        val monthlyTotalExpenditure: String? = emptyString(),
         val yearlyExpenditure: String? = emptyString(),
+        val yearlyTotalExpenditure: String? = emptyString(),
     )
 
     sealed class UiIntent {

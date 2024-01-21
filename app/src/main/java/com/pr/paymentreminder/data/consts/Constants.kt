@@ -25,7 +25,7 @@ class Constants {
         const val IMAGE = "image"
         const val URL = "url"
         const val IMAGE_PATH = "image/*"
-        const val DEFAULT_IMAGE = "https://clubbalonmanomalaga.com/wp-content/plugins/accelerated-mobile-pages/images/SD-default-image.png"
+        const val DEFAULT_IMAGE = "https://www.palomacornejo.com/wp-content/uploads/2021/08/no-image.jpg"
         const val NOTIFICATION_ID = "NOTIFICATION_ID"
         const val SERVICE_NAME = "SERVICE_NAME"
         const val SERVICE_REMEMBER = "SERVICE_REMEMBER"

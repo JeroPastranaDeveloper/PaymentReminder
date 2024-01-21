@@ -29,6 +29,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiState
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewModel
+import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.spacing16
 
@@ -86,7 +87,7 @@ fun GraphicFragment(viewModel: GraphicViewModel) {
             if (state.services.isEmpty()) {
                 Text(
                     stringResource(id = R.string.no_services), modifier = Modifier
-                        .padding(top = spacing16)
+                        .padding(spacing16)
                         .align(Alignment.CenterHorizontally)
                 )
             } else {
@@ -96,8 +97,12 @@ fun GraphicFragment(viewModel: GraphicViewModel) {
             Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                 Text(text = stringResource(id = R.string.weekly_expenditure, state.weeklyExpenditure.orEmpty()))
                 Text(text = stringResource(id = R.string.monthly_expenditure, state.monthlyExpenditure.orEmpty()))
+                Text(text = stringResource(id = R.string.monthly_total_expenditure, state.monthlyTotalExpenditure.orEmpty()))
                 Text(text = stringResource(id = R.string.yearly_expenditure, state.yearlyExpenditure.orEmpty()))
+                Text(text = stringResource(id = R.string.yearly_total_expenditure, state.yearlyTotalExpenditure.orEmpty()))
             }
+
+            Spacer(modifier = Modifier.height(dimen56))
         }
     }
 }
