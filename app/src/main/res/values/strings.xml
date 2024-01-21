@@ -54,7 +54,9 @@
     <string name="yearly_services">Anuales</string>
     <string name="services">Servicios</string>
     <string name="no_services">No hay servicios</string>
-    <string name="weekly_expenditure">Gasto semanal: %s</string>
-    <string name="monthly_expenditure">Gasto mensual: %s</string>
-    <string name="yearly_expenditure">Gasto anual: %s</string>
+    <string name="weekly_expenditure">Gastos semanales: %s€</string>
+    <string name="monthly_expenditure">Gastos mensuales: %s€</string>
+    <string name="monthly_total_expenditure">Gasto total mensual: %s€</string>
+    <string name="yearly_expenditure">Gastos anuales: %s€</string>
+    <string name="yearly_total_expenditure">Gasto total anual: %s€</string>
 </resources>

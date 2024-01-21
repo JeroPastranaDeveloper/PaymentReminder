@@ -40,8 +40,10 @@ class GraphicViewModel @Inject constructor(
         setState {
             copy(
                 weeklyExpenditure = weeklyServices.showTwoDecimals(),
-                monthlyExpenditure = monthlyExpenditure.showTwoDecimals(),
-                yearlyExpenditure = yearlyExpenditure.showTwoDecimals()
+                monthlyExpenditure = monthlyServices.showTwoDecimals(),
+                monthlyTotalExpenditure = monthlyExpenditure.showTwoDecimals(),
+                yearlyExpenditure = yearlyServices.showTwoDecimals(),
+                yearlyTotalExpenditure = yearlyExpenditure.showTwoDecimals()
             )
         }
     }
