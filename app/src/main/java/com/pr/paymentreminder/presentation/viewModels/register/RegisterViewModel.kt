@@ -44,7 +44,6 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-
     private fun validatePasswordValidation(password: String?, passwordValidation: String?) {
         setState {
             copy(hasPasswordValidationHelperText = password != passwordValidation)
