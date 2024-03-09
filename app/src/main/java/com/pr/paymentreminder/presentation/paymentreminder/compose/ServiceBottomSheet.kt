@@ -76,19 +76,19 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
         uri?.let { imageUri.value = it }
     }*/
 
-    var serviceName by remember { mutableStateOf(TextFieldValue(service?.name ?: emptyString())) }
+    var serviceName by remember { mutableStateOf(TextFieldValue(service?.name.orEmpty())) }
 
-    var servicePrice by remember { mutableStateOf(TextFieldValue(service?.price ?: emptyString())) }
+    var servicePrice by remember { mutableStateOf(TextFieldValue(service?.price.orEmpty())) }
 
-    var selectedCategory by remember { mutableStateOf(service?.category ?: emptyString()) }
+    var selectedCategory by remember { mutableStateOf(service?.category.orEmpty()) }
     val categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS)
 
-    var serviceDate by remember { mutableStateOf(service?.date ?: emptyString()) }
+    var serviceDate by remember { mutableStateOf(service?.date.orEmpty()) }
 
-    var selectedType by remember { mutableStateOf(service?.type ?: emptyString()) }
+    var selectedType by remember { mutableStateOf(service?.type.orEmpty()) }
     val types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY)
 
-    var selectedRemember by remember { mutableStateOf(service?.remember ?: emptyString()) }
+    var selectedRemember by remember { mutableStateOf(service?.remember.orEmpty()) }
     val daysRemember = listOf(1, 2, 3)
 
     /*val selectedColor by remember { mutableStateOf(Color.White) }

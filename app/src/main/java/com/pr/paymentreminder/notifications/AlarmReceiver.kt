@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
+import com.pr.paymentreminder.ui.theme.orZero
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -43,7 +44,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setContentIntent(pendingIntent)
             .build()
 
-        val notificationId = intent?.getIntExtra(Constants.NOTIFICATION_ID, 0) ?: 0
+        val notificationId = intent?.getIntExtra(Constants.NOTIFICATION_ID, 0).orZero()
 
         notificationManager.run {
             notify(notificationId, notification)

@@ -1,30 +1,27 @@
-package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home
+package com.pr.paymentreminder.presentation.viewModels.add_service
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.model.ServiceItem
 
-class HomeViewContract : BaseViewContract() {
+class AddServiceViewContract : BaseViewContract() {
     data class UiState(
         val isLoading: Boolean = false,
-        val services: List<Service> = emptyList(),
         val serviceNameHelperText: Boolean = false,
         val servicePriceHelperText: Boolean = false,
         val serviceCategoryHelperText: Boolean = false,
         val serviceDateHelperText: Boolean = false,
         val serviceTypeHelperText: Boolean = false,
-        val serviceRememberHelperText: Boolean = false
+        val serviceRememberHelperText: Boolean = false,
     )
 
     sealed class UiIntent {
-        data class RemoveService(val serviceId: String) : UiIntent()
         data class UpdateService(val serviceId: String, val service: Service) : UiIntent()
         data class CreateService(val service: Service) : UiIntent()
         data class ValidateService(val item: ServiceItem, val value: String) : UiIntent()
-        data object GetServices : UiIntent()
     }
 
-    sealed class UiAction {
-        data object RemoveService : UiAction()
+    sealed class  UiAction {
+
     }
 }
