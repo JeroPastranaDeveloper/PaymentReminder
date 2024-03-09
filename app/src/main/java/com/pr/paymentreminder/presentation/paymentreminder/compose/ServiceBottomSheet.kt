@@ -40,15 +40,9 @@ import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.SaveButtonFunctionality
 import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.data.model.categoryItem
-import com.pr.paymentreminder.data.model.dateItem
-import com.pr.paymentreminder.data.model.nameItem
-import com.pr.paymentreminder.data.model.priceItem
-import com.pr.paymentreminder.data.model.rememberItem
-import com.pr.paymentreminder.data.model.typeItem
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
@@ -153,7 +147,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         text = serviceName,
                         onTextChange = {
                             serviceName = it
-                            viewModel.sendIntent(UiIntent.ValidateService(nameItem, it.text))
+                            // viewModel.sendIntent(UiIntent.ValidateService(nameItem, it.text))
                         },
                         hasHelperText = state.serviceNameHelperText,
                         textHelperText = stringResource(id = R.string.invalid_service_name),
@@ -170,7 +164,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     textHelperText = stringResource(id = R.string.invalid_service_category)
                 ) {
                     selectedCategory = it
-                    viewModel.sendIntent(UiIntent.ValidateService(categoryItem, selectedCategory))
+                    // viewModel.sendIntent(UiIntent.ValidateService(categoryItem, selectedCategory))
                 }
 
                 ServiceSeparator()
@@ -189,7 +183,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         Calendar.getInstance()[Calendar.DAY_OF_MONTH]
                     ).apply {
                         setOnDismissListener {
-                            viewModel.sendIntent(UiIntent.ValidateService(dateItem, serviceDate))
+                            // viewModel.sendIntent(UiIntent.ValidateService(dateItem, serviceDate))
                         }
                     }
                 }
@@ -213,7 +207,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                     textHelperText = stringResource(id = R.string.invalid_service_type)
                 ) {
                     selectedType = it
-                    viewModel.sendIntent(UiIntent.ValidateService(typeItem, selectedType))
+                    // viewModel.sendIntent(UiIntent.ValidateService(typeItem, selectedType))
                 }
 
                 ServiceSeparator()
@@ -223,7 +217,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         text = servicePrice,
                         onTextChange = {
                             servicePrice = it
-                            viewModel.sendIntent(UiIntent.ValidateService(priceItem, it.text))
+                            // viewModel.sendIntent(UiIntent.ValidateService(priceItem, it.text))
                         },
                         hasHelperText = state.servicePriceHelperText,
                         textHelperText = stringResource(id = R.string.invalid_service_price),
@@ -243,7 +237,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                             textHelperText = stringResource(id = R.string.invalid_service_remember)
                         ) {
                             selectedRemember = it
-                            viewModel.sendIntent(UiIntent.ValidateService(rememberItem, it))
+                            // viewModel.sendIntent(UiIntent.ValidateService(rememberItem, it))
                         }
                     }
 
@@ -297,12 +291,12 @@ private fun initialValidations(
     selectedType: String,
     selectedRemember: String
 ) {
-    viewModel.sendIntent(UiIntent.ValidateService(nameItem, serviceName.text))
+    /*viewModel.sendIntent(UiIntent.ValidateService(nameItem, serviceName.text))
     viewModel.sendIntent(UiIntent.ValidateService(priceItem, servicePrice.text))
     viewModel.sendIntent(UiIntent.ValidateService(categoryItem, selectedCategory))
     viewModel.sendIntent(UiIntent.ValidateService(dateItem, serviceDate))
     viewModel.sendIntent(UiIntent.ValidateService(typeItem, selectedType))
-    viewModel.sendIntent(UiIntent.ValidateService(rememberItem, selectedRemember))
+    viewModel.sendIntent(UiIntent.ValidateService(rememberItem, selectedRemember))*/
 }
 
 /*@Composable
@@ -423,10 +417,10 @@ private fun updateService(
         image = service.image,
         url = service.url
     )
-    viewModel.sendIntent(UiIntent.UpdateService(
+    /*viewModel.sendIntent(UiIntent.UpdateService(
         service.id.orElse { emptyString() },
         updatedServiceData
-    ))
+    ))*/
 }
 
 private fun createService(
@@ -445,5 +439,5 @@ private fun createService(
         image = serviceData.image,
         url = serviceData.url
     )
-    viewModel.sendIntent(UiIntent.CreateService(newService))
+    //viewModel.sendIntent(UiIntent.CreateService(newService))
 }

@@ -1,19 +1,15 @@
 package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home
 
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.data.model.ServiceItem
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -30,10 +26,11 @@ class HomeViewModel @Inject constructor(
     override suspend fun manageIntent(intent: UiIntent) {
         when (intent) {
             is UiIntent.RemoveService -> removeService(intent.serviceId)
-            is UiIntent.CreateService -> createService(intent.service)
+            /*is UiIntent.CreateService -> createService(intent.service)
             is UiIntent.UpdateService -> updateService(intent.serviceId, intent.service)
-            is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)
+            is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)*/
             UiIntent.GetServices -> getServices()
+            is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId))
         }
     }
 
@@ -41,7 +38,7 @@ class HomeViewModel @Inject constructor(
         getServices()
     }
 
-    private fun createService(service: Service) {
+    /*private fun createService(service: Service) {
         viewModelScope.launch {
             val database = Firebase.database
             val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -52,7 +49,7 @@ class HomeViewModel @Inject constructor(
                 servicesUseCase.createService(id, service)
             }
         }
-    }
+    }*/
 
     private fun Service.getDate(): LocalDate {
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
@@ -111,7 +108,7 @@ class HomeViewModel @Inject constructor(
         dispatchAction(UiAction.RemoveService)
     }
 
-    private fun validateServiceItem(item: ServiceItem, value: String) {
+    /*private fun validateServiceItem(item: ServiceItem, value: String) {
         val isEmpty = value.isEmpty()
         when (item) {
             ServiceItem.NAME -> setState { copy(serviceNameHelperText = isEmpty) }
@@ -121,5 +118,5 @@ class HomeViewModel @Inject constructor(
             ServiceItem.PRICE -> setState { copy(servicePriceHelperText = isEmpty) }
             ServiceItem.REMEMBER -> setState { copy(serviceRememberHelperText = isEmpty) }
         }
-    }
+    }*/
 }

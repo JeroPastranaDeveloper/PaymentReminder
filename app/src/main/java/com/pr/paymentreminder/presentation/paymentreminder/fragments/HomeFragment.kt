@@ -1,5 +1,6 @@
 package com.pr.paymentreminder.presentation.paymentreminder.fragments
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat.startActivity
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceActivity
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceBottomSheet
@@ -54,9 +54,11 @@ fun HomeFragment(viewModel: HomeViewModel) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
+
     fun handleAction(action: UiAction) {
         when (action) {
             UiAction.RemoveService -> removeService(viewModel)
+            is UiAction.AddEditService -> addOrEditService(action.serviceId, context)
         }
     }
 
@@ -131,31 +133,18 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     onEdit = {
                         showBottomSheet = false
                         showDialog = false
-
-                        // TODO: Pasar únicamente la ID del servicio y que se recoja en AddServiceActivity.
-                        // En AddServiceActivity, que filtre el servicio por el ID que se le ha pasado y de ahí que muestre los datos del servicio.
-
-                        val intent = Intent(context, AddServiceActivity::class.java)
-
-                        // Pasar los datos del servicio seleccionado al Intent
-                        intent.putExtra("serviceId", selectedService?.id)
-                        intent.putExtra("serviceCategory", selectedService?.category)
-                        intent.putExtra("serviceColor", selectedService?.color)
-                        intent.putExtra("serviceDate", selectedService?.date)
-                        intent.putExtra("serviceName", selectedService?.name)
-                        intent.putExtra("servicePrice", selectedService?.price)
-                        intent.putExtra("serviceRemember", selectedService?.remember)
-                        intent.putExtra("serviceType", selectedService?.type)
-                        intent.putExtra("serviceImage", selectedService?.image)
-                        intent.putExtra("serviceUrl", selectedService?.url)
-
-                        // Iniciar la actividad
-                        context.startActivity(intent)
+                        viewModel.sendIntent(UiIntent.AddEditService(selectedService?.id.orEmpty()))
                     }
                 )
             }
         }
     }
+}
+
+private fun addOrEditService(serviceId: String, context: Context) {
+    val intent = Intent(context, AddServiceActivity::class.java)
+    intent.putExtra("serviceId", serviceId)
+    context.startActivity(intent)
 }
 
 private fun removeService(
