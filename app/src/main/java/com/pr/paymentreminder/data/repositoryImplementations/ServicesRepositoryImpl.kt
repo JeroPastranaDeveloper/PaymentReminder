@@ -11,19 +11,19 @@ class ServicesRepositoryImpl @Inject constructor (
     private val dataSource: ServicesDataSource
 ) : ServicesRepository {
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getServices(): Flow<List<Service>> {
-        return dataSource.getServices()
-    }
 
-    override suspend fun createService(id: String, service: Service) {
-        return dataSource.createService(id, service)
-    }
+    override fun getServices(): Flow<List<Service>> =
+        dataSource.getServices()
 
-    override suspend fun updateService(serviceId: String, newServiceData: Service) {
-        return dataSource.updateService(serviceId, newServiceData)
-    }
+    override fun getService(id: String): Flow<Service> =
+        dataSource.getService(id)
 
-    override suspend fun deleteService(serviceId: String) {
-        return dataSource.deleteService(serviceId)
-    }
+    override suspend fun createService(id: String, service: Service) =
+        dataSource.createService(id, service)
+
+    override suspend fun updateService(serviceId: String, newServiceData: Service) =
+        dataSource.updateService(serviceId, newServiceData)
+
+    override suspend fun deleteService(serviceId: String) =
+        dataSource.deleteService(serviceId)
 }

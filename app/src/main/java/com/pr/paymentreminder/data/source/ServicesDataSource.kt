@@ -50,6 +50,25 @@ class ServicesDataSource @Inject constructor() {
         }
     }
 
+    fun getService(id: String): Flow<Service> {
+        val serviceRef = getServicesRef().child(id)
+
+        return callbackFlow {
+            val listener = serviceRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val service = snapshotToService(snapshot)
+                    trySend(service).isSuccess
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    println("Error obteniendo el servicio")
+                }
+            })
+
+            awaitClose { serviceRef.removeEventListener(listener) }
+        }
+    }
+
     fun createService(id: String, service: Service) {
         getServicesRef().child(id).setValue(service)
     }

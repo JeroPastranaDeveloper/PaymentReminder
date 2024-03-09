@@ -17,15 +17,15 @@ class ServicesUseCaseImpl @Inject constructor(
         return services
     }
 
-    override suspend fun createService(id: String, service: Service) {
+    override fun getService(id: String): Flow<Service> =
+        repository.getService(id)
+
+    override suspend fun createService(id: String, service: Service) =
         repository.createService(id, service)
-    }
 
-    override suspend fun updateService(serviceId: String, newServiceData: Service) {
+    override suspend fun updateService(serviceId: String, newServiceData: Service) =
         repository.updateService(serviceId, newServiceData)
-    }
 
-    override suspend fun deleteService(serviceId: String) {
+    override suspend fun deleteService(serviceId: String) =
         repository.deleteService(serviceId)
-    }
 }
