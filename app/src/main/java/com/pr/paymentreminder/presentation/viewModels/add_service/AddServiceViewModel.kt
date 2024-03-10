@@ -43,6 +43,7 @@ class AddServiceViewModel @Inject constructor(
                 setState {
                     copy(
                         service = service,
+                        serviceTextField = service.toServiceTextField(),
                         isLoading = false
                     )
                 }

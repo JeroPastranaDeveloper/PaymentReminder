@@ -8,6 +8,7 @@ class AddServiceViewContract : BaseViewContract() {
     data class UiState(
         val isLoading: Boolean = false,
         val service: Service = Service(),
+        val serviceTextField: ServiceTextField = ServiceTextField(),
         val serviceNameHelperText: Boolean = false,
         val servicePriceHelperText: Boolean = false,
         val serviceCategoryHelperText: Boolean = false,

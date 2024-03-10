@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 
@@ -25,6 +26,10 @@ fun Float.scaledSp(): TextUnit {
 }
 
 fun emptyString(): String = ""
+
+fun emptyTextField(): TextFieldValue = TextFieldValue("")
+
+fun TextFieldValue?.orEmpty(): TextFieldValue = this ?: TextFieldValue("")
 
 fun <T> T?.orElse(result: () -> T): T = this ?: result()
 
