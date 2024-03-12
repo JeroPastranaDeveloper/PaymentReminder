@@ -2,7 +2,6 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.data.model.ServiceItem
 
 class HomeViewContract : BaseViewContract() {
     data class UiState(
