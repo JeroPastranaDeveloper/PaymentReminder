@@ -48,4 +48,5 @@
     <string name="monthly_total_expenditure">Total monthly expenditure: %s$</string>
     <string name="yearly_expenditure">Yearly expenditures: %s$</string>
     <string name="yearly_total_expenditure">Total yearly expenditure: %s$</string>
+    <string name="edit_service_title">Edit Service</string>
 </resources>
