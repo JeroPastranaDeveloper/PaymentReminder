@@ -2,6 +2,8 @@ package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
@@ -15,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.PaymentType
+import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.emptyString
 
 @Composable
@@ -33,7 +36,7 @@ fun TypesDropDownMenu(
         modifier = Modifier.clickable { typesExpanded = !typesExpanded }
     )
 
-    ServiceSeparator()
+    Spacer(modifier = Modifier.height(dimen16))
 
     if (hasHelperText) HelperText(textHelperText)
 
