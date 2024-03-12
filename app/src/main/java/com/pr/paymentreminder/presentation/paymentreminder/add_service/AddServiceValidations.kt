@@ -57,17 +57,5 @@ fun createService(
     serviceData: Service,
     viewModel: AddServiceViewModel
 ) {
-    val newService = Service(
-        id = emptyString(),
-        category = serviceData.category,
-        color = emptyString(),
-        date = serviceData.date,
-        name = serviceData.name,
-        price = serviceData.price,
-        remember = serviceData.remember,
-        type = serviceData.type,
-        image = serviceData.image,
-        url = serviceData.url
-    )
-    viewModel.sendIntent(AddServiceViewContract.UiIntent.CreateService(newService))
+    viewModel.sendIntent(AddServiceViewContract.UiIntent.CreateService(serviceData.copy(id = emptyString())))
 }

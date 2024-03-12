@@ -50,6 +50,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.compose.HelperText
 import com.pr.paymentreminder.presentation.paymentreminder.compose.RememberDropDownMenu
 import com.pr.paymentreminder.presentation.paymentreminder.compose.SaveButton
 import com.pr.paymentreminder.presentation.paymentreminder.compose.TypesDropDownMenu
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiState
@@ -77,11 +78,12 @@ class AddServiceActivity : BaseActivity() {
         val state by viewModel.state.collectAsState(UiState())
 
         val serviceId = intent.getStringExtra("serviceId")
-        if (serviceId?.isEmpty() == false) {
+        val action = intent.getStringExtra("action")
+        if (action == ButtonActions.EDIT.name) {
             viewModel.sendIntent(UiIntent.GetService(serviceId))
         }
 
-        Content(state)
+        Content(state, action)
     }
 
     private fun handleAction(action: UiAction) {
@@ -92,7 +94,7 @@ class AddServiceActivity : BaseActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun Content(state: UiState) {
+    private fun Content(state: UiState, action: String?) {
         val context = LocalContext.current
 
         var serviceName by remember { mutableStateOf(state.serviceTextField.name.orEmpty()) }
@@ -252,6 +254,7 @@ class AddServiceActivity : BaseActivity() {
                     imageUri = imageUrl,
                     serviceUrl = serviceUrl,
                     service = state.service,
+                    action = action.orEmpty(),
                     context = context
                 )
             )

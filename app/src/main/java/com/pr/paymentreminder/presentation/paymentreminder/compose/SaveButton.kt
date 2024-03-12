@@ -12,6 +12,7 @@ import com.pr.paymentreminder.data.model.SaveButtonFunctionality
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.createService
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.updateService
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewModel
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.orElse
@@ -55,8 +56,10 @@ fun SaveButton(
                             url = serviceUrl.text
                         )
 
-                        if (service?.id != null) updateService(serviceData, viewModel)
-                        else createService(serviceData, viewModel)
+                        when(action) {
+                            ButtonActions.EDIT.name -> updateService(serviceData, viewModel)
+                            ButtonActions.ADD.name -> createService(serviceData, viewModel)
+                        }
 
                     } else {
                         com.pr.paymentreminder.presentation.paymentreminder.add_service.initialValidations(
@@ -74,8 +77,7 @@ fun SaveButton(
                 }
             }
         },
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         Text(text = stringResource(id = R.string.btn_save))
     }
