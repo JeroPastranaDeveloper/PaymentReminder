@@ -28,7 +28,7 @@ class AddServiceViewModel @Inject constructor(
             is UiIntent.CreateService -> createService(intent.service)
             is UiIntent.UpdateService -> updateService(intent.serviceId, intent.service)
             is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)
-            is UiIntent.GetService -> getService(intent.serviceId)
+            is UiIntent.GetService -> getService(intent.serviceId.orEmpty())
         }
     }
 
@@ -49,13 +49,12 @@ class AddServiceViewModel @Inject constructor(
         viewModelScope.launch {
             val database = Firebase.database
             val userId = FirebaseAuth.getInstance().currentUser?.uid
-            val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
-            val id = servicesRef.push().key
-            if (id != null) {
-                service.id = id
-                servicesUseCase.createService(id, service)
-            }
+            val servicesRef = database.getReference("$userId")
+            val id = servicesRef.push().key.orEmpty()
+            service.id = id
+            servicesUseCase.createService(id, service)
         }
+
         dispatchAction(UiAction.GoBack)
     }
 

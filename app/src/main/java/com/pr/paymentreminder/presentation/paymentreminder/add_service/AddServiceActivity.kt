@@ -77,8 +77,8 @@ class AddServiceActivity : BaseActivity() {
         val state by viewModel.state.collectAsState(UiState())
 
         val serviceId = intent.getStringExtra("serviceId")
-        serviceId?.let {
-            viewModel.sendIntent(UiIntent.GetService(it))
+        if (serviceId?.isEmpty() == false) {
+            viewModel.sendIntent(UiIntent.GetService(serviceId))
         }
 
         Content(state)

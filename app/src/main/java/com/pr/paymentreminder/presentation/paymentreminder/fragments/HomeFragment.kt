@@ -52,7 +52,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
     fun handleAction(action: UiAction) {
         when (action) {
             UiAction.RemoveService -> removeService(viewModel)
-            is UiAction.AddEditService -> addOrEditService(action.serviceId, context)
+            is UiAction.AddEditService -> addOrEditService(action.serviceId.orEmpty(), context)
         }
     }
 
@@ -98,7 +98,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = emptyString()
+                    contentDescription = null
                 )
             }
 

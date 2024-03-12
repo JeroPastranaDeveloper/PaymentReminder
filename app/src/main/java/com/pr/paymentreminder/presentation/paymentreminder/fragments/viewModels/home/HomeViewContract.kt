@@ -25,7 +25,7 @@ class HomeViewContract : BaseViewContract() {
     }
 
     sealed class UiAction {
-        data class AddEditService(val serviceId: String) : UiAction()
+        data class AddEditService(val serviceId: String?) : UiAction()
         data object RemoveService : UiAction()
     }
 }

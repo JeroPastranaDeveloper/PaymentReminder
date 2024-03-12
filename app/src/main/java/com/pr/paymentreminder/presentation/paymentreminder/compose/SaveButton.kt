@@ -10,6 +10,8 @@ import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.SaveButtonFunctionality
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.presentation.paymentreminder.add_service.createService
+import com.pr.paymentreminder.presentation.paymentreminder.add_service.updateService
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewModel
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.orElse
@@ -53,8 +55,8 @@ fun SaveButton(
                             url = serviceUrl.text
                         )
 
-                        if (service != null) com.pr.paymentreminder.presentation.paymentreminder.add_service.updateService(serviceData, viewModel)
-                        else com.pr.paymentreminder.presentation.paymentreminder.add_service.createService(serviceData, viewModel)
+                        if (service?.id != null) updateService(serviceData, viewModel)
+                        else createService(serviceData, viewModel)
 
                     } else {
                         com.pr.paymentreminder.presentation.paymentreminder.add_service.initialValidations(
