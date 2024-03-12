@@ -33,18 +33,12 @@ class AddServiceViewModel @Inject constructor(
     }
 
     private fun getService(serviceId: String) {
-        setState {
-            copy(
-                isLoading = true
-            )
-        }
         viewModelScope.launch {
             servicesUseCase.getService(serviceId).collect { service ->
                 setState {
                     copy(
                         service = service,
-                        serviceTextField = service.toServiceTextField(),
-                        isLoading = false
+                        serviceTextField = service.toServiceTextField()
                     )
                 }
             }
@@ -62,12 +56,14 @@ class AddServiceViewModel @Inject constructor(
                 servicesUseCase.createService(id, service)
             }
         }
+        dispatchAction(UiAction.GoBack)
     }
 
     private fun updateService(serviceId: String, newServiceData: Service) {
         viewModelScope.launch {
             servicesUseCase.updateService(serviceId, newServiceData)
         }
+        dispatchAction(UiAction.GoBack)
     }
 
     private fun validateServiceItem(item: ServiceItem, value: String) {

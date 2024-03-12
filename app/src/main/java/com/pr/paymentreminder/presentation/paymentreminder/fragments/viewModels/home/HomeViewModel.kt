@@ -25,12 +25,12 @@ class HomeViewModel @Inject constructor(
     override val initialViewState = UiState()
     override suspend fun manageIntent(intent: UiIntent) {
         when (intent) {
-            is UiIntent.RemoveService -> removeService(intent.serviceId)
             /*is UiIntent.CreateService -> createService(intent.service)
             is UiIntent.UpdateService -> updateService(intent.serviceId, intent.service)
             is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)*/
             UiIntent.GetServices -> getServices()
-            is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId))
+            is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty()))
+            is UiIntent.RemoveService -> removeService(intent.serviceId)
         }
     }
 
@@ -101,13 +101,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun removeService(serviceId: String) {
-        viewModelScope.launch {
-            servicesUseCase.deleteService(serviceId)
-        }
-        dispatchAction(UiAction.RemoveService)
-    }
-
     /*private fun validateServiceItem(item: ServiceItem, value: String) {
         val isEmpty = value.isEmpty()
         when (item) {
@@ -119,4 +112,11 @@ class HomeViewModel @Inject constructor(
             ServiceItem.REMEMBER -> setState { copy(serviceRememberHelperText = isEmpty) }
         }
     }*/
+
+    private fun removeService(serviceId: String) {
+        viewModelScope.launch {
+            servicesUseCase.deleteService(serviceId)
+        }
+        dispatchAction(UiAction.RemoveService)
+    }
 }

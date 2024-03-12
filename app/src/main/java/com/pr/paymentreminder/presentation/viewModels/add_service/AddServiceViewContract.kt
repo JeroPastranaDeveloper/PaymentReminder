@@ -6,7 +6,6 @@ import com.pr.paymentreminder.data.model.ServiceItem
 
 class AddServiceViewContract : BaseViewContract() {
     data class UiState(
-        val isLoading: Boolean = false,
         val service: Service = Service(),
         val serviceTextField: ServiceTextField = ServiceTextField(),
         val serviceNameHelperText: Boolean = false,
@@ -25,6 +24,6 @@ class AddServiceViewContract : BaseViewContract() {
     }
 
     sealed class  UiAction {
-
+        data object GoBack : UiAction()
     }
 }

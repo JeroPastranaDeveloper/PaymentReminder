@@ -256,7 +256,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                 ServiceSeparator()
 
                 val serviceId = service?.id
-                SaveButton(
+                /*SaveButton(
                     viewModel,
                     saveButtonFunctionality = SaveButtonFunctionality(
                         serviceName = serviceName,
@@ -272,7 +272,7 @@ fun ServiceBottomSheet(service: Service?, viewModel: HomeViewModel, onDismiss: (
                         onDismiss = onDismiss,
                         context = context
                     )
-                )
+                )*/
 
                 Spacer(modifier = Modifier.height(dimen56))
             }
@@ -371,7 +371,7 @@ private fun SaveButton(
                             createService(serviceData, viewModel)
                         }
                         viewModel.sendIntent(UiIntent.GetServices)
-                        onDismiss()
+                        //onDismiss()
 
                     } else {
                         /*initialValidations(

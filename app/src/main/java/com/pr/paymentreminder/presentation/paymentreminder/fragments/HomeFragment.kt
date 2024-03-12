@@ -11,11 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -31,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceActivity
-import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceBottomSheet
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceCard
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceDialog
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiAction
@@ -44,12 +40,10 @@ import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing72
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeFragment(viewModel: HomeViewModel) {
     val state by viewModel.state.collectAsState(UiState())
     var selectedService by remember { mutableStateOf<Service?>(null) }
-    var showBottomSheet by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
     val context = LocalContext.current
@@ -82,18 +76,11 @@ fun HomeFragment(viewModel: HomeViewModel) {
             ) {
                 Spacer(modifier = Modifier.height(dimen64))
                 state.services.map { service ->
-                    val dismissState = rememberDismissState()
                     ServiceCard(
                         service = service,
                         onClick = {
                             selectedService = service
                             showDialog = true
-                        },
-                        dismissState = dismissState,
-                        deleteService = {
-                            if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                                viewModel.sendIntent(UiIntent.RemoveService(service.id))
-                            }
                         }
                     )
                 }
@@ -106,21 +93,13 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     .align(Alignment.BottomEnd)
                     .padding(bottom = spacing72, end = spacing16),
                 onClick = {
-                    selectedService = null
-                    showBottomSheet = true
+                    viewModel.sendIntent(UiIntent.AddEditService(null))
                 }
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = emptyString()
                 )
-            }
-
-            if (showBottomSheet) {
-                ServiceBottomSheet(selectedService, viewModel) {
-                    selectedService = null
-                    showBottomSheet = false
-                }
             }
 
             if (showDialog) {
@@ -131,9 +110,12 @@ fun HomeFragment(viewModel: HomeViewModel) {
                         showDialog = false
                     },
                     onEdit = {
-                        showBottomSheet = false
                         showDialog = false
                         viewModel.sendIntent(UiIntent.AddEditService(selectedService?.id.orEmpty()))
+                    },
+                    onRemove = {
+                        showDialog = false
+                        viewModel.sendIntent(UiIntent.RemoveService(selectedService?.id.orEmpty()))
                     }
                 )
             }

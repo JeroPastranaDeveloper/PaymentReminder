@@ -8,11 +8,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,6 +45,7 @@ import com.pr.paymentreminder.ui.theme.spacing16
 fun ServiceDialog(
     service: Service?,
     onClick: () -> Unit,
+    onRemove: () -> Unit,
     onEdit: () -> Unit
 ) {
     val context = LocalContext.current
@@ -74,12 +77,15 @@ fun ServiceDialog(
                                     .height(dimen200)
                                     .clip(RoundedCornerShape(percent = 5))
                                     .clickable {
-                                        url?.takeIf { it.isNotEmpty() }?.let { url ->
-                                            if (URLUtil.isValidUrl(url)) {
-                                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                                                context.startActivity(intent)
+                                        url
+                                            ?.takeIf { it.isNotEmpty() }
+                                            ?.let { url ->
+                                                if (URLUtil.isValidUrl(url)) {
+                                                    val intent =
+                                                        Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                                    context.startActivity(intent)
+                                                }
                                             }
-                                        }
                                     },
                                 contentScale = ContentScale.Fit
                             )
@@ -89,8 +95,17 @@ fun ServiceDialog(
                             Text(text = stringResource(id = R.string.dialog_pryce, price + "€"))
                         }
                     }
-                    IconButton(onClick = onEdit, modifier = Modifier.align(Alignment.BottomEnd)) {
-                        Icon(Icons.Filled.Edit, contentDescription = null)
+                    Row(modifier = Modifier.align(Alignment.BottomEnd)) {
+                        IconButton(
+                            onClick = onRemove
+                        ) {
+                            Icon(Icons.Filled.Delete, contentDescription = null)
+                        }
+                        IconButton(
+                            onClick = onEdit
+                        ) {
+                            Icon(Icons.Filled.Edit, contentDescription = null)
+                        }
                     }
                 }
             }

@@ -17,8 +17,8 @@ class HomeViewContract : BaseViewContract() {
     )
 
     sealed class UiIntent {
+        data class AddEditService(val serviceId: String?) : UiIntent()
         data class RemoveService(val serviceId: String) : UiIntent()
-        data class AddEditService(val serviceId: String) : UiIntent()
         /*data class UpdateService(val serviceId: String, val service: Service) : UiIntent()
         data class CreateService(val service: Service) : UiIntent()
         data class ValidateService(val item: ServiceItem, val value: String) : UiIntent()*/
@@ -26,7 +26,7 @@ class HomeViewContract : BaseViewContract() {
     }
 
     sealed class UiAction {
-        data object RemoveService : UiAction()
         data class AddEditService(val serviceId: String) : UiAction()
+        data object RemoveService : UiAction()
     }
 }

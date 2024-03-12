@@ -14,6 +14,5 @@ data class SaveButtonFunctionality(
     val imageUri: TextFieldValue,
     val serviceUrl: TextFieldValue,
     val service: Service?,
-    val onDismiss: () -> Unit,
     val context: Context
 )

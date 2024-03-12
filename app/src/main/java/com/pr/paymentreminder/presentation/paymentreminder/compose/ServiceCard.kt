@@ -47,121 +47,93 @@ import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ServiceCard(
     service: Service,
-    onClick: () -> Unit,
-    dismissState: DismissState,
-    deleteService: (String) -> Unit
+    onClick: () -> Unit
 ) {
     val context = LocalContext.current
-    val dismissThresholds = { _: DismissDirection -> FractionalThreshold(0.2f) }
 
-    SwipeToDismiss(
-        state = dismissState,
-        dismissThresholds = dismissThresholds,
-        background = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(spacing8)
-                    .clip(RoundedCornerShape(dimen16))
-                    .background(Color.Red),
-                content = {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(end = spacing16)
-                            .align(Alignment.CenterEnd)
-                    )
-                }
-            )
-        },
-        directions = setOf(DismissDirection.EndToStart)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(spacing8),
+        onClick = onClick
     ) {
-        deleteService(service.id)
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(spacing8),
-            onClick = onClick
+        Row(
+            horizontalArrangement = Arrangement.Start
         ) {
-            Row(
-                horizontalArrangement = Arrangement.Start
-            ) {
-                /*val imageUri = service.image?.let { Uri.parse(it) }
-                if (imageUri != null) {
-                    val painter = rememberAsyncImagePainter(model = imageUri)
-
-                    Image(
-                        painter = painter,
-                        contentDescription = emptyString(),
-                        modifier = Modifier
-                            .size(dimen100)
-                            .align(Alignment.CenterVertically),
-                        contentScale = ContentScale.Fit,
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_launcher_background),
-                        contentDescription = emptyString(),
-                        modifier = Modifier
-                            .width(dimen100)
-                            .height(dimen100)
-                            .align(Alignment.CenterVertically),
-                        contentScale = ContentScale.Fit,
-                    )
-                }*/
-
-                val imageLoader = ImageLoader.Builder(context)
-                    .components {
-                        add(SvgDecoder.Factory())
-                    }
-                    .build()
-
-                val imageUrl = service.image.takeIf { it.isNotEmpty() }.orElse{ Constants.DEFAULT_IMAGE }
-                val image = rememberAsyncImagePainter(model = imageUrl, imageLoader = imageLoader)
+            /*val imageUri = service.image?.let { Uri.parse(it) }
+            if (imageUri != null) {
+                val painter = rememberAsyncImagePainter(model = imageUri)
 
                 Image(
-                    painter = image,
-                    contentDescription = null,
+                    painter = painter,
+                    contentDescription = emptyString(),
                     modifier = Modifier
                         .size(dimen100)
-                        .padding(start = spacing4)
                         .align(Alignment.CenterVertically),
                     contentScale = ContentScale.Fit,
                 )
-
-                Column(
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_background),
+                    contentDescription = emptyString(),
                     modifier = Modifier
-                        .padding(spacing4)
-                        .align(Alignment.CenterVertically)
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = service.name,
-                        modifier = Modifier.padding(spacing4),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(dimen8))
-                    Text(
-                        text = service.date,
-                        modifier = Modifier.padding(spacing4),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Spacer(modifier = Modifier.height(dimen8))
-                    Text(
-                        text = "${service.price}${Constants.EURO}",
-                        modifier = Modifier.padding(spacing4),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                        .width(dimen100)
+                        .height(dimen100)
+                        .align(Alignment.CenterVertically),
+                    contentScale = ContentScale.Fit,
+                )
+            }*/
+
+            val imageLoader = ImageLoader.Builder(context)
+                .components {
+                    add(SvgDecoder.Factory())
                 }
+                .build()
+
+            val imageUrl =
+                service.image.takeIf { it.isNotEmpty() }.orElse { Constants.DEFAULT_IMAGE }
+            val image = rememberAsyncImagePainter(model = imageUrl, imageLoader = imageLoader)
+
+            Image(
+                painter = image,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(dimen100)
+                    .padding(start = spacing4)
+                    .align(Alignment.CenterVertically),
+                contentScale = ContentScale.Fit,
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(spacing4)
+                    .align(Alignment.CenterVertically)
+                    .weight(1f)
+            ) {
+                Text(
+                    text = service.name,
+                    modifier = Modifier.padding(spacing4),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(dimen8))
+                Text(
+                    text = service.date,
+                    modifier = Modifier.padding(spacing4),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(modifier = Modifier.height(dimen8))
+                Text(
+                    text = "${service.price}${Constants.EURO}",
+                    modifier = Modifier.padding(spacing4),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         }
     }
+
 }
 
 /*when (painter.state) {
