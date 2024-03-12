@@ -1,7 +1,6 @@
 package com.pr.paymentreminder.presentation.paymentreminder.add_service
 
 import android.app.DatePickerDialog
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,7 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -31,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.Lifecycle
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.base.BaseActivity
@@ -41,7 +38,6 @@ import com.pr.paymentreminder.data.model.Categories
 import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.SaveButtonFunctionality
-import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.model.categoryItem
 import com.pr.paymentreminder.data.model.dateItem
 import com.pr.paymentreminder.data.model.nameItem
@@ -53,7 +49,6 @@ import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextFi
 import com.pr.paymentreminder.presentation.paymentreminder.compose.HelperText
 import com.pr.paymentreminder.presentation.paymentreminder.compose.RememberDropDownMenu
 import com.pr.paymentreminder.presentation.paymentreminder.compose.SaveButton
-import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceSeparator
 import com.pr.paymentreminder.presentation.paymentreminder.compose.TypesDropDownMenu
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
@@ -63,8 +58,6 @@ import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen64
-import com.pr.paymentreminder.ui.theme.emptyString
-import com.pr.paymentreminder.ui.theme.orElse
 import com.pr.paymentreminder.ui.theme.orEmpty
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
@@ -186,7 +179,7 @@ class AddServiceActivity : BaseActivity() {
             )
 
             if (state.serviceDateHelperText) {
-                ServiceSeparator()
+                Spacer(modifier = Modifier.height(dimen16))
                 HelperText(stringResource(id = R.string.invalid_service_date))
             }
 
