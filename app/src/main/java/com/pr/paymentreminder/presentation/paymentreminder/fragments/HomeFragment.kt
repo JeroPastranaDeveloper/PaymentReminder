@@ -48,11 +48,10 @@ fun HomeFragment(viewModel: HomeViewModel) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
-
     fun handleAction(action: UiAction) {
         when (action) {
             UiAction.RemoveService -> removeService(viewModel)
-            is UiAction.AddEditService -> addOrEditService(action.serviceId.orEmpty(), context)
+            is UiAction.AddEditService -> addOrEditService(action.serviceId.orEmpty(), action.action, context)
         }
     }
 
@@ -93,7 +92,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     .align(Alignment.BottomEnd)
                     .padding(bottom = spacing72, end = spacing16),
                 onClick = {
-                    viewModel.sendIntent(UiIntent.AddEditService(null))
+                    viewModel.sendIntent(UiIntent.AddEditService(null, ButtonActions.ADD))
                 }
             ) {
                 Icon(
@@ -111,7 +110,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     },
                     onEdit = {
                         showDialog = false
-                        viewModel.sendIntent(UiIntent.AddEditService(selectedService?.id.orEmpty()))
+                        viewModel.sendIntent(UiIntent.AddEditService(selectedService?.id.orEmpty(), ButtonActions.EDIT))
                     },
                     onRemove = {
                         showDialog = false
@@ -123,14 +122,15 @@ fun HomeFragment(viewModel: HomeViewModel) {
     }
 }
 
-private fun addOrEditService(serviceId: String, context: Context) {
+private fun addOrEditService(serviceId: String, action: ButtonActions, context: Context) {
     val intent = Intent(context, AddServiceActivity::class.java)
     intent.putExtra("serviceId", serviceId)
+    intent.putExtra("action", action)
     context.startActivity(intent)
 }
 
-private fun removeService(
-    viewModel: HomeViewModel
-) {
-    viewModel.sendIntent(UiIntent.GetServices)
+private fun removeService(viewModel: HomeViewModel) = viewModel.sendIntent(UiIntent.GetServices)
+
+enum class ButtonActions {
+    ADD, EDIT
 }

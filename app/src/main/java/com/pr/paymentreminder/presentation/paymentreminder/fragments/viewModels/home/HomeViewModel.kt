@@ -25,11 +25,8 @@ class HomeViewModel @Inject constructor(
     override val initialViewState = UiState()
     override suspend fun manageIntent(intent: UiIntent) {
         when (intent) {
-            /*is UiIntent.CreateService -> createService(intent.service)
-            is UiIntent.UpdateService -> updateService(intent.serviceId, intent.service)
-            is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)*/
             UiIntent.GetServices -> getServices()
-            is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty()))
+            is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty(), intent.action))
             is UiIntent.RemoveService -> removeService(intent.serviceId)
         }
     }
@@ -37,19 +34,6 @@ class HomeViewModel @Inject constructor(
     init {
         getServices()
     }
-
-    /*private fun createService(service: Service) {
-        viewModelScope.launch {
-            val database = Firebase.database
-            val userId = FirebaseAuth.getInstance().currentUser?.uid
-            val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
-            val id = servicesRef.push().key
-            if (id != null) {
-                service.id = id
-                servicesUseCase.createService(id, service)
-            }
-        }
-    }*/
 
     private fun Service.getDate(): LocalDate {
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
@@ -100,18 +84,6 @@ class HomeViewModel @Inject constructor(
             servicesUseCase.updateService(serviceId, newServiceData)
         }
     }
-
-    /*private fun validateServiceItem(item: ServiceItem, value: String) {
-        val isEmpty = value.isEmpty()
-        when (item) {
-            ServiceItem.NAME -> setState { copy(serviceNameHelperText = isEmpty) }
-            ServiceItem.CATEGORY -> setState { copy(serviceCategoryHelperText = isEmpty) }
-            ServiceItem.DATE -> setState { copy(serviceDateHelperText = isEmpty) }
-            ServiceItem.TYPE -> setState { copy(serviceTypeHelperText = isEmpty) }
-            ServiceItem.PRICE -> setState { copy(servicePriceHelperText = isEmpty) }
-            ServiceItem.REMEMBER -> setState { copy(serviceRememberHelperText = isEmpty) }
-        }
-    }*/
 
     private fun removeService(serviceId: String) {
         viewModelScope.launch {

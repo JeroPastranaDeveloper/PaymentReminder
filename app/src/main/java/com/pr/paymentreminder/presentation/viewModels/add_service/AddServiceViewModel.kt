@@ -49,7 +49,7 @@ class AddServiceViewModel @Inject constructor(
         viewModelScope.launch {
             val database = Firebase.database
             val userId = FirebaseAuth.getInstance().currentUser?.uid
-            val servicesRef = database.getReference("$userId")
+            val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
             val id = servicesRef.push().key.orEmpty()
             service.id = id
             servicesUseCase.createService(id, service)
