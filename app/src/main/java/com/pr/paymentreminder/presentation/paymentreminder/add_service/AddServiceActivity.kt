@@ -254,6 +254,7 @@ class AddServiceActivity : BaseActivity() {
                     imageUri = imageUrl,
                     serviceUrl = serviceUrl,
                     service = state.service,
+                    // TODO: Explota no sé por qué
                     action = action.orEmpty(),
                     context = context
                 )
