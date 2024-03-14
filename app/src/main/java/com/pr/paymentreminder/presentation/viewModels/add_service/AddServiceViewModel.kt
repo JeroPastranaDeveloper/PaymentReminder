@@ -31,6 +31,17 @@ class AddServiceViewModel @Inject constructor(
             is UiIntent.UpdateService -> updateService(intent.serviceId, intent.service)
             is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)
             is UiIntent.GetService -> getService(intent.serviceId.orEmpty())
+            is UiIntent.CheckIntent -> checkIntent(intent.serviceId, intent.action)
+        }
+    }
+
+    private fun checkIntent(serviceId: String, action: String) {
+        setState {
+            copy(
+                action = action,
+                serviceId = serviceId,
+                isLoading = false
+            )
         }
     }
 
