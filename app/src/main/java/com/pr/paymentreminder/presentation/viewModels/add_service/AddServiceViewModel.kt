@@ -13,6 +13,8 @@ import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceView
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,17 +34,22 @@ class AddServiceViewModel @Inject constructor(
         }
     }
 
-    private fun getService(serviceId: String) {
-        viewModelScope.launch {
-            servicesUseCase.getService(serviceId).collect { service ->
-                setState {
-                    copy(
-                        service = service,
-                        serviceTextField = service.toServiceTextField()
-                    )
+    private suspend fun getService(serviceId: String) {
+        val jobsGroup = listOf(
+
+            viewModelScope.async {
+                servicesUseCase.getService(serviceId).collect { service ->
+                    setState {
+                        copy(
+                            service = service,
+                            serviceTextField = service.toServiceTextField()
+                        )
+                    }
                 }
             }
-        }
+        )
+
+        jobsGroup.awaitAll()
     }
 
     private fun createService(service: Service) {

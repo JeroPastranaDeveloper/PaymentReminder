@@ -20,11 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -59,6 +61,7 @@ import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen64
+import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.orEmpty
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
@@ -67,6 +70,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+val LocalAction = staticCompositionLocalOf { emptyString() }
 @AndroidEntryPoint
 class AddServiceActivity : BaseActivity() {
 
@@ -83,7 +87,9 @@ class AddServiceActivity : BaseActivity() {
             viewModel.sendIntent(UiIntent.GetService(serviceId))
         }
 
-        Content(state, action)
+        CompositionLocalProvider(LocalAction provides action.orEmpty()) {
+            Content(state)
+        }
     }
 
     private fun handleAction(action: UiAction) {
@@ -94,8 +100,9 @@ class AddServiceActivity : BaseActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun Content(state: UiState, action: String?) {
+    private fun Content(state: UiState) {
         val context = LocalContext.current
+        val action = LocalAction.current
 
         var serviceName by remember { mutableStateOf(state.serviceTextField.name.orEmpty()) }
 
@@ -255,7 +262,7 @@ class AddServiceActivity : BaseActivity() {
                     serviceUrl = serviceUrl,
                     service = state.service,
                     // TODO: Explota no sé por qué
-                    action = action.orEmpty(),
+                    action = action,
                     context = context
                 )
             )
