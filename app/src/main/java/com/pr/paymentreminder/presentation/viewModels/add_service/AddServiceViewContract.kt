@@ -10,6 +10,7 @@ class AddServiceViewContract : BaseViewContract() {
         val action: String = emptyString(),
         val isLoading: Boolean = false,
         val service: Service = Service(),
+        val services: List<Service> = emptyList(),
         val serviceCategoryHelperText: Boolean = false,
         val serviceDateHelperText: Boolean = false,
         val serviceId: String = emptyString(),
@@ -23,7 +24,6 @@ class AddServiceViewContract : BaseViewContract() {
     sealed class UiIntent {
         data class CheckIntent(val serviceId: String, val action: String) : UiIntent()
         data class CreateService(val service: Service) : UiIntent()
-        data class GetService(val serviceId: String?) : UiIntent()
         data class UpdateService(val serviceId: String, val service: Service) : UiIntent()
         data class ValidateService(val item: ServiceItem, val value: String) : UiIntent()
     }

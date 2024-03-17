@@ -91,7 +91,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     .align(Alignment.BottomEnd)
                     .padding(bottom = spacing72, end = spacing16),
                 onClick = {
-                    viewModel.sendIntent(UiIntent.AddEditService(null, ButtonActions.ADD))
+                    viewModel.sendIntent(UiIntent.AddEditService(null, ButtonActions.ADD.name))
                 }
             ) {
                 Icon(
@@ -109,7 +109,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     },
                     onEdit = {
                         showDialog = false
-                        viewModel.sendIntent(UiIntent.AddEditService(selectedService?.id.orEmpty(), ButtonActions.EDIT))
+                        viewModel.sendIntent(UiIntent.AddEditService(selectedService?.id.orEmpty(), ButtonActions.EDIT.name))
                     },
                     onRemove = {
                         showDialog = false
@@ -121,7 +121,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
     }
 }
 
-private fun addOrEditService(serviceId: String, action: ButtonActions, context: Context) {
+private fun addOrEditService(serviceId: String, action: String, context: Context) {
     val intent = Intent(context, AddServiceActivity::class.java)
     intent.putExtra("serviceId", serviceId)
     intent.putExtra("action", action)

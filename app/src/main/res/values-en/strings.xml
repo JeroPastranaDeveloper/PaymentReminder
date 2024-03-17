@@ -17,6 +17,7 @@
     <string name="service_price">Service price</string>
     <string name="service_image_url">Image URL</string>
     <string name="service_url">Service URL</string>
+    <string name="service_comments">Comments…</string>
     <string name="payment_date">Payment date: %s</string>
     <string name="payment_type">Payment type: %s</string>
     <string name="remember_days_before">Remember %s days before</string>

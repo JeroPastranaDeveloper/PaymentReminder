@@ -18,7 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -116,7 +116,7 @@ class PaymentReminderActivity : AppCompatActivity() {
 
         Scaffold(
             topBar = {
-                Surface (elevation = dimen4) {
+                Surface {
                     TopAppBar(
                         title = { Text(stringResource(id = R.string.app_name)) }
                     )

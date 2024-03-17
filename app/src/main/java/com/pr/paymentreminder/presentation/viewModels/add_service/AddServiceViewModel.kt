@@ -9,12 +9,11 @@ import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.model.ServiceItem
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,37 +29,39 @@ class AddServiceViewModel @Inject constructor(
             is UiIntent.CreateService -> createService(intent.service)
             is UiIntent.UpdateService -> updateService(intent.serviceId, intent.service)
             is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)
-            is UiIntent.GetService -> getService(intent.serviceId.orEmpty())
             is UiIntent.CheckIntent -> checkIntent(intent.serviceId, intent.action)
         }
     }
 
-    private fun checkIntent(serviceId: String, action: String) {
+    private suspend fun checkIntent(serviceId: String, action: String) {
+
+        setState {
+            copy(
+                isLoading = true
+            )
+        }
+
         setState {
             copy(
                 action = action,
                 serviceId = serviceId,
-                isLoading = false
+                isLoading = action != ButtonActions.ADD.name
             )
         }
+
+        if(action == ButtonActions.EDIT.name) getService(serviceId)
     }
 
     private suspend fun getService(serviceId: String) {
-        val jobsGroup = listOf(
-
-            viewModelScope.async {
-                servicesUseCase.getService(serviceId).collect { service ->
-                    setState {
-                        copy(
-                            service = service,
-                            serviceTextField = service.toServiceTextField()
-                        )
-                    }
-                }
+        servicesUseCase.getService(serviceId).collect { service ->
+            setState {
+                copy(
+                    service = service,
+                    serviceTextField = service.toServiceTextField(),
+                    isLoading = false
+                )
             }
-        )
-
-        jobsGroup.awaitAll()
+        }
     }
 
     private fun createService(service: Service) {

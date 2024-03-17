@@ -12,5 +12,6 @@ data class Service(
     val remember: String = emptyString(),
     val type: String = emptyString(),
     val image: String = emptyString(),
+    val comments: String = emptyString(),
     val url: String? = emptyString()
 )

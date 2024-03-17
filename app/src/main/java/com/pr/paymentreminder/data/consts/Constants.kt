@@ -11,6 +11,7 @@ class Constants {
         const val COLOR = "color"
         const val TYPE = "type"
         const val REMEMBER = "remember"
+        const val COMMENTS = "comments"
         const val EURO = "€"
         const val HOME = "home"
         const val GRAPHIC = "graphic"

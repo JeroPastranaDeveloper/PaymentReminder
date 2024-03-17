@@ -14,6 +14,7 @@ data class ServiceTextField (
     val remember: TextFieldValue = emptyTextField(),
     val type: TextFieldValue = emptyTextField(),
     val image: TextFieldValue = emptyTextField(),
+    val comments: TextFieldValue = emptyTextField(),
     val url: TextFieldValue? = emptyTextField()
 )
 
@@ -28,5 +29,6 @@ fun Service.toServiceTextField() : ServiceTextField =
         remember = TextFieldValue(this.remember),
         type = TextFieldValue(this.type),
         image = TextFieldValue(this.image),
+        comments = TextFieldValue(this.comments),
         url = this.url?.let { TextFieldValue(it) }
     )

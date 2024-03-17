@@ -11,6 +11,7 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.SaveButtonFunctionality
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.createService
+import com.pr.paymentreminder.presentation.paymentreminder.add_service.initialValidations
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.updateService
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewModel
@@ -25,7 +26,7 @@ fun SaveButton(
     Button(
         onClick = {
             with(saveButtonFunctionality) {
-                com.pr.paymentreminder.presentation.paymentreminder.add_service.initialValidations(
+                initialValidations(
                     viewModel,
                     serviceName,
                     servicePrice,
@@ -52,6 +53,7 @@ fun SaveButton(
                             price = servicePrice.text,
                             remember = selectedRemember,
                             type = selectedPaymentType,
+                            comments = comments,
                             image = imageUri.text,
                             url = serviceUrl.text
                         )
@@ -62,7 +64,7 @@ fun SaveButton(
                         }
 
                     } else {
-                        com.pr.paymentreminder.presentation.paymentreminder.add_service.initialValidations(
+                        initialValidations(
                             viewModel,
                             serviceName,
                             servicePrice,

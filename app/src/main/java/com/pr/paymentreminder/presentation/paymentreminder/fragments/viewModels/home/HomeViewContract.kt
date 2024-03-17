@@ -2,7 +2,6 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
 
 class HomeViewContract : BaseViewContract() {
     data class UiState(
@@ -17,13 +16,13 @@ class HomeViewContract : BaseViewContract() {
     )
 
     sealed class UiIntent {
-        data class AddEditService(val serviceId: String?, val action: ButtonActions) : UiIntent()
+        data class AddEditService(val serviceId: String?, val action: String) : UiIntent()
         data class RemoveService(val serviceId: String) : UiIntent()
         data object GetServices : UiIntent()
     }
 
     sealed class UiAction {
-        data class AddEditService(val serviceId: String?, val action: ButtonActions) : UiAction()
+        data class AddEditService(val serviceId: String?, val action: String) : UiAction()
         data object RemoveService : UiAction()
     }
 }

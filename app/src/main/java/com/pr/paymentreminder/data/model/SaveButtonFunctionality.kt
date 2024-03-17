@@ -2,7 +2,6 @@ package com.pr.paymentreminder.data.model
 
 import android.content.Context
 import androidx.compose.ui.text.input.TextFieldValue
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
 
 data class SaveButtonFunctionality(
     val serviceName: TextFieldValue,
@@ -12,6 +11,7 @@ data class SaveButtonFunctionality(
     val servicePrice: TextFieldValue,
     val serviceId: String?,
     val selectedRemember: String,
+    val comments: String,
     val imageUri: TextFieldValue,
     val serviceUrl: TextFieldValue,
     val service: Service?,
