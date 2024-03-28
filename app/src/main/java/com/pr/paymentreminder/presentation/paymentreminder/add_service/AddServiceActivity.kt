@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +69,7 @@ import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceView
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
+import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.orEmpty
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
@@ -111,7 +113,12 @@ class AddServiceActivity : BaseActivity() {
     private fun Content(state: UiState) {
         val context = LocalContext.current
 
-        var serviceName by remember { mutableStateOf(state.serviceTextField.name.orEmpty()) }
+        // var serviceName = remember { mutableStateOf(state.serviceTextField.name.orEmpty()) }
+        var serviceName = remember { mutableStateOf(state.serviceTextField.name) }
+        
+        /*LaunchedEffect(key1 = state.serviceTextField.name) {
+            serviceName.value = state.service.name
+        }*/
 
         var servicePrice by remember { mutableStateOf(state.serviceTextField.price.orEmpty()) }
 
@@ -157,9 +164,9 @@ class AddServiceActivity : BaseActivity() {
                     ) {
                         DefaultTextField(
                             params = DefaultTextFieldParams(
-                                text = state.serviceTextField.name,
+                                text = serviceName.value,
                                 onTextChange = {
-                                    serviceName = it
+                                    serviceName = it.text
                                     viewModel.sendIntent(
                                         UiIntent.ValidateService(
                                             nameItem,
