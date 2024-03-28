@@ -9,11 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.DismissDirection
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -43,7 +40,6 @@ import com.pr.paymentreminder.ui.theme.spacing72
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeFragment(viewModel: HomeViewModel) {
     val state by viewModel.state.collectAsState(UiState())
@@ -79,18 +75,11 @@ fun HomeFragment(viewModel: HomeViewModel) {
             ) {
                 Spacer(modifier = Modifier.height(dimen64))
                 state.services.map { service ->
-                    val dismissState = rememberDismissState()
                     ServiceCard(
                         service = service,
                         onClick = {
                             selectedService = service
                             showDialog = true
-                        },
-                        dismissState = dismissState,
-                        deleteService = {
-                            if (dismissState.isDismissed(DismissDirection.EndToStart)) {
-                                viewModel.sendIntent(UiIntent.RemoveService(service.id))
-                            }
                         }
                     )
                 }
@@ -128,8 +117,12 @@ fun HomeFragment(viewModel: HomeViewModel) {
                         showDialog = false
                     },
                     onEdit = {
-                        showBottomSheet = true
                         showDialog = false
+                        showBottomSheet = true
+                    },
+                    onRemove = {
+                        showDialog = false
+                        viewModel.sendIntent(UiIntent.RemoveService(selectedService?.id.orEmpty()))
                     }
                 )
             }
