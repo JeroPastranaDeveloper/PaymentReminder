@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
@@ -28,31 +29,33 @@ fun TypesDropDownMenu(
     textHelperText: String,
     onCategorySelected: (String) -> Unit
 ) {
-    var selectedPaymentType by remember { mutableStateOf(initialSelectedType) }
+    var selectedPaymentType = initialSelectedType
     var typesExpanded by remember { mutableStateOf(false) }
 
-    Text(
-        text = stringResource(id = R.string.payment_type, selectedPaymentType),
-        modifier = Modifier.clickable { typesExpanded = !typesExpanded }
-    )
+    Column(modifier = Modifier.wrapContentSize()) {
+        Text(
+            text = stringResource(id = R.string.payment_type, selectedPaymentType),
+            modifier = Modifier.clickable { typesExpanded = !typesExpanded }
+        )
 
-    Spacer(modifier = Modifier.height(dimen16))
+        Spacer(modifier = Modifier.height(dimen16))
 
-    if (hasHelperText) HelperText(textHelperText)
+        if (hasHelperText) HelperText(textHelperText)
 
-    DropdownMenu(
-        expanded = typesExpanded,
-        onDismissRequest = {
-            typesExpanded = false
-        }
-    ) {
-        types.forEach { type ->
-            DropdownMenuItem(onClick = {
-                selectedPaymentType = type.type
-                onCategorySelected(selectedPaymentType)
+        DropdownMenu(
+            expanded = typesExpanded,
+            onDismissRequest = {
                 typesExpanded = false
-            }) {
-                Text(text = type.type)
+            }
+        ) {
+            types.forEach { type ->
+                DropdownMenuItem(onClick = {
+                    selectedPaymentType = type.type
+                    onCategorySelected(selectedPaymentType)
+                    typesExpanded = false
+                }) {
+                    Text(text = type.type)
+                }
             }
         }
     }

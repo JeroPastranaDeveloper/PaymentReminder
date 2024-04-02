@@ -10,14 +10,12 @@ class AddServiceViewContract : BaseViewContract() {
         val action: String = emptyString(),
         val isLoading: Boolean = false,
         val service: Service = Service(),
-        val services: List<Service> = emptyList(),
         val serviceCategoryHelperText: Boolean = false,
         val serviceDateHelperText: Boolean = false,
         val serviceId: String = emptyString(),
         val serviceNameHelperText: Boolean = false,
         val servicePriceHelperText: Boolean = false,
         val serviceRememberHelperText: Boolean = false,
-        val serviceTextField: ServiceTextField = ServiceTextField(),
         val serviceTypeHelperText: Boolean = false
     )
 

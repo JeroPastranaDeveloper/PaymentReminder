@@ -69,8 +69,6 @@ import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceView
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
-import com.pr.paymentreminder.ui.theme.emptyString
-import com.pr.paymentreminder.ui.theme.orEmpty
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
 import dagger.hilt.android.AndroidEntryPoint
@@ -113,14 +111,8 @@ class AddServiceActivity : BaseActivity() {
     private fun Content(state: UiState) {
         val context = LocalContext.current
 
-        // var serviceName = remember { mutableStateOf(state.serviceTextField.name.orEmpty()) }
-        var serviceName = remember { mutableStateOf(state.serviceTextField.name) }
-        
-        /*LaunchedEffect(key1 = state.serviceTextField.name) {
-            serviceName.value = state.service.name
-        }*/
-
-        var servicePrice by remember { mutableStateOf(state.serviceTextField.price.orEmpty()) }
+        var serviceName by remember { mutableStateOf(state.service.name) }
+        var servicePrice by remember { mutableStateOf(state.service.price) }
 
         var selectedCategory by remember { mutableStateOf(state.service.category) }
         val categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS)
@@ -131,11 +123,22 @@ class AddServiceActivity : BaseActivity() {
         val types = listOf(PaymentType.WEEKLY, PaymentType.MONTHLY, PaymentType.YEARLY)
 
         var selectedRemember by remember { mutableStateOf(state.service.remember) }
-        val daysRemember = listOf(1, 2, 3)
 
-        var comments by remember { mutableStateOf(state.serviceTextField.comments.orEmpty()) }
-        var imageUrl by remember { mutableStateOf(state.serviceTextField.image.orEmpty()) }
-        var serviceUrl by remember { mutableStateOf(state.serviceTextField.url.orEmpty()) }
+        var comments by remember { mutableStateOf(state.service.comments.orEmpty()) }
+        var imageUrl by remember { mutableStateOf(state.service.image.orEmpty()) }
+        var serviceUrl by remember { mutableStateOf(state.service.url.orEmpty()) }
+
+        LaunchedEffect(key1 = state.service.name) {
+            serviceName = state.service.name
+            servicePrice = state.service.price
+            selectedCategory = state.service.category
+            serviceDate = state.service.date
+            selectedType = state.service.type
+            comments = state.service.comments.orEmpty()
+            selectedRemember = state.service.remember
+            imageUrl = state.service.image.orEmpty()
+            serviceUrl = state.service.url.orEmpty()
+        }
 
         Column {
             Surface {
@@ -164,7 +167,7 @@ class AddServiceActivity : BaseActivity() {
                     ) {
                         DefaultTextField(
                             params = DefaultTextFieldParams(
-                                text = serviceName.value,
+                                text = TextFieldValue(serviceName),
                                 onTextChange = {
                                     serviceName = it.text
                                     viewModel.sendIntent(
@@ -182,9 +185,9 @@ class AddServiceActivity : BaseActivity() {
 
                         DefaultTextField(
                             DefaultTextFieldParams(
-                                text = state.serviceTextField.price,
+                                text = TextFieldValue(servicePrice),
                                 onTextChange = {
-                                    servicePrice = it
+                                    servicePrice = it.text
                                     viewModel.sendIntent(
                                         UiIntent.ValidateService(
                                             priceItem,
@@ -224,7 +227,7 @@ class AddServiceActivity : BaseActivity() {
                         }
 
                         Text(
-                            text = stringResource(id = R.string.payment_date, state.service.date),
+                            text = stringResource(id = R.string.payment_date, serviceDate),
                             modifier = Modifier.clickable { datePickerDialog.show() }
                         )
                         Spacer(modifier = Modifier.height(dimen16))
@@ -242,8 +245,7 @@ class AddServiceActivity : BaseActivity() {
                         }
 
                         RememberDropDownMenu(
-                            rememberDays = daysRemember,
-                            initialSelectedDay = state.service.remember,
+                            initialSelectedDay = selectedRemember,
                             hasHelperText = state.serviceRememberHelperText,
                             textHelperText = stringResource(id = R.string.invalid_service_remember)
                         ) {
@@ -253,7 +255,7 @@ class AddServiceActivity : BaseActivity() {
 
                         CategoriesDropDownMenu(
                             categories = categories,
-                            initialSelectedCategory = state.service.category,
+                            initialSelectedCategory = selectedCategory,
                             hasHelperText = state.serviceCategoryHelperText,
                             textHelperText = stringResource(id = R.string.invalid_service_category)
                         ) {
@@ -278,7 +280,7 @@ class AddServiceActivity : BaseActivity() {
                         )
 
                         TextField(
-                            value = state.serviceTextField.image,
+                            value = imageUrl,
                             onValueChange = { imageUrl = it },
                             label = { Text(stringResource(id = R.string.service_image_url)) },
                             modifier = Modifier
@@ -289,7 +291,7 @@ class AddServiceActivity : BaseActivity() {
                         )
 
                         TextField(
-                            value = state.serviceTextField.url.orEmpty(),
+                            value = serviceUrl,
                             onValueChange = { serviceUrl = it },
                             label = { Text(stringResource(id = R.string.service_url)) },
                             modifier = Modifier
@@ -304,16 +306,16 @@ class AddServiceActivity : BaseActivity() {
                         SaveButton(
                             viewModel,
                             saveButtonFunctionality = SaveButtonFunctionality(
-                                serviceName = serviceName,
+                                serviceName = TextFieldValue(serviceName),
                                 selectedCategory = selectedCategory,
                                 serviceDate = serviceDate,
                                 selectedPaymentType = selectedType,
-                                servicePrice = servicePrice,
+                                servicePrice = TextFieldValue(servicePrice),
                                 serviceId = state.service.id,
                                 selectedRemember = selectedRemember,
-                                imageUri = imageUrl,
-                                comments = comments.text,
-                                serviceUrl = serviceUrl,
+                                imageUri = TextFieldValue(imageUrl),
+                                comments = comments,
+                                serviceUrl = TextFieldValue(serviceUrl),
                                 service = state.service,
                                 action = state.action,
                                 context = context

@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
@@ -31,29 +32,31 @@ fun CategoriesDropDownMenu(
     var selectedCategory by remember { mutableStateOf(initialSelectedCategory) }
     var categoryExpanded by remember { mutableStateOf(false) }
 
-    Text(
-        text = stringResource(id = R.string.category, selectedCategory),
-        modifier = Modifier.clickable { categoryExpanded = !categoryExpanded }
-    )
+    Column(modifier = Modifier.wrapContentSize()) {
+        Text(
+            text = stringResource(id = R.string.category, selectedCategory),
+            modifier = Modifier.clickable { categoryExpanded = !categoryExpanded }
+        )
 
-    if (hasHelperText) {
-        Spacer(modifier = Modifier.height(dimen16))
-        HelperText(textHelperText)
-    }
-
-    DropdownMenu(
-        expanded = categoryExpanded,
-        onDismissRequest = {
-            categoryExpanded = false
+        if (hasHelperText) {
+            Spacer(modifier = Modifier.height(dimen16))
+            HelperText(textHelperText)
         }
-    ) {
-        categories.forEach { category ->
-            DropdownMenuItem(onClick = {
-                selectedCategory = category.category
-                onCategorySelected(selectedCategory)
+
+        DropdownMenu(
+            expanded = categoryExpanded,
+            onDismissRequest = {
                 categoryExpanded = false
-            }) {
-                Text(text = category.category)
+            }
+        ) {
+            categories.forEach { category ->
+                DropdownMenuItem(onClick = {
+                    selectedCategory = category.category
+                    onCategorySelected(selectedCategory)
+                    categoryExpanded = false
+                }) {
+                    Text(text = category.category)
+                }
             }
         }
     }

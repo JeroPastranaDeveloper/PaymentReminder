@@ -77,7 +77,7 @@ fun ServiceCard(
                 .build()
 
             val imageUrl =
-                service.image.takeIf { it.isNotEmpty() }.orElse { Constants.DEFAULT_IMAGE }
+                service.image.takeIf { it.orEmpty().isNotEmpty() }.orElse { Constants.DEFAULT_IMAGE }
             val image = rememberAsyncImagePainter(model = imageUrl, imageLoader = imageLoader)
 
             Image(
