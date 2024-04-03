@@ -2,6 +2,7 @@ package com.pr.paymentreminder.presentation.viewModels.add_service
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.data.model.ServiceHelperText
 import com.pr.paymentreminder.data.model.ServiceItem
 import com.pr.paymentreminder.ui.theme.emptyString
 
@@ -10,13 +11,8 @@ class AddServiceViewContract : BaseViewContract() {
         val action: String = emptyString(),
         val isLoading: Boolean = false,
         val service: Service = Service(),
-        val serviceCategoryHelperText: Boolean = false,
-        val serviceDateHelperText: Boolean = false,
-        val serviceId: String = emptyString(),
-        val serviceNameHelperText: Boolean = false,
-        val servicePriceHelperText: Boolean = false,
-        val serviceRememberHelperText: Boolean = false,
-        val serviceTypeHelperText: Boolean = false
+        val serviceHelperText: ServiceHelperText? = null,
+        val serviceId: String = emptyString()
     )
 
     sealed class UiIntent {

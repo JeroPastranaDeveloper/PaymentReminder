@@ -6,3 +6,5 @@ fun <T> Boolean.doIfTrue(block: () -> T): T? {
 fun <T> Boolean.doIfFalse(block: () -> T): T? {
     return if (!this) block.invoke() else null
 }
+
+fun Boolean?.orFalse() = this ?: false

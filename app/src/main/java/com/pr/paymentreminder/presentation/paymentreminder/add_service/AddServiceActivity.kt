@@ -69,6 +69,7 @@ import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceView
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
+import com.pr.paymentreminder.ui.theme.orFalse
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
 import dagger.hilt.android.AndroidEntryPoint
@@ -177,7 +178,7 @@ class AddServiceActivity : BaseActivity() {
                                         )
                                     )
                                 },
-                                hasHelperText = state.serviceNameHelperText,
+                                hasHelperText = state.serviceHelperText?.nameHelperText.orFalse(),
                                 textHelperText = stringResource(id = R.string.invalid_service_name),
                                 placeHolder = stringResource(id = R.string.service_name)
                             )
@@ -195,7 +196,7 @@ class AddServiceActivity : BaseActivity() {
                                         )
                                     )
                                 },
-                                hasHelperText = state.servicePriceHelperText,
+                                hasHelperText = state.serviceHelperText?.priceHelperText.orFalse(),
                                 textHelperText = stringResource(id = R.string.invalid_service_price),
                                 placeHolder = stringResource(id = R.string.service_price)
                             )
@@ -232,12 +233,12 @@ class AddServiceActivity : BaseActivity() {
                         )
                         Spacer(modifier = Modifier.height(dimen16))
 
-                        if (state.serviceDateHelperText) HelperText(stringResource(id = R.string.invalid_service_date))
+                        if (state.serviceHelperText?.dateHelperText.orFalse()) HelperText(stringResource(id = R.string.invalid_service_date))
 
                         TypesDropDownMenu(
                             types = types,
                             initialSelectedType = state.service.type,
-                            hasHelperText = state.serviceTypeHelperText,
+                            hasHelperText = state.serviceHelperText?.typeHelperText.orFalse(),
                             textHelperText = stringResource(id = R.string.invalid_service_type)
                         ) {
                             selectedType = it
@@ -246,7 +247,7 @@ class AddServiceActivity : BaseActivity() {
 
                         RememberDropDownMenu(
                             initialSelectedDay = selectedRemember,
-                            hasHelperText = state.serviceRememberHelperText,
+                            hasHelperText = state.serviceHelperText?.rememberHelperText.orFalse(),
                             textHelperText = stringResource(id = R.string.invalid_service_remember)
                         ) {
                             selectedRemember = it
@@ -256,7 +257,7 @@ class AddServiceActivity : BaseActivity() {
                         CategoriesDropDownMenu(
                             categories = categories,
                             initialSelectedCategory = selectedCategory,
-                            hasHelperText = state.serviceCategoryHelperText,
+                            hasHelperText = state.serviceHelperText?.categoryHelperText.orFalse(),
                             textHelperText = stringResource(id = R.string.invalid_service_category)
                         ) {
                             selectedCategory = it

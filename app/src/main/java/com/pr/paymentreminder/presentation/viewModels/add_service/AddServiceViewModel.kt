@@ -7,6 +7,7 @@ import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.data.model.ServiceHelperText
 import com.pr.paymentreminder.data.model.ServiceItem
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
@@ -85,13 +86,14 @@ class AddServiceViewModel @Inject constructor(
 
     private fun validateServiceItem(item: ServiceItem, value: String) {
         val isEmpty = value.isEmpty()
-        when (item) {
-            ServiceItem.NAME -> setState { copy(serviceNameHelperText = isEmpty) }
-            ServiceItem.CATEGORY -> setState { copy(serviceCategoryHelperText = isEmpty) }
-            ServiceItem.DATE -> setState { copy(serviceDateHelperText = isEmpty) }
-            ServiceItem.TYPE -> setState { copy(serviceTypeHelperText = isEmpty) }
-            ServiceItem.PRICE -> setState { copy(servicePriceHelperText = isEmpty) }
-            ServiceItem.REMEMBER -> setState { copy(serviceRememberHelperText = isEmpty) }
+        val helperText = when (item) {
+            ServiceItem.NAME -> ServiceHelperText(nameHelperText = isEmpty)
+            ServiceItem.CATEGORY -> ServiceHelperText(categoryHelperText = isEmpty)
+            ServiceItem.DATE -> ServiceHelperText(dateHelperText = isEmpty)
+            ServiceItem.TYPE -> ServiceHelperText(typeHelperText = isEmpty)
+            ServiceItem.PRICE -> ServiceHelperText(priceHelperText = isEmpty)
+            ServiceItem.REMEMBER -> ServiceHelperText(rememberHelperText = isEmpty)
         }
+        setState { copy(serviceHelperText = helperText) }
     }
 }
