@@ -2,17 +2,21 @@ package com.pr.paymentreminder.presentation.viewModels.add_service
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.data.model.ServiceHelperText
 import com.pr.paymentreminder.data.model.ServiceItem
 import com.pr.paymentreminder.ui.theme.emptyString
 
 class AddServiceViewContract : BaseViewContract() {
     data class UiState(
         val action: String = emptyString(),
+        val categoryHelperText: Boolean = false,
+        val dateHelperText: Boolean = false,
         val isLoading: Boolean = false,
+        val nameHelperText: Boolean = false,
+        val priceHelperText: Boolean = false,
+        val rememberHelperText: Boolean = false,
         val service: Service = Service(),
-        val serviceHelperText: ServiceHelperText? = null,
-        val serviceId: String = emptyString()
+        val serviceId: String = emptyString(),
+        val typeHelperText: Boolean = false
     )
 
     sealed class UiIntent {

@@ -7,7 +7,6 @@ import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.data.model.ServiceHelperText
 import com.pr.paymentreminder.data.model.ServiceItem
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
@@ -26,16 +25,15 @@ class AddServiceViewModel @Inject constructor(
     override val initialViewState = UiState()
 
     override suspend fun manageIntent(intent: UiIntent) {
-        when(intent) {
+        when (intent) {
+            is UiIntent.CheckIntent -> checkIntent(intent.serviceId, intent.action)
             is UiIntent.CreateService -> createService(intent.service)
             is UiIntent.UpdateService -> updateService(intent.serviceId, intent.service)
             is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)
-            is UiIntent.CheckIntent -> checkIntent(intent.serviceId, intent.action)
         }
     }
 
     private suspend fun checkIntent(serviceId: String, action: String) {
-
         setState {
             copy(
                 isLoading = true
@@ -50,7 +48,7 @@ class AddServiceViewModel @Inject constructor(
             )
         }
 
-        if(action == ButtonActions.EDIT.name) getService(serviceId)
+        if (action == ButtonActions.EDIT.name) getService(serviceId)
     }
 
     private suspend fun getService(serviceId: String) {
@@ -86,14 +84,17 @@ class AddServiceViewModel @Inject constructor(
 
     private fun validateServiceItem(item: ServiceItem, value: String) {
         val isEmpty = value.isEmpty()
-        val helperText = when (item) {
-            ServiceItem.NAME -> ServiceHelperText(nameHelperText = isEmpty)
-            ServiceItem.CATEGORY -> ServiceHelperText(categoryHelperText = isEmpty)
-            ServiceItem.DATE -> ServiceHelperText(dateHelperText = isEmpty)
-            ServiceItem.TYPE -> ServiceHelperText(typeHelperText = isEmpty)
-            ServiceItem.PRICE -> ServiceHelperText(priceHelperText = isEmpty)
-            ServiceItem.REMEMBER -> ServiceHelperText(rememberHelperText = isEmpty)
+        setState { copy(isLoading = true) }
+
+        when(item) {
+            ServiceItem.CATEGORY -> setState { copy(categoryHelperText = isEmpty) }
+            ServiceItem.DATE -> setState { copy(dateHelperText = isEmpty) }
+            ServiceItem.NAME -> setState { copy(nameHelperText = isEmpty) }
+            ServiceItem.PRICE -> setState { copy(priceHelperText = isEmpty) }
+            ServiceItem.REMEMBER -> setState { copy(rememberHelperText = isEmpty) }
+            ServiceItem.TYPE -> setState { copy(typeHelperText = isEmpty) }
         }
-        setState { copy(serviceHelperText = helperText) }
+
+        setState { copy(isLoading = false) }
     }
 }
