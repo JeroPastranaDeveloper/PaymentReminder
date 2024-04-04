@@ -8,6 +8,12 @@ import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.model.ServiceItem
+import com.pr.paymentreminder.data.model.categoryItem
+import com.pr.paymentreminder.data.model.dateItem
+import com.pr.paymentreminder.data.model.nameItem
+import com.pr.paymentreminder.data.model.priceItem
+import com.pr.paymentreminder.data.model.rememberItem
+import com.pr.paymentreminder.data.model.typeItem
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiAction
@@ -27,9 +33,49 @@ class AddServiceViewModel @Inject constructor(
     override suspend fun manageIntent(intent: UiIntent) {
         when (intent) {
             is UiIntent.CheckIntent -> checkIntent(intent.serviceId, intent.action)
-            is UiIntent.CreateService -> createService(intent.service)
-            is UiIntent.UpdateService -> updateService(intent.serviceId, intent.service)
+            is UiIntent.ValidateAndSave -> validateAndSave(intent.service)
             is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)
+        }
+    }
+
+    private fun validateAndSave(service: Service) {
+        validateServiceItem(nameItem, service.name)
+        validateServiceItem(priceItem, service.price)
+        validateServiceItem(categoryItem, service.category)
+        validateServiceItem(dateItem, service.date)
+        validateServiceItem(typeItem, service.type)
+        validateServiceItem(rememberItem, service.remember)
+
+        if (!state.value.categoryHelperText && !state.value.dateHelperText && !state.value.nameHelperText && !state.value.priceHelperText && !state.value.rememberHelperText && !state.value.typeHelperText) {
+            when (state.value.action) {
+                ButtonActions.EDIT.name -> updateService(
+                    service.id, Service(
+                        category = service.category,
+                        price = service.price,
+                        name = service.name,
+                        date = service.date,
+                        type = service.type,
+                        remember = service.remember,
+                        image = service.image,
+                        comments = service.comments,
+                        url = service.url
+                    )
+                )
+
+                else -> createService(
+                    Service(
+                        category = service.category,
+                        price = service.price,
+                        name = service.name,
+                        date = service.date,
+                        type = service.type,
+                        remember = service.remember,
+                        image = service.image,
+                        comments = service.comments,
+                        url = service.url
+                    )
+                )
+            }
         }
     }
 
@@ -86,7 +132,7 @@ class AddServiceViewModel @Inject constructor(
         val isEmpty = value.isEmpty()
         setState { copy(isLoading = true) }
 
-        when(item) {
+        when (item) {
             ServiceItem.CATEGORY -> setState { copy(categoryHelperText = isEmpty) }
             ServiceItem.DATE -> setState { copy(dateHelperText = isEmpty) }
             ServiceItem.NAME -> setState { copy(nameHelperText = isEmpty) }

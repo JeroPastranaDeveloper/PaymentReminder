@@ -2,7 +2,6 @@ package com.pr.paymentreminder.presentation.paymentreminder.add_service
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import com.pr.paymentreminder.R
@@ -53,16 +51,12 @@ import com.pr.paymentreminder.base.addRepeatingJob
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Categories
 import com.pr.paymentreminder.data.model.PaymentType
-import com.pr.paymentreminder.data.model.SaveButtonFunctionality
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.model.categoryItem
 import com.pr.paymentreminder.data.model.dateItem
-import com.pr.paymentreminder.data.model.nameItem
-import com.pr.paymentreminder.data.model.priceItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
 import com.pr.paymentreminder.presentation.paymentreminder.compose.HelperText
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiState
@@ -73,7 +67,6 @@ import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.doComposableIfTrue
 import com.pr.paymentreminder.ui.theme.emptyString
-import com.pr.paymentreminder.ui.theme.orElse
 import com.pr.paymentreminder.ui.theme.orFalse
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing8
@@ -411,142 +404,27 @@ class AddServiceActivity : BaseActivity() {
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        SaveButton(
-                            viewModel,
-                            saveButtonFunctionality = SaveButtonFunctionality(
-                                serviceName = TextFieldValue(serviceName),
-                                selectedCategory = selectedCategory,
-                                serviceDate = serviceDate,
-                                selectedPaymentType = selectedType,
-                                servicePrice = TextFieldValue(servicePrice),
-                                serviceId = state.service.id,
-                                selectedRemember = selectedRemember,
-                                imageUri = TextFieldValue(imageUrl),
-                                comments = comments,
-                                serviceUrl = TextFieldValue(serviceUrl),
-                                service = state.service,
-                                action = state.action,
-                                context = context
-                            )
-                        )
+                        Button(onClick = {
+                            viewModel.sendIntent(UiIntent.ValidateAndSave(Service(
+                                serviceId,
+                                selectedCategory,
+                                emptyString(),
+                                serviceDate,
+                                serviceName,
+                                servicePrice,
+                                selectedRemember,
+                                selectedType,
+                                imageUrl,
+                                comments,
+                                serviceUrl
+                            )))
+                        }) {
+                            Text(text = stringResource(id = R.string.btn_save))
+                        }
                     }
                 }
             }
         }
-    }
-
-    @Composable
-    fun SaveButton(
-        viewModel: AddServiceViewModel,
-        saveButtonFunctionality: SaveButtonFunctionality
-    ) {
-        var shouldValidate by remember { mutableStateOf(false) }
-        Button(
-            onClick = {
-                with(saveButtonFunctionality) {
-                    initialValidations(
-                        serviceName.text,
-                        servicePrice.text,
-                        selectedCategory,
-                        serviceDate,
-                        selectedPaymentType,
-                        selectedRemember
-                    )
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = stringResource(id = R.string.btn_save))
-        }
-
-        with(viewModel) {
-            LaunchedEffect(key1 = state) {
-                val isServiceCategoryValid = !state.value.categoryHelperText
-                val isServiceDateValid = !state.value.dateHelperText
-                val isServiceNameValid = !state.value.nameHelperText
-                val isServicePriceValid = !state.value.priceHelperText
-                val isServiceRememberValid = !state.value.rememberHelperText
-                val isServiceTypeValid = !state.value.typeHelperText
-
-                if (isServiceNameValid && isServiceCategoryValid && isServiceDateValid && isServiceTypeValid && isServicePriceValid && isServiceRememberValid) {
-                    val serviceNewData = Service(
-                        id = serviceId.orElse { emptyString() },
-                        category = saveButtonFunctionality.selectedCategory,
-                        name = saveButtonFunctionality.serviceName.text,
-                        color = emptyString(),
-                        date = saveButtonFunctionality.serviceDate,
-                        price = saveButtonFunctionality.servicePrice.text,
-                        remember = saveButtonFunctionality.selectedRemember,
-                        type = saveButtonFunctionality.selectedPaymentType,
-                        comments = saveButtonFunctionality.comments,
-                        image = saveButtonFunctionality.imageUri.text,
-                        url = saveButtonFunctionality.serviceUrl.text
-                    )
-
-                    when (action) {
-                        ButtonActions.EDIT.name -> editService(serviceNewData, viewModel)
-                        ButtonActions.ADD.name -> createService(viewModel, serviceNewData)
-                    }
-
-                } else {
-                    Toast.makeText(
-                        saveButtonFunctionality.context,
-                        R.string.invalid_data,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    shouldValidate = false
-                }
-
-            }
-        }
-    }
-
-    private fun createService(
-        viewModel: AddServiceViewModel,
-        serviceNewData: Service
-    ) {
-        viewModel.sendIntent(
-            UiIntent.CreateService(
-                serviceNewData.copy(
-                    id = emptyString()
-                )
-            )
-        )
-    }
-
-    private fun editService(
-        serviceNewData: Service,
-        viewModel: AddServiceViewModel
-    ) {
-        val serviceData = Service(
-            id = serviceNewData.id,
-            category = serviceNewData.category,
-            color = emptyString(),
-            date = serviceNewData.date,
-            name = serviceNewData.name,
-            price = serviceNewData.price,
-            remember = serviceNewData.remember,
-            type = serviceNewData.type,
-            image = serviceNewData.image,
-            url = serviceNewData.url
-        )
-        viewModel.sendIntent(UiIntent.UpdateService(serviceNewData.id, serviceData))
-    }
-
-    private fun initialValidations(
-        serviceName: String,
-        servicePrice: String,
-        selectedCategory: String,
-        serviceDate: String,
-        selectedType: String,
-        selectedRemember: String
-    ) {
-        viewModel.sendIntent(UiIntent.ValidateService(nameItem, serviceName))
-        viewModel.sendIntent(UiIntent.ValidateService(priceItem, servicePrice))
-        viewModel.sendIntent(UiIntent.ValidateService(categoryItem, selectedCategory))
-        viewModel.sendIntent(UiIntent.ValidateService(dateItem, serviceDate))
-        viewModel.sendIntent(UiIntent.ValidateService(typeItem, selectedType))
-        viewModel.sendIntent(UiIntent.ValidateService(rememberItem, selectedRemember))
     }
 
     @OptIn(ExperimentalMaterial3Api::class)

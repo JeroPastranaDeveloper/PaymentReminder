@@ -21,8 +21,7 @@ class AddServiceViewContract : BaseViewContract() {
 
     sealed class UiIntent {
         data class CheckIntent(val serviceId: String, val action: String) : UiIntent()
-        data class CreateService(val service: Service) : UiIntent()
-        data class UpdateService(val serviceId: String, val service: Service) : UiIntent()
+        data class ValidateAndSave(val service: Service) : UiIntent()
         data class ValidateService(val item: ServiceItem, val value: String) : UiIntent()
     }
 
