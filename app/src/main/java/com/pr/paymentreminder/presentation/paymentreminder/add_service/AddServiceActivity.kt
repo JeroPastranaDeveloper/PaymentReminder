@@ -418,7 +418,7 @@ class AddServiceActivity : BaseActivity() {
                                 comments,
                                 serviceUrl
                             )))
-                        }) {
+                        }, modifier = Modifier.fillMaxWidth()) {
                             Text(text = stringResource(id = R.string.btn_save))
                         }
                     }
