@@ -1,6 +1,7 @@
 package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home
 
 import androidx.lifecycle.viewModelScope
+import com.pr.paymentreminder.androidVersions.hasT33
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
@@ -10,6 +11,8 @@ import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
+import com.pr.paymentreminder.providers.Permissions
+import com.pr.paymentreminder.providers.PermissionsRequester
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -20,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val servicesUseCase: ServicesUseCase,
-    private val alarmScheduler: AlarmScheduler
+    private val alarmScheduler: AlarmScheduler,
+    private val permissionsRequester: PermissionsRequester
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     override fun manageIntent(intent: UiIntent) {
@@ -33,6 +37,13 @@ class HomeViewModel @Inject constructor(
 
     init {
         getServices()
+        if(hasT33()) checkPermissions()
+    }
+
+    private fun checkPermissions() {
+        viewModelScope.launch {
+            permissionsRequester.requestPermissions(Permissions.Notification)
+        }
     }
 
     private fun Service.getDate(): LocalDate {
