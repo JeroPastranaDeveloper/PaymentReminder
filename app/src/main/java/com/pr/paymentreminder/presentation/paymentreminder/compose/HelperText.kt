@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing20
-import com.pr.paymentreminder.ui.theme.spacing8
 
 @Composable
 fun HelperText(
@@ -18,7 +17,7 @@ fun HelperText(
         text = helperText,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = spacing20, end = spacing16, bottom = spacing8),
+            .padding(start = spacing20, end = spacing16),
         color = Color.Red
     )
 }

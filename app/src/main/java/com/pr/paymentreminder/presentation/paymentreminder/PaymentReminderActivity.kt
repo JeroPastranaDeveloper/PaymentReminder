@@ -18,7 +18,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material3.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -26,6 +25,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -41,7 +41,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.pr.paymentreminder.R
-import com.pr.paymentreminder.androidVersions.hasS31
+import com.pr.paymentreminder.androidVersions.hasS33
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
@@ -49,7 +49,6 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFra
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewModel
-import com.pr.paymentreminder.ui.theme.dimen4
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -63,7 +62,6 @@ class PaymentReminderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         checkNotificationPermissions()
-        checkAndRequestPermissions()
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -84,21 +82,16 @@ class PaymentReminderActivity : AppCompatActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun checkNotificationPermissions() {
-        if (hasS31() && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        if (hasS33() && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    private fun checkAndRequestPermissions() {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if (!alarmManager.canScheduleExactAlarms()) {
-            val intent = Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                data = Uri.fromParts("package", packageName, null)
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                val intent = Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                    data = Uri.fromParts("package", packageName, null)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
         }
     }
 

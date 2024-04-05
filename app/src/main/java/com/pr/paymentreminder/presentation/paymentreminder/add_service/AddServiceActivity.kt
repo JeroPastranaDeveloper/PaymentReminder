@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,7 +64,6 @@ import com.pr.paymentreminder.ui.theme.Visible
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
-import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.orFalse
 import com.pr.paymentreminder.ui.theme.spacing16
@@ -176,6 +174,7 @@ class AddServiceActivity : BaseActivity() {
                         Visible(state.nameHelperText.orFalse()) {
                             HelperText(stringResource(R.string.invalid_service_name))
                         }
+                        Spacer(modifier = Modifier.height(dimen16))
 
                         TextField(
                             value = servicePrice,
@@ -192,7 +191,7 @@ class AddServiceActivity : BaseActivity() {
                             HelperText(stringResource(R.string.invalid_service_price))
                         }
 
-                        Spacer(modifier = Modifier.size(dimen8))
+                        Spacer(modifier = Modifier.height(dimen16))
 
                         val datePickerDialog = remember {
                             DatePickerDialog(
@@ -223,11 +222,13 @@ class AddServiceActivity : BaseActivity() {
                             text = stringResource(id = R.string.payment_date, serviceDate),
                             modifier = Modifier.clickable { datePickerDialog.show() }
                         )
-                        Spacer(modifier = Modifier.height(dimen16))
 
                         Visible(state.dateHelperText.orFalse()) {
+                            Spacer(modifier = Modifier.height(dimen4))
                             HelperText(stringResource(id = R.string.invalid_service_date))
                         }
+
+                        Spacer(modifier = Modifier.height(dimen16))
 
                         Column(modifier = Modifier.wrapContentSize()) {
                             var typesExpanded by remember { mutableStateOf(false) }
@@ -238,6 +239,7 @@ class AddServiceActivity : BaseActivity() {
                             )
 
                             Visible(state.typeHelperText.orFalse()) {
+                                Spacer(modifier = Modifier.height(dimen4))
                                 HelperText(stringResource(id = R.string.invalid_service_type))
                             }
 
@@ -285,6 +287,7 @@ class AddServiceActivity : BaseActivity() {
                             )
 
                             Visible(state.rememberHelperText.orFalse()){
+                                Spacer(modifier = Modifier.height(dimen4))
                                 HelperText(stringResource(R.string.invalid_service_remember))
                             }
 
@@ -330,6 +333,7 @@ class AddServiceActivity : BaseActivity() {
                             )
 
                             Visible(state.categoryHelperText.orFalse()) {
+                                Spacer(modifier = Modifier.height(dimen4))
                                 HelperText(stringResource(R.string.invalid_service_category))
                             }
 
@@ -365,17 +369,6 @@ class AddServiceActivity : BaseActivity() {
                         }
 
                         TextField(
-                            value = comments,
-                            onValueChange = { comments = it },
-                            label = { Text(stringResource(id = R.string.service_comments)) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = spacing8)
-                                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
-                            singleLine = false
-                        )
-
-                        TextField(
                             value = imageUrl,
                             onValueChange = { imageUrl = it },
                             label = { Text(stringResource(id = R.string.service_image_url)) },
@@ -397,13 +390,22 @@ class AddServiceActivity : BaseActivity() {
                             singleLine = true
                         )
 
+                        TextField(
+                            value = comments,
+                            onValueChange = { comments = it },
+                            label = { Text(stringResource(id = R.string.service_comments)) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = spacing8),
+                        )
+
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Button(onClick = {
-                            viewModel.sendIntent(UiIntent.ValidateAndSave(Service(
-                                serviceId,
+                        SaveButton(
+                            Service(
+                                id = emptyString(),
                                 selectedCategory,
-                                emptyString(),
+                                color = emptyString(),
                                 serviceDate,
                                 serviceName,
                                 servicePrice,
@@ -412,13 +414,22 @@ class AddServiceActivity : BaseActivity() {
                                 imageUrl,
                                 comments,
                                 serviceUrl
-                            )))
-                        }, modifier = Modifier.fillMaxWidth()) {
-                            Text(text = stringResource(id = R.string.btn_save))
-                        }
+                            )
+                        )
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun SaveButton(
+        service: Service
+    ) {
+        Button(
+            onClick = { viewModel.sendIntent(UiIntent.ValidateAndSave(service)) },
+            modifier = Modifier.fillMaxWidth()) {
+            Text(text = stringResource(id = R.string.btn_save))
         }
     }
 
