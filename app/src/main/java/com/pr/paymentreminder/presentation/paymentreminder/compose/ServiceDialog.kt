@@ -36,6 +36,7 @@ import coil.decode.SvgDecoder
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.ui.theme.Visible
 import com.pr.paymentreminder.ui.theme.dimen10
 import com.pr.paymentreminder.ui.theme.dimen200
 import com.pr.paymentreminder.ui.theme.orElse
@@ -93,6 +94,11 @@ fun ServiceDialog(
                             Text(text = stringResource(id = R.string.dialog_date, date))
                             Text(text = stringResource(id = R.string.dialog_type, type))
                             Text(text = stringResource(id = R.string.dialog_pryce, price + "€"))
+                            comments?.let {
+                                Visible(it.isNotEmpty()) {
+                                    Text(text = it)
+                                }
+                            }
                         }
                     }
                     Row(modifier = Modifier.align(Alignment.BottomEnd)) {
