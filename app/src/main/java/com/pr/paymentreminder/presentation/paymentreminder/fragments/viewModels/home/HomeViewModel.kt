@@ -23,7 +23,7 @@ class HomeViewModel @Inject constructor(
     private val alarmScheduler: AlarmScheduler
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
-    override suspend fun manageIntent(intent: UiIntent) {
+    override fun manageIntent(intent: UiIntent) {
         when (intent) {
             UiIntent.GetServices -> getServices()
             is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty(), intent.action))

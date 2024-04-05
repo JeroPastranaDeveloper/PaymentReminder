@@ -61,11 +61,11 @@ import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceView
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiState
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewModel
+import com.pr.paymentreminder.ui.theme.Visible
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.dimen8
-import com.pr.paymentreminder.ui.theme.doComposableIfTrue
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.orFalse
 import com.pr.paymentreminder.ui.theme.spacing16
@@ -83,19 +83,16 @@ class AddServiceActivity : BaseActivity() {
     private lateinit var action: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         serviceId = intent.getStringExtra("serviceId").toString()
         action = intent.getStringExtra("action").toString()
-
-        super.onCreate(savedInstanceState)
+        viewModel.sendIntent(UiIntent.CheckIntent(serviceId, action))
     }
 
     @Composable
     override fun ComposableContent() {
         addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect(::handleAction) }
         val state by viewModel.state.collectAsState(UiState())
-
-        viewModel.sendIntent(UiIntent.CheckIntent(serviceId, action))
-
         Content(state)
     }
 
@@ -176,7 +173,7 @@ class AddServiceActivity : BaseActivity() {
                             singleLine = false
                         )
 
-                        state.nameHelperText.orFalse().doComposableIfTrue {
+                        Visible(state.nameHelperText.orFalse()) {
                             HelperText(stringResource(R.string.invalid_service_name))
                         }
 
@@ -191,7 +188,7 @@ class AddServiceActivity : BaseActivity() {
                             singleLine = false
                         )
 
-                        state.priceHelperText.orFalse().doComposableIfTrue {
+                        Visible(state.priceHelperText.orFalse()) {
                             HelperText(stringResource(R.string.invalid_service_price))
                         }
 
@@ -228,9 +225,9 @@ class AddServiceActivity : BaseActivity() {
                         )
                         Spacer(modifier = Modifier.height(dimen16))
 
-                        if (state.dateHelperText.orFalse()) HelperText(
-                            stringResource(id = R.string.invalid_service_date)
-                        )
+                        Visible(state.dateHelperText.orFalse()) {
+                            HelperText(stringResource(id = R.string.invalid_service_date))
+                        }
 
                         Column(modifier = Modifier.wrapContentSize()) {
                             var typesExpanded by remember { mutableStateOf(false) }
@@ -240,7 +237,7 @@ class AddServiceActivity : BaseActivity() {
                                 modifier = Modifier.clickable { typesExpanded = !typesExpanded }
                             )
 
-                            state.typeHelperText.orFalse().doComposableIfTrue {
+                            Visible(state.typeHelperText.orFalse()) {
                                 HelperText(stringResource(id = R.string.invalid_service_type))
                             }
 
@@ -287,10 +284,9 @@ class AddServiceActivity : BaseActivity() {
                                 modifier = Modifier.clickable { daysExpanded = !daysExpanded }
                             )
 
-                            state.rememberHelperText.orFalse()
-                                .doComposableIfTrue {
-                                    HelperText(stringResource(R.string.invalid_service_remember))
-                                }
+                            Visible(state.rememberHelperText.orFalse()){
+                                HelperText(stringResource(R.string.invalid_service_remember))
+                            }
 
                             Spacer(modifier = Modifier.height(dimen16))
 
@@ -333,10 +329,9 @@ class AddServiceActivity : BaseActivity() {
                                 }
                             )
 
-                            state.categoryHelperText.orFalse()
-                                .doComposableIfTrue {
-                                    HelperText(stringResource(R.string.invalid_service_category))
-                                }
+                            Visible(state.categoryHelperText.orFalse()) {
+                                HelperText(stringResource(R.string.invalid_service_category))
+                            }
 
                             Spacer(modifier = Modifier.height(dimen16))
 

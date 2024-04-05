@@ -18,7 +18,7 @@ class LoginViewModel @Inject constructor(
 
     override val initialViewState = UiState()
 
-    override suspend fun manageIntent(intent: UiIntent) {
+    override fun manageIntent(intent: UiIntent) {
         when (intent) {
             is UiIntent.ValidateEmail -> validateEmail(intent.email)
             is UiIntent.ValidatePassword -> validatePassword(intent.password)

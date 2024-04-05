@@ -40,17 +40,13 @@ abstract class BaseViewModelWithActions<S, I, A> : BaseViewModel<S, I>() {
     }
 
     protected fun dispatchAction(action: A) {
-        if (_actions.hasSubscribers) {
-            _actions.tryEmit(action)
-        } else {
-            pendingActions.add(action)
-        }
+        if (_actions.hasSubscribers) _actions.tryEmit(action) else pendingActions.add(action)
     }
 
     protected inline fun <reified T> SavedStateHandle.getArgs(): T? = get("args")
 
     protected inline fun <reified T> SavedStateHandle.requireArgs(): T =
-        getArgs() ?: throw  IllegalArgumentException()
+        getArgs() ?: throw IllegalArgumentException()
 
     private val <T> MutableSharedFlow<T>.hasSubscribers: Boolean
         get() = subscriptionCount.value > 0

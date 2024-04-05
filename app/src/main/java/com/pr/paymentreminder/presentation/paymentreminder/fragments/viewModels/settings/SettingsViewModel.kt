@@ -13,7 +13,7 @@ class SettingsViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
-    override suspend fun manageIntent(intent: UiIntent) {
+    override fun manageIntent(intent: UiIntent) {
         when (intent) {
             UiIntent.SignOut -> signOut()
             UiIntent.ShowSignOutDialog -> dispatchAction(UiAction.SignOut)

@@ -46,30 +46,6 @@ fun ServiceCard(
         Row(
             horizontalArrangement = Arrangement.Start
         ) {
-            /*val imageUri = service.image?.let { Uri.parse(it) }
-            if (imageUri != null) {
-                val painter = rememberAsyncImagePainter(model = imageUri)
-
-                Image(
-                    painter = painter,
-                    contentDescription = emptyString(),
-                    modifier = Modifier
-                        .size(dimen100)
-                        .align(Alignment.CenterVertically),
-                    contentScale = ContentScale.Fit,
-                )
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_background),
-                    contentDescription = emptyString(),
-                    modifier = Modifier
-                        .width(dimen100)
-                        .height(dimen100)
-                        .align(Alignment.CenterVertically),
-                    contentScale = ContentScale.Fit,
-                )
-            }*/
-
             val imageLoader = ImageLoader.Builder(context)
                 .components {
                     add(SvgDecoder.Factory())
@@ -118,27 +94,3 @@ fun ServiceCard(
     }
 
 }
-
-/*when (painter.state) {
-                    is AsyncImagePainter.State.Loading -> {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterVertically))
-                    }
-                    is AsyncImagePainter.State.Error -> {
-                        Toast.makeText(LocalContext.current, "Error", Toast.LENGTH_SHORT).show()
-                    }
-                    is AsyncImagePainter.State.Success -> {
-                        Image(
-                            painter = painter,
-                            contentDescription = emptyString(),
-                            modifier = Modifier
-                                .width(dimen100)
-                                .height(dimen100)
-                                .align(Alignment.CenterVertically),
-                            contentScale = ContentScale.Fit,
-                        )
-                    }
-
-                    AsyncImagePainter.State.Empty -> {
-                        Toast.makeText(LocalContext.current, "Empty", Toast.LENGTH_SHORT).show()
-                    }
-                }*/

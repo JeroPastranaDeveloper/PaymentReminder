@@ -19,7 +19,7 @@ class GraphicViewModel @Inject constructor(
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
 
-    override suspend fun manageIntent(intent: UiIntent) {
+    override fun manageIntent(intent: UiIntent) {
         when (intent) {
             is UiIntent.GetFilteredServices -> filterServices(intent.filter)
         }
