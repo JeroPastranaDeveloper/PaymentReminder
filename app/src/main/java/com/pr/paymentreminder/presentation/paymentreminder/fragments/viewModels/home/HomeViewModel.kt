@@ -42,7 +42,7 @@ class HomeViewModel @Inject constructor(
 
     private fun checkPermissions() {
         viewModelScope.launch {
-            permissionsRequester.requestPermissions(Permissions.Notification)
+            // permissionsRequester.requestPermissions(Permissions.Notification)
         }
     }
 

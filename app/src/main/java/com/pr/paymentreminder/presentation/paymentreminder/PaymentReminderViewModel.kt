@@ -15,7 +15,11 @@ class PaymentReminderViewModel @Inject constructor(
     override val initialViewState = PaymentReminderViewContract.UiState()
     override fun manageIntent(intent: PaymentReminderViewContract.UiIntent) {
         when(intent) {
-            PaymentReminderViewContract.UiIntent.CheckIntent -> permissionsRequester.onCreate()
+            PaymentReminderViewContract.UiIntent.CheckIntent -> permissions()
         }
+    }
+
+    private fun permissions() {
+
     }
 }

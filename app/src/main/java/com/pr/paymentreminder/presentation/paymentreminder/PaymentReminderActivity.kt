@@ -44,7 +44,9 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFra
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewModel
+import com.pr.paymentreminder.providers.PermissionsRequester
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PaymentReminderActivity : AppCompatActivity() {
@@ -52,11 +54,12 @@ class PaymentReminderActivity : AppCompatActivity() {
     private val graphicViewModel: GraphicViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val paymentViewModel: PaymentReminderViewModel by viewModels()
+    //@Inject lateinit var permissionsRequester: PermissionsRequester
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(paymentViewModel.sendIntent(PaymentReminderViewContract.UiIntent.CheckIntent))
+        //lifecycle.addObserver(permissionsRequester)
 
         //checkNotificationPermissions()
 
