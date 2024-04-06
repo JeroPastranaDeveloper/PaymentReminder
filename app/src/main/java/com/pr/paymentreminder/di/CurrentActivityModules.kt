@@ -2,27 +2,18 @@ package com.pr.paymentreminder.di
 
 import com.pr.paymentreminder.providers.CurrentActivityProvider
 import com.pr.paymentreminder.providers.CurrentActivityProviderImpl
-import com.pr.paymentreminder.providers.PermissionsRequester
-import com.pr.paymentreminder.providers.PermissionsRequesterImpl
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 class CurrentActivityModules {
-    /*@Binds
-    abstract fun bindsCurrentActivityProvider(currentActivityProvider: CurrentActivityProviderImpl) : CurrentActivityProvider
-
-*/
-    @ViewModelScoped
+    @Singleton
     @Provides
-    fun providesCurrentActivity(
-        currentActivityProvider: CurrentActivityProviderImpl
-    ) : CurrentActivityProvider {
-        return currentActivityProvider
-    }
+    fun providesCurrentActivity(currentActivityProvider: CurrentActivityProviderImpl): CurrentActivityProvider =
+        currentActivityProvider
 }

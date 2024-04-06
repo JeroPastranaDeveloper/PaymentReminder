@@ -6,14 +6,17 @@ import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
+import com.pr.paymentreminder.providers.CurrentActivityProvider
 import com.pr.paymentreminder.providers.Permissions
 import com.pr.paymentreminder.providers.PermissionsRequester
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -24,7 +27,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val servicesUseCase: ServicesUseCase,
     private val alarmScheduler: AlarmScheduler,
-    private val permissionsRequester: PermissionsRequester
+    private val permissionsRequester: PermissionsRequester,
+    private val preferencesHandler: PreferencesHandler
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     override fun manageIntent(intent: UiIntent) {
@@ -36,13 +40,14 @@ class HomeViewModel @Inject constructor(
     }
 
     init {
-        getServices()
-        if(hasT33()) checkPermissions()
+        if (preferencesHandler.hasToLogin) getServices()
+        //if(hasT33()) checkPermissions()
     }
 
     private fun checkPermissions() {
         viewModelScope.launch {
-            // permissionsRequester.requestPermissions(Permissions.Notification)
+            delay(1000)
+            permissionsRequester.requestPermissions(Permissions.Notification)
         }
     }
 
@@ -74,6 +79,7 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+
             servicesUseCase.getServices().collect { services ->
                 services.forEach { service ->
                     service.updateDate()

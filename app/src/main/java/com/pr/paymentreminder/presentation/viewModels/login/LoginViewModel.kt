@@ -3,6 +3,7 @@ package com.pr.paymentreminder.presentation.viewModels.login
 import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
+import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val preferencesHandler: PreferencesHandler
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
 
     override val initialViewState = UiState()
@@ -32,6 +34,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             loginUseCase.login(email, password)
         }
+        preferencesHandler.hasToLogin = true
         dispatchAction(UiAction.Login)
     }
 
@@ -55,22 +58,13 @@ class LoginViewModel @Inject constructor(
 
     private fun autoLogin() {
         viewModelScope.launch {
-            val hasToLogin = loginUseCase.hasToLogin()
+            val hasToLogin = preferencesHandler.hasToLogin
             setState {
                 copy(
                     isLoginSuccessful = hasToLogin
                 )
             }
-        }
-
-        if (state.value.isLoginSuccessful) {
-            dispatchAction(UiAction.Login)
-        }
-
-        setState {
-            copy(
-                isLoginSuccessful = false
-            )
+            if (hasToLogin) dispatchAction(UiAction.Login)
         }
     }
 }

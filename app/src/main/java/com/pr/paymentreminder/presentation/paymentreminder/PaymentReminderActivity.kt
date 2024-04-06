@@ -53,13 +53,13 @@ class PaymentReminderActivity : AppCompatActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
     private val graphicViewModel: GraphicViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
-    private val paymentViewModel: PaymentReminderViewModel by viewModels()
-    //@Inject lateinit var permissionsRequester: PermissionsRequester
+    @Inject lateinit var permissionsRequester: PermissionsRequester
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //lifecycle.addObserver(permissionsRequester)
+        permissionsRequester.onCreate(this)
+        lifecycle.addObserver(permissionsRequester)
 
         //checkNotificationPermissions()
 

@@ -6,19 +6,15 @@ import com.pr.paymentreminder.providers.PermissionsRequesterImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 class ProvidesPermissionRequester {
-
-    @ViewModelScoped
+    @Singleton
     @Provides
-    fun providesPermissionRequester(
-        currentActivityProvider: CurrentActivityProvider
-    ): PermissionsRequester {
-        return PermissionsRequesterImpl(currentActivityProvider)
-    }
+    fun providesPermissionRequester(currentActivityProvider: CurrentActivityProvider): PermissionsRequester =
+        PermissionsRequesterImpl(currentActivityProvider)
 }
