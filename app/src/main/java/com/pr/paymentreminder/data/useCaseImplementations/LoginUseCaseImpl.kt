@@ -1,15 +1,17 @@
 package com.pr.paymentreminder.data.useCaseImplementations
 
-import com.pr.paymentreminder.data.repository.LoginRepository
+import com.pr.paymentreminder.data.source.LoginDataSource
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class LoginUseCaseImpl @Inject constructor(
-    private val loginRepository: LoginRepository
+    private val loginDataSource: LoginDataSource
 ) : LoginUseCase {
-    override fun login(email: String, password: String): StateFlow<Boolean> = loginRepository.login(email, password)
-    override fun isUserAuthenticated(): Boolean = loginRepository.isUserAuthenticated()
-    override fun hasToLogin(): Boolean = loginRepository.hasToLogin()
-    override fun signOut() = loginRepository.signOut()
+    override fun login(email: String, password: String): StateFlow<Boolean> {
+        loginDataSource.login(email, password)
+        return loginDataSource.loginState
+    }
+    override fun isUserAuthenticated(): Boolean = loginDataSource.isUserAuthenticated()
+    override fun signOut() = loginDataSource.signOut()
 }

@@ -25,7 +25,6 @@ class Constants {
         const val DATE_FORMAT = "dd/MM/yyyy"
         const val IMAGE = "image"
         const val URL = "url"
-        const val IMAGE_PATH = "image/*"
         const val DEFAULT_IMAGE = "https://www.palomacornejo.com/wp-content/uploads/2021/08/no-image.jpg"
         const val NOTIFICATION_ID = "NOTIFICATION_ID"
         const val SERVICE_NAME = "SERVICE_NAME"
@@ -34,7 +33,5 @@ class Constants {
         const val NOTIFICATION_CHANNEL_ID = "ServiceChannel"
         const val NOTIFICATION_CHANNEL_NAME = "Service Channel"
         const val ALL_SERVICES = "Todos"
-        const val PREFERENCES = "MyPreferences"
-        const val HAS_TO_LOGIN = "hasToLogin"
     }
 }

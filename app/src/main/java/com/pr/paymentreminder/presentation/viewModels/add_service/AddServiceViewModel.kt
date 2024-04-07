@@ -52,6 +52,7 @@ class AddServiceViewModel @Inject constructor(
                 ButtonActions.EDIT.name -> updateService(
                     service.id,
                     Service(
+                        id = service.id,
                         category = service.category,
                         price = service.price,
                         name = service.name,

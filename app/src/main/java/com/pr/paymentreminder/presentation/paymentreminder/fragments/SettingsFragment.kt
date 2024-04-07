@@ -83,9 +83,9 @@ private fun signOutDialog(
         .setMessage(R.string.logout_question)
         .setPositiveButton(R.string.yes) { _, _ ->
             viewModel.sendIntent(UiIntent.SignOut)
+            (context as Activity).finish()
             val intent = Intent(context, LoginActivity::class.java)
             context.startActivity(intent)
-            (context as Activity).finish()
         }
         .setNegativeButton(R.string.no, null)
         .create()

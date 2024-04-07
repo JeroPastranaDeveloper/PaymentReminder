@@ -6,20 +6,25 @@ import com.pr.paymentreminder.data.useCaseImplementations.ServicesUseCaseImpl
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
 import com.pr.paymentreminder.domain.usecase.RegisterUseCase
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
-abstract class UseCaseModule {
-    @Binds
-    abstract fun bindsLoginUseCase(useCaseImpl: LoginUseCaseImpl) : LoginUseCase
+@InstallIn(SingletonComponent::class)
+class UseCaseModule {
+    @Singleton
+    @Provides
+    fun providesLoginUseCase(useCaseImpl: LoginUseCaseImpl) : LoginUseCase = useCaseImpl
 
-    @Binds
-    abstract fun bindsRegisterUseCase(useCaseImpl: RegisterUseCaseImpl) : RegisterUseCase
+    @Singleton
+    @Provides
+    fun providesRegisterUseCase(useCaseImpl: RegisterUseCaseImpl) : RegisterUseCase = useCaseImpl
 
-    @Binds
-    abstract fun bindsServicesUseCase(useCaseImpl: ServicesUseCaseImpl) : ServicesUseCase
+    @Singleton
+    @Provides
+    fun providesServicesUseCase(useCaseImpl: ServicesUseCaseImpl) : ServicesUseCase = useCaseImpl
 }

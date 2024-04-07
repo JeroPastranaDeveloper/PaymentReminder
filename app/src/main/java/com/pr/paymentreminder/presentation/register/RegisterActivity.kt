@@ -1,7 +1,6 @@
 package com.pr.paymentreminder.presentation.register
 
 import android.content.Intent
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +49,7 @@ class RegisterActivity : BaseActivity() {
     }
 
     private fun handleAction(action: UiAction) {
-        when(action) {
+        when (action) {
             UiAction.Register -> doRegister()
             UiAction.GoLogin -> goLogin()
         }
@@ -111,7 +109,12 @@ class RegisterActivity : BaseActivity() {
                     text = repeatPassText.value,
                     onTextChange = {
                         repeatPassText.value = it
-                        viewModel.sendIntent(UiIntent.ValidatePasswordValidation(passText.value.text, it.text))
+                        viewModel.sendIntent(
+                            UiIntent.ValidatePasswordValidation(
+                                passText.value.text,
+                                it.text
+                            )
+                        )
                     },
                     placeHolder = stringResource(R.string.repeat_password),
                     hasHelperText = state.hasPasswordValidationHelperText,
@@ -128,41 +131,19 @@ class RegisterActivity : BaseActivity() {
             }
 
             RegisterLoginButton(R.string.register) {
-                validations(emailText, passText, repeatPassText)
-                if (isValidInput(state)) {
-                    viewModel.sendIntent(UiIntent.Register(emailText.value.text, passText.value.text))
-                } else {
-                    Toast.makeText(this@RegisterActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
-                }
+                viewModel.sendIntent(
+                    UiIntent.CheckData(
+                        emailText.value.text,
+                        passText.value.text,
+                        repeatPassText.value.text
+                    )
+                )
             }
         }
-    }
-
-    private fun validations(
-        emailText: MutableState<TextFieldValue>,
-        passText: MutableState<TextFieldValue>,
-        repeatPassText: MutableState<TextFieldValue>
-    ) {
-        viewModel.sendIntent(UiIntent.ValidateEmail(emailText.value.text))
-        viewModel.sendIntent(UiIntent.ValidatePassword(passText.value.text))
-        viewModel.sendIntent(
-            UiIntent.ValidatePasswordValidation(
-                passText.value.text,
-                repeatPassText.value.text
-            )
-        )
     }
 
     private fun goLogin() {
         startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
         finish()
-    }
-
-    private fun isValidInput(state: UiState): Boolean {
-        val isEmailValid = state.hasEmailHelperText
-        val isPasswordValid = state.hasPasswordHelperText
-        val isPasswordValidationValid = state.hasPasswordValidationHelperText
-
-        return isEmailValid && isPasswordValid && isPasswordValidationValid
     }
 }

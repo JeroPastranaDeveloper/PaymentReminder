@@ -3,6 +3,7 @@ package com.pr.paymentreminder.presentation.viewModels.login
 import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
+import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
 import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val preferencesHandler: PreferencesHandler
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
 
     override val initialViewState = UiState()
@@ -23,7 +25,6 @@ class LoginViewModel @Inject constructor(
             is UiIntent.ValidateEmail -> validateEmail(intent.email)
             is UiIntent.ValidatePassword -> validatePassword(intent.password)
             is UiIntent.DoLogin -> login(intent.email, intent.password)
-            UiIntent.AutoLogin -> autoLogin()
             UiIntent.GoRegister -> dispatchAction(UiAction.GoRegister)
         }
     }
@@ -32,11 +33,16 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             loginUseCase.login(email, password)
         }
+        preferencesHandler.hasToLogin = true
+        preferencesHandler.email = email
+        preferencesHandler.password = password
         dispatchAction(UiAction.Login)
     }
 
     init {
-        autoLogin()
+        if (preferencesHandler.hasToLogin) {
+            login(preferencesHandler.email.orEmpty(), preferencesHandler.password.orEmpty())
+        }
     }
 
     private fun validateEmail(email: String) {
@@ -50,27 +56,6 @@ class LoginViewModel @Inject constructor(
         val isPasswordInvalid = password.isEmpty() || password.length < 8 || !password.matches(".*[0-9].*".toRegex())
         setState {
             copy(hasPasswordHelperText = isPasswordInvalid)
-        }
-    }
-
-    private fun autoLogin() {
-        viewModelScope.launch {
-            val hasToLogin = loginUseCase.hasToLogin()
-            setState {
-                copy(
-                    isLoginSuccessful = hasToLogin
-                )
-            }
-        }
-
-        if (state.value.isLoginSuccessful) {
-            dispatchAction(UiAction.Login)
-        }
-
-        setState {
-            copy(
-                isLoginSuccessful = false
-            )
         }
     }
 }

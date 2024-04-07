@@ -143,7 +143,7 @@ class LoginActivity : BaseActivity() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 if (state.isLoginSuccessful) {
-                    viewModel.sendIntent(UiIntent.AutoLogin)
+                    viewModel.sendIntent(UiIntent.DoLogin(state.email, state.password))
                 }
             }
         }

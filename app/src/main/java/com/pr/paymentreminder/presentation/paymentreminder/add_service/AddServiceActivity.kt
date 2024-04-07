@@ -403,7 +403,7 @@ class AddServiceActivity : BaseActivity() {
 
                         SaveButton(
                             Service(
-                                id = emptyString(),
+                                id = serviceId,
                                 selectedCategory,
                                 color = emptyString(),
                                 serviceDate,
