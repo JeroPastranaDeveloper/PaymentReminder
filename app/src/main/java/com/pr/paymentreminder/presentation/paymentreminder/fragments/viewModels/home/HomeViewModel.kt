@@ -11,8 +11,6 @@ import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
-import com.pr.paymentreminder.providers.Permissions
-import com.pr.paymentreminder.providers.PermissionsRequester
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,7 +23,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val servicesUseCase: ServicesUseCase,
     private val alarmScheduler: AlarmScheduler,
-    private val permissionsRequester: PermissionsRequester,
     preferencesHandler: PreferencesHandler
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
@@ -39,14 +36,6 @@ class HomeViewModel @Inject constructor(
 
     init {
         if (preferencesHandler.hasToLogin) getServices()
-        //if(hasT33()) checkPermissions()
-    }
-
-    private fun checkPermissions() {
-        viewModelScope.launch {
-            delay(1000)
-            permissionsRequester.requestPermissions(Permissions.Notification)
-        }
     }
 
     private fun Service.getDate(): LocalDate {

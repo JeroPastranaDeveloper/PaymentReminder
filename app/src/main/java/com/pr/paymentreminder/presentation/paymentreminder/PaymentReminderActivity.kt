@@ -1,10 +1,12 @@
 package com.pr.paymentreminder.presentation.paymentreminder
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -31,12 +33,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.androidVersions.hasT33
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
@@ -44,24 +49,19 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFra
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewModel
-import com.pr.paymentreminder.providers.PermissionsRequester
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class PaymentReminderActivity : AppCompatActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
     private val graphicViewModel: GraphicViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
-    @Inject lateinit var permissionsRequester: PermissionsRequester
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        permissionsRequester.onCreate(this)
-        lifecycle.addObserver(permissionsRequester)
 
-        //checkNotificationPermissions()
+        checkNotificationPermissions()
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -84,8 +84,8 @@ class PaymentReminderActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun checkNotificationPermissions() {
-        /*if (hasT33() && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)*/
+        if (hasT33() && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (!alarmManager.canScheduleExactAlarms()) {
                 val intent = Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
@@ -93,7 +93,7 @@ class PaymentReminderActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             }
-        //}
+        }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
