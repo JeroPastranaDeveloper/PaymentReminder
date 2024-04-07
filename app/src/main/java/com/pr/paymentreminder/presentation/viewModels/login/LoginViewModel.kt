@@ -25,7 +25,6 @@ class LoginViewModel @Inject constructor(
             is UiIntent.ValidateEmail -> validateEmail(intent.email)
             is UiIntent.ValidatePassword -> validatePassword(intent.password)
             is UiIntent.DoLogin -> login(intent.email, intent.password)
-            UiIntent.AutoLogin -> autoLogin()
             UiIntent.GoRegister -> dispatchAction(UiAction.GoRegister)
         }
     }
@@ -35,11 +34,15 @@ class LoginViewModel @Inject constructor(
             loginUseCase.login(email, password)
         }
         preferencesHandler.hasToLogin = true
+        preferencesHandler.email = email
+        preferencesHandler.password = password
         dispatchAction(UiAction.Login)
     }
 
     init {
-        autoLogin()
+        if (preferencesHandler.hasToLogin) {
+            login(preferencesHandler.email.orEmpty(), preferencesHandler.password.orEmpty())
+        }
     }
 
     private fun validateEmail(email: String) {
@@ -53,18 +56,6 @@ class LoginViewModel @Inject constructor(
         val isPasswordInvalid = password.isEmpty() || password.length < 8 || !password.matches(".*[0-9].*".toRegex())
         setState {
             copy(hasPasswordHelperText = isPasswordInvalid)
-        }
-    }
-
-    private fun autoLogin() {
-        viewModelScope.launch {
-            val hasToLogin = preferencesHandler.hasToLogin
-            setState {
-                copy(
-                    isLoginSuccessful = hasToLogin
-                )
-            }
-            if (hasToLogin) dispatchAction(UiAction.Login)
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home
 
 import androidx.lifecycle.viewModelScope
-import com.pr.paymentreminder.androidVersions.hasT33
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
@@ -12,7 +11,6 @@ import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
-import com.pr.paymentreminder.providers.CurrentActivityProvider
 import com.pr.paymentreminder.providers.Permissions
 import com.pr.paymentreminder.providers.PermissionsRequester
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +26,7 @@ class HomeViewModel @Inject constructor(
     private val servicesUseCase: ServicesUseCase,
     private val alarmScheduler: AlarmScheduler,
     private val permissionsRequester: PermissionsRequester,
-    private val preferencesHandler: PreferencesHandler
+    preferencesHandler: PreferencesHandler
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     override fun manageIntent(intent: UiIntent) {
@@ -78,8 +76,11 @@ class HomeViewModel @Inject constructor(
             )
         }
 
+        /**
+         * The second wait is for the login process to complete.
+         */
         viewModelScope.launch {
-
+            delay(1000)
             servicesUseCase.getServices().collect { services ->
                 services.forEach { service ->
                     service.updateDate()
