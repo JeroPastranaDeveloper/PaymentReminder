@@ -19,7 +19,6 @@ class RegisterViewContract : BaseViewContract() {
         data class ValidateEmail(val email: String?) : UiIntent()
         data class ValidatePassword(val password: String?) : UiIntent()
         data class ValidatePasswordValidation(val password: String?, val passwordValidation: String?) : UiIntent()
-        data class Register(val email: String?, val password: String?) : UiIntent()
         data object GoLogin : UiIntent()
     }
 

@@ -29,8 +29,6 @@ class RegisterViewModel @Inject constructor(
                 intent.password,
                 intent.passwordValidation
             )
-
-            is UiIntent.Register -> register(intent.email, intent.password)
             UiIntent.GoLogin -> dispatchAction(UiAction.GoLogin)
             is UiIntent.CheckData -> checkData(
                 intent.email,
