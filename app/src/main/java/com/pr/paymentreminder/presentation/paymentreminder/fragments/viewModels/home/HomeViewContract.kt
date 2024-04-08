@@ -6,6 +6,7 @@ import com.pr.paymentreminder.data.model.Service
 class HomeViewContract : BaseViewContract() {
     data class UiState(
         val isLoading: Boolean = false,
+        val serviceToRemove: Service = Service(),
         val services: List<Service> = emptyList(),
         val serviceNameHelperText: Boolean = false,
         val servicePriceHelperText: Boolean = false,
@@ -17,12 +18,12 @@ class HomeViewContract : BaseViewContract() {
 
     sealed class UiIntent {
         data class AddEditService(val serviceId: String?, val action: String) : UiIntent()
-        data class RemoveService(val serviceId: String) : UiIntent()
+        data class RemoveService(val serviceId: String, val service: Service) : UiIntent()
+        data class RestoreDeletedService(val service: Service) : UiIntent()
         data object GetServices : UiIntent()
     }
 
     sealed class UiAction {
         data class AddEditService(val serviceId: String?, val action: String) : UiAction()
-        data object RemoveService : UiAction()
     }
 }

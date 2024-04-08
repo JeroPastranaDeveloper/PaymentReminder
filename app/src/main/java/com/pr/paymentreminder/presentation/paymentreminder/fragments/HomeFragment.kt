@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -16,12 +17,16 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,18 +43,19 @@ import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing72
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeFragment(viewModel: HomeViewModel) {
     val state by viewModel.state.collectAsState(UiState())
     var selectedService by remember { mutableStateOf<Service?>(null) }
     var showDialog by remember { mutableStateOf(false) }
+    var showSnackBar by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
     fun handleAction(action: UiAction) {
         when (action) {
-            UiAction.RemoveService -> removeService(viewModel)
             is UiAction.AddEditService -> addOrEditService(action.serviceId.orEmpty(), action.action, context)
         }
     }
@@ -113,12 +119,36 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     },
                     onRemove = {
                         showDialog = false
-                        viewModel.sendIntent(UiIntent.RemoveService(selectedService?.id.orEmpty()))
+                        showSnackBar = true
+                        viewModel.sendIntent(UiIntent.RemoveService(selectedService?.id.orEmpty(), selectedService ?: Service()))
                     }
                 )
             }
+
+            if (showSnackBar) {
+                RestoreServiceSnackBar(viewModel, state.serviceToRemove)
+            }
         }
     }
+}
+
+@Composable
+private fun RestoreServiceSnackBar(viewModel: HomeViewModel, service: Service) {
+    val scaffoldState = rememberScrollState()
+    val scope = rememberCoroutineScope()
+
+    Scaffold(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Text(text = "Borrao")
+        }
+        TextButton(onClick = viewModel.sendIntent(UiIntent.RestoreDeletedService(service))) {
+            scope.launch {
+                scaffoldState.snack
+            }
+        }
+    }
+
+    Spacer(modifier = Modifier.size(dimen64))
 }
 
 private fun addOrEditService(serviceId: String, action: String, context: Context) {
@@ -127,8 +157,6 @@ private fun addOrEditService(serviceId: String, action: String, context: Context
     intent.putExtra("action", action)
     context.startActivity(intent)
 }
-
-private fun removeService(viewModel: HomeViewModel) = viewModel.sendIntent(UiIntent.GetServices)
 
 enum class ButtonActions {
     ADD, EDIT

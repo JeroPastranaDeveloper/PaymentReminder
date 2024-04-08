@@ -30,7 +30,8 @@ class HomeViewModel @Inject constructor(
         when (intent) {
             UiIntent.GetServices -> getServices()
             is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty(), intent.action))
-            is UiIntent.RemoveService -> removeService(intent.serviceId)
+            is UiIntent.RemoveService -> removeService(intent.serviceId, intent.service)
+            is UiIntent.RestoreDeletedService -> restoreService(intent.service)
         }
     }
 
@@ -41,6 +42,13 @@ class HomeViewModel @Inject constructor(
     private fun Service.getDate(): LocalDate {
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
         return LocalDate.parse(this.date, formatter)
+    }
+
+    private fun restoreService(service: Service) {
+        viewModelScope.launch {
+            servicesUseCase.createService(service.id, service)
+        }
+        getServices()
     }
 
     private fun Service.updateDate() {
@@ -66,7 +74,7 @@ class HomeViewModel @Inject constructor(
         }
 
         /**
-         * The second wait is for the login process to complete.
+         * The second of wait is to complete the login process.
          */
         viewModelScope.launch {
             delay(1000)
@@ -92,10 +100,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun removeService(serviceId: String) {
+    private fun removeService(serviceId: String, service: Service) {
         viewModelScope.launch {
+            setState { copy(serviceToRemove = service) }
             servicesUseCase.deleteService(serviceId)
         }
-        dispatchAction(UiAction.RemoveService)
     }
 }
