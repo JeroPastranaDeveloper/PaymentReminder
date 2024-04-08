@@ -11,7 +11,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import com.pr.paymentreminder.ui.theme.spacing8
+import com.pr.paymentreminder.theme.spacing8
 
 @Composable
 fun UnderlinedText(

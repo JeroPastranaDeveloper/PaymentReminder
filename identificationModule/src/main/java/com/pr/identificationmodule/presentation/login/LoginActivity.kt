@@ -29,16 +29,14 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.base.BaseActivity
 import com.pr.paymentreminder.base.addRepeatingJob
 import com.pr.paymentreminder.data.model.DefaultTextFieldParams
-import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
-import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
-import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLoginButton
 import com.pr.identificationmodule.presentation.login.LoginViewContract.UiState
 import com.pr.identificationmodule.presentation.login.LoginViewContract.UiIntent
 import com.pr.identificationmodule.presentation.login.LoginViewContract.UiAction
 import com.pr.identificationmodule.presentation.register.RegisterActivity
-
-import com.pr.paymentreminder.ui.theme.dimen16
-import com.pr.paymentreminder.ui.theme.spacing16
+import com.pr.paymentreminder.compose.DefaultTextField
+import com.pr.paymentreminder.compose.RegisterLoginButton
+import com.pr.paymentreminder.theme.dimen16
+import com.pr.paymentreminder.theme.spacing16
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
