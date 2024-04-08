@@ -21,7 +21,7 @@
             android:name=".presentation.paymentreminder.PaymentReminderActivity"/>
         <receiver android:name=".notifications.AlarmReceiver" />
         <activity
-            android:name=".presentation.login.LoginActivity"
+            android:name="com.pr.identificationmodule.presentation.login.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.PaymentReminder" >
             <intent-filter android:priority="1">
@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.register.RegisterActivity"
+            android:name="com.pr.identificationmodule.presentation.register.RegisterActivity"
             android:exported="false"
             android:theme="@style/Theme.PaymentReminder" />
         <activity

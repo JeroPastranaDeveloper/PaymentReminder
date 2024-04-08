@@ -18,3 +18,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "PaymentReminder"
 include(":app")
+include(":identificationModule")

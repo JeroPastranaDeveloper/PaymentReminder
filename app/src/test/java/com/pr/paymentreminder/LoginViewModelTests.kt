@@ -1,10 +1,10 @@
 package com.pr.paymentreminder
 
 import androidx.lifecycle.viewModelScope
-import com.pr.paymentreminder.domain.usecase.LoginUseCase
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewModel
+import com.pr.identificationmodule.domain.usecase.LoginUseCase
+import com.pr.identificationmodule.presentation.login.LoginViewContract.UiIntent
+import com.pr.identificationmodule.presentation.login.LoginViewContract.UiState
+import com.pr.identificationmodule.presentation.login.LoginViewModel
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -18,17 +18,17 @@ import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class LoginViewModelTests {
-    private lateinit var vm: LoginViewModel
+    private lateinit var vm: com.pr.identificationmodule.presentation.login.LoginViewModel
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @get:Rule
     var coroutineRule = MainCoroutineRule()
 
     @Mock
-    private lateinit var loginUseCase: LoginUseCase
+    private lateinit var loginUseCase: com.pr.identificationmodule.domain.usecase.LoginUseCase
 
     private fun setUpViewModel() {
-        vm = LoginViewModel(
+        vm = com.pr.identificationmodule.presentation.login.LoginViewModel(
             loginUseCase = loginUseCase
         )
     }
