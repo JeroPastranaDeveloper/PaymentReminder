@@ -11,6 +11,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/identificationModule" />
+            <option value="$PROJECT_DIR$/navigationModule" />
+            <option value="$PROJECT_DIR$/servicesModule" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

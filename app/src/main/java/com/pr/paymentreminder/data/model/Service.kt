@@ -1,6 +1,7 @@
 package com.pr.paymentreminder.data.model
 
-import com.pr.paymentreminder.ui.theme.emptyString
+import com.pr.paymentreminder.theme.emptyString
+
 
 data class Service(
     var id: String = emptyString(),

@@ -3,7 +3,7 @@ package com.pr.paymentreminder
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
-import com.pr.paymentreminder.notifications.AlarmScheduler
+import com.pr.servicesModule.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
@@ -31,7 +31,7 @@ class HomeViewModelTest {
     private lateinit var servicesUseCase: ServicesUseCase
 
     @Mock
-    private lateinit var alarmScheduler: AlarmScheduler
+    private lateinit var alarmScheduler: com.pr.servicesModule.notifications.AlarmScheduler
 
     private fun setUpViewModel() {
         vm = HomeViewModel(

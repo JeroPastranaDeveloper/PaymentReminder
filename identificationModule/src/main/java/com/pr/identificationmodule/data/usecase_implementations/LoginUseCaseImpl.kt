@@ -12,6 +12,4 @@ class LoginUseCaseImpl @Inject constructor(
         loginDataSource.login(email, password)
         return loginDataSource.loginState
     }
-    override fun isUserAuthenticated(): Boolean = loginDataSource.isUserAuthenticated()
-    override fun signOut() = loginDataSource.signOut()
 }

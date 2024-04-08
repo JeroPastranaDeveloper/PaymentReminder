@@ -20,11 +20,4 @@ class LoginDataSource @Inject constructor(
                 val isLoggedIn = task.isSuccessful
                 _loginState.value = isLoggedIn
             }
-
-    fun isUserAuthenticated(): Boolean = auth.currentUser != null || preferencesHandler.hasToLogin
-
-    fun signOut() {
-        auth.signOut()
-        _loginState.value = false
-    }
 }
