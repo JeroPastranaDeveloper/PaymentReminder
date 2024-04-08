@@ -1,7 +1,7 @@
 package com.pr.identificationmodule.presentation.register
 
 import com.pr.paymentreminder.base.BaseViewContract
-import com.pr.paymentreminder.ui.theme.emptyString
+import com.pr.paymentreminder.theme.emptyString
 
 class RegisterViewContract : BaseViewContract() {
     data class UiState(

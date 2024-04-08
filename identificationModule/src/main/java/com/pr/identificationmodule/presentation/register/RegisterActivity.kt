@@ -26,14 +26,13 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.base.BaseActivity
 import com.pr.paymentreminder.base.addRepeatingJob
 import com.pr.paymentreminder.data.model.DefaultTextFieldParams
-import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
-import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
-import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLoginButton
 import com.pr.identificationmodule.presentation.register.RegisterViewContract.UiIntent
 import com.pr.identificationmodule.presentation.register.RegisterViewContract.UiAction
 import com.pr.identificationmodule.presentation.register.RegisterViewContract.UiState
-import com.pr.paymentreminder.ui.theme.dimen16
-import com.pr.paymentreminder.ui.theme.spacing16
+import com.pr.paymentreminder.compose.DefaultTextField
+import com.pr.paymentreminder.compose.RegisterLoginButton
+import com.pr.paymentreminder.theme.dimen16
+import com.pr.paymentreminder.theme.spacing16
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
