@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.BottomNavigation
@@ -40,22 +39,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.createGraph
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.androidVersions.hasT33
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.SettingsFragment
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewModel
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PaymentReminderActivity : AppCompatActivity() {
-    private val homeViewModel: HomeViewModel by viewModels()
-    private val graphicViewModel: GraphicViewModel by viewModels()
-    private val settingsViewModel: SettingsViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,8 +78,16 @@ class PaymentReminderActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun checkNotificationPermissions() {
-        if (hasT33() && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
+        if (hasT33() && ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                100
+            )
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (!alarmManager.canScheduleExactAlarms()) {
                 val intent = Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
@@ -101,6 +103,12 @@ class PaymentReminderActivity : AppCompatActivity() {
     @Composable
     private fun Content() {
         val navController = rememberNavController()
+
+        val navGraph = navController.createGraph(startDestination = CurrentScreen.Home.route) {
+            composable(CurrentScreen.Home.route) { HomeFragment() }
+            composable(CurrentScreen.Graphic.route) { GraphicFragment() }
+            composable(CurrentScreen.Settings.route) { SettingsFragment() }
+        }
 
         val screens = listOf(
             CurrentScreen.Home,
@@ -122,44 +130,40 @@ class PaymentReminderActivity : AppCompatActivity() {
         ) {
             NavHost(
                 navController = navController,
-                startDestination = CurrentScreen.Home.route
-            ) {
-                composable(CurrentScreen.Home.route) { HomeFragment(homeViewModel) }
-                composable(CurrentScreen.Graphic.route) { GraphicFragment(graphicViewModel) }
-                composable(CurrentScreen.Settings.route) { SettingsFragment(settingsViewModel) }
-            }
+                graph = navGraph
+            )
         }
     }
+}
 
-    @Composable
-    private fun BottomNavigationBar(
-        navController: NavHostController,
-        screens: List<CurrentScreen>
-    ) {
-        BottomNavigation(backgroundColor = Color.White) {
-            val currentBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = currentBackStackEntry?.destination?.route
+@Composable
+private fun BottomNavigationBar(
+    navController: NavHostController,
+    screens: List<CurrentScreen>
+) {
+    BottomNavigation(backgroundColor = Color.White) {
+        val currentBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = currentBackStackEntry?.destination?.route
 
-            screens.forEach { screen ->
-                BottomNavigationItem(
-                    icon = { Icon(screen.icon, contentDescription = null) },
-                    selected = currentRoute == screen.route,
-                    onClick = {
-                        navController.navigate(screen.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
+        screens.forEach { screen ->
+            BottomNavigationItem(
+                icon = { Icon(screen.icon, contentDescription = null) },
+                selected = currentRoute == screen.route,
+                onClick = {
+                    navController.navigate(screen.route) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
                         }
+                        launchSingleTop = true
                     }
-                )
-            }
+                }
+            )
         }
     }
+}
 
-    sealed class CurrentScreen(val route: String, val icon: ImageVector) {
-        data object Home : CurrentScreen(Constants.HOME, Icons.Filled.Home)
-        data object Graphic : CurrentScreen(Constants.GRAPHIC, Icons.Filled.Info)
-        data object Settings : CurrentScreen(Constants.SETTINGS, Icons.Filled.Settings)
-    }
+sealed class CurrentScreen(val route: String, val icon: ImageVector) {
+    data object Home : CurrentScreen(Constants.HOME, Icons.Filled.Home)
+    data object Graphic : CurrentScreen(Constants.GRAPHIC, Icons.Filled.Info)
+    data object Settings : CurrentScreen(Constants.SETTINGS, Icons.Filled.Settings)
 }

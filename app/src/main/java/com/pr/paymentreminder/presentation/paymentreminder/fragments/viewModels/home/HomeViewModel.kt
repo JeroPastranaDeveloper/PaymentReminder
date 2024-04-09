@@ -8,6 +8,7 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
+import com.pr.paymentreminder.presentation.paymentreminder.compose.CustomToastInfo
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
@@ -28,7 +29,6 @@ class HomeViewModel @Inject constructor(
     override val initialViewState = UiState()
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
-            UiIntent.GetServices -> getServices()
             is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty(), intent.action))
             is UiIntent.RemoveService -> removeService(intent.serviceId, intent.service)
             is UiIntent.RestoreDeletedService -> restoreService(intent.service)
@@ -105,5 +105,10 @@ class HomeViewModel @Inject constructor(
             setState { copy(serviceToRemove = service) }
             servicesUseCase.deleteService(serviceId)
         }
+        val toastInfo = CustomToastInfo(
+            message = "Servicio borrado"
+        )
+
+        dispatchAction(UiAction.ShowRemovedToast(toastInfo))
     }
 }

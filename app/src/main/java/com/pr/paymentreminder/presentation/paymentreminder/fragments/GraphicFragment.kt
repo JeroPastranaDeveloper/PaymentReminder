@@ -1,5 +1,10 @@
 package com.pr.paymentreminder.presentation.paymentreminder.fragments
 
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,7 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
@@ -33,76 +40,118 @@ import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.spacing16
 
-@Composable
-fun GraphicFragment(viewModel: GraphicViewModel) {
+class GraphicFragment : Fragment() {
+    private val viewModel: GraphicViewModel by viewModels()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setContent {
 
-    val state by viewModel.state.collectAsState(UiState())
-    var selectedChip by remember { mutableStateOf(Constants.ALL_SERVICES) }
+                Log.d("ESTOY EN", "GRAPHIC")
+                val state by viewModel.state.collectAsState(UiState())
+                var selectedChip by remember { mutableStateOf(Constants.ALL_SERVICES) }
 
-    val paymentWeekly = PaymentType.WEEKLY.type
-    val paymentMonthly = PaymentType.MONTHLY.type
-    val paymentYearly = PaymentType.YEARLY.type
+                val paymentWeekly = PaymentType.WEEKLY.type
+                val paymentMonthly = PaymentType.MONTHLY.type
+                val paymentYearly = PaymentType.YEARLY.type
 
-    fun handleAction(action: UiAction) {
-        when (action) {
-            else -> {}
-        }
-    }
+                fun handleAction(action: UiAction) {
+                    /*when (action) {
+                        else -> {}
+                    }*/
+                }
 
-    LaunchedEffect(viewModel) {
-        viewModel.actions.collect { action ->
-            handleAction(action)
-        }
-    }
+                LaunchedEffect(viewModel) {
+                    viewModel.actions.collect { action ->
+                        handleAction(action)
+                    }
+                }
 
-    val serviceTypes = listOf(
-        Pair(R.string.all_services, Constants.ALL_SERVICES),
-        Pair(R.string.weekly_services, paymentWeekly),
-        Pair(R.string.monthly_services, paymentMonthly),
-        Pair(R.string.yearly_services, paymentYearly)
-    )
-
-    Column(
-        modifier = Modifier
-            .padding(start = spacing16, end = spacing16, bottom = spacing16)
-            .fillMaxSize()
-    ) {
-        Spacer(modifier = Modifier.height(dimen64))
-        Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-            serviceTypes.forEach { (stringId, serviceType) ->
-                ServicesChip(
-                    title = stringResource(id = stringId),
-                    onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(serviceType)) },
-                    selected = selectedChip == serviceType,
-                    onSelectedChange = { selectedChip = it }
+                val serviceTypes = listOf(
+                    Pair(R.string.all_services, Constants.ALL_SERVICES),
+                    Pair(R.string.weekly_services, paymentWeekly),
+                    Pair(R.string.monthly_services, paymentMonthly),
+                    Pair(R.string.yearly_services, paymentYearly)
                 )
-            }
-        }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
-            if (state.services.isEmpty()) {
-                Text(
-                    stringResource(id = R.string.no_services), modifier = Modifier
-                        .padding(spacing16)
-                        .align(Alignment.CenterHorizontally)
-                )
-            } else {
-                DonutChart(state.services)
-            }
+                Column(
+                    modifier = Modifier
+                        .padding(start = spacing16, end = spacing16, bottom = spacing16)
+                        .fillMaxSize()
+                ) {
+                    Spacer(modifier = Modifier.height(dimen64))
+                    Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                        serviceTypes.forEach { (stringId, serviceType) ->
+                            ServicesChip(
+                                title = stringResource(id = stringId),
+                                onClick = {
+                                    viewModel.sendIntent(
+                                        UiIntent.GetFilteredServices(
+                                            serviceType
+                                        )
+                                    )
+                                },
+                                selected = selectedChip == serviceType,
+                                onSelectedChange = { selectedChip = it }
+                            )
+                        }
+                    }
 
-            Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text(text = stringResource(id = R.string.weekly_expenditure, state.weeklyExpenditure.orEmpty()))
-                Text(text = stringResource(id = R.string.monthly_expenditure, state.monthlyExpenditure.orEmpty()))
-                Text(text = stringResource(id = R.string.monthly_total_expenditure, state.monthlyTotalExpenditure.orEmpty()))
-                Text(text = stringResource(id = R.string.yearly_expenditure, state.yearlyExpenditure.orEmpty()))
-                Text(text = stringResource(id = R.string.yearly_total_expenditure, state.yearlyTotalExpenditure.orEmpty()))
-            }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        if (state.services.isEmpty()) {
+                            Text(
+                                stringResource(id = R.string.no_services), modifier = Modifier
+                                    .padding(spacing16)
+                                    .align(Alignment.CenterHorizontally)
+                            )
+                        } else {
+                            DonutChart(state.services)
+                        }
 
-            Spacer(modifier = Modifier.height(dimen56))
+                        Column(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                            Text(
+                                text = stringResource(
+                                    id = R.string.weekly_expenditure,
+                                    state.weeklyExpenditure.orEmpty()
+                                )
+                            )
+                            Text(
+                                text = stringResource(
+                                    id = R.string.monthly_expenditure,
+                                    state.monthlyExpenditure.orEmpty()
+                                )
+                            )
+                            Text(
+                                text = stringResource(
+                                    id = R.string.monthly_total_expenditure,
+                                    state.monthlyTotalExpenditure.orEmpty()
+                                )
+                            )
+                            Text(
+                                text = stringResource(
+                                    id = R.string.yearly_expenditure,
+                                    state.yearlyExpenditure.orEmpty()
+                                )
+                            )
+                            Text(
+                                text = stringResource(
+                                    id = R.string.yearly_total_expenditure,
+                                    state.yearlyTotalExpenditure.orEmpty()
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(dimen56))
+                    }
+                }
+            }
         }
     }
 }
