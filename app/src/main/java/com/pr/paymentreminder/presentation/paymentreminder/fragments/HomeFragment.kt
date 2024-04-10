@@ -46,11 +46,12 @@ fun HomeFragment(viewModel: HomeViewModel) {
     var showDialog by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    var hola = false
 
     fun handleAction(action: UiAction) {
         when (action) {
-            UiAction.RemoveService -> removeService(viewModel)
             is UiAction.AddEditService -> addOrEditService(action.serviceId.orEmpty(), action.action, context)
+            is UiAction.ShowRemovedToast -> hola = true
         }
     }
 
@@ -113,7 +114,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     },
                     onRemove = {
                         showDialog = false
-                        viewModel.sendIntent(UiIntent.RemoveService(selectedService?.id.orEmpty()))
+                        viewModel.sendIntent(UiIntent.RemoveService(selectedService ?: Service()))
                     }
                 )
             }
@@ -127,8 +128,6 @@ private fun addOrEditService(serviceId: String, action: String, context: Context
     intent.putExtra("action", action)
     context.startActivity(intent)
 }
-
-private fun removeService(viewModel: HomeViewModel) = viewModel.sendIntent(UiIntent.GetServices)
 
 enum class ButtonActions {
     ADD, EDIT
