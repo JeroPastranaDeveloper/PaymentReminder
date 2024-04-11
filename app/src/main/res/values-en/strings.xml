@@ -13,6 +13,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="category">Category: %s</string>
+    <string name="service_removed">Service removed</string>
+    <string name="undo">Undo</string>
     <string name="service_name">Service name</string>
     <string name="service_price">Service price</string>
     <string name="service_image_url">Image URL</string>

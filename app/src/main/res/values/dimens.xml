@@ -12,6 +12,7 @@
     <dimen name="dimen24">24dp</dimen>
     <dimen name="dimen56">56dp</dimen>
     <dimen name="dimen64">64dp</dimen>
+    <dimen name="dimen72">72dp</dimen>
     <dimen name="dimen100">100dp</dimen>
     <dimen name="dimen150">150dp</dimen>
     <dimen name="dimen200">200dp</dimen>
@@ -27,6 +28,7 @@
     <dimen name="spacing_20">20dp</dimen>
     <dimen name="spacing_24">24dp</dimen>
     <dimen name="spacing_72">72dp</dimen>
+    <dimen name="spacing_144">144dp</dimen>
 
     <!-- Text sizes -->
     <dimen name="textSize1">1sp</dimen>

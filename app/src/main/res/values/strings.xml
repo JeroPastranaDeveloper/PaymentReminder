@@ -24,6 +24,8 @@
     <string name="title_settings" translatable="false">settings</string>
     <string name="title_graphic" translatable="false">graphic</string>
     <string name="category">Categoría: %s</string>
+    <string name="service_removed">Servicio eliminado</string>
+    <string name="undo">Deshacer</string>
     <string name="service_name">Nombre del servicio</string>
     <string name="service_price">Precio del servicio</string>
     <string name="service_image_url">URL de la imagen</string>

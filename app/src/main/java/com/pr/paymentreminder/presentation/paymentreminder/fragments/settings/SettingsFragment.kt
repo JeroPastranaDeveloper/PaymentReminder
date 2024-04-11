@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.presentation.paymentreminder.fragments
+package com.pr.paymentreminder.presentation.paymentreminder.fragments.settings
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -23,9 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.presentation.login.LoginActivity
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewContract.UiAction
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewContract.UiIntent
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings.SettingsViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsViewContract.UiIntent
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.spacing16

@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic
+package com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.data.model.Service

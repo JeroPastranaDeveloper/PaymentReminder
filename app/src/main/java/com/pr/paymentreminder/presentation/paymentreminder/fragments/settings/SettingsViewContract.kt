@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.settings
+package com.pr.paymentreminder.presentation.paymentreminder.fragments.settings
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.ui.theme.emptyString

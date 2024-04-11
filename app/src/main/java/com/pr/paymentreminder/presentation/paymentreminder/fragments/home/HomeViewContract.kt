@@ -1,7 +1,6 @@
-package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home
+package com.pr.paymentreminder.presentation.paymentreminder.fragments.home
 
 import com.pr.paymentreminder.base.BaseViewContract
-import com.pr.paymentreminder.data.model.CustomToastInfo
 import com.pr.paymentreminder.data.model.Service
 
 class HomeViewContract : BaseViewContract() {
@@ -20,6 +19,5 @@ class HomeViewContract : BaseViewContract() {
 
     sealed class UiAction {
         data class AddEditService(val serviceId: String?, val action: String) : UiAction()
-        data class ShowRemovedToast(val toastInfo: CustomToastInfo) : UiAction()
     }
 }

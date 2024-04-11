@@ -6,6 +6,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
+import com.pr.paymentreminder.data.model.ButtonActions
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.model.ServiceItem
 import com.pr.paymentreminder.data.model.categoryItem
@@ -15,7 +16,6 @@ import com.pr.paymentreminder.data.model.priceItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiState

@@ -1,17 +1,16 @@
-package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home
+package com.pr.paymentreminder.presentation.paymentreminder.fragments.home
 
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
-import com.pr.paymentreminder.data.model.CustomToastInfo
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiAction
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -101,13 +100,11 @@ class HomeViewModel @Inject constructor(
 
     private fun removeService(service: Service) {
         viewModelScope.launch {
-            setState { copy(serviceToRemove = service) }
+            setState { copy(serviceToRemove = service, showSnackBar = true) }
             servicesUseCase.deleteService(service.id)
-        }
-        val toastInfo = CustomToastInfo(
-            message = "Servicio borrado"
-        )
 
-        dispatchAction(UiAction.ShowRemovedToast(toastInfo))
+            delay(2000)
+            setState { copy(showSnackBar = false) }
+        }
     }
 }
