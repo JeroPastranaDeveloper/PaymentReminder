@@ -82,6 +82,13 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
+
+                val targetHeight = if (state.showSnackBar) dimen72 else dimen0
+                val animatedHeight by animateDpAsState(
+                    targetValue = targetHeight,
+                    label = emptyString()
+                )
+
                 Spacer(modifier = Modifier.height(dimen64))
                 state.services.map { service ->
                     ServiceCard(
@@ -93,18 +100,21 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     )
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
-
-                val targetHeight = if (state.showSnackBar) dimen72 else dimen0
-                val animatedHeight by animateDpAsState(targetValue = targetHeight, label = emptyString())
+                //Spacer(modifier = Modifier.weight(1f))
 
                 Spacer(modifier = Modifier.size(dimen56))
+
+                // Sale debajo del todo después del último serviceCard
                 Visible(state.showSnackBar) {
-                    CustomSnackBar(config = CustomSnackBarConfig(R.drawable.baseline_delete_24, CustomSnackBarType.DELETE)) {
+                    CustomSnackBar(
+                        config = CustomSnackBarConfig(
+                            R.drawable.baseline_delete_24,
+                            CustomSnackBarType.DELETE
+                        )
+                    ) {
                         viewModel.sendIntent(UiIntent.RestoreDeletedService(state.serviceToRemove))
                     }
                 }
-
                 Spacer(modifier = Modifier.height(animatedHeight))
             }
 
