@@ -12,10 +12,10 @@ import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
-import com.pr.paymentreminder.ui.theme.orFalse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -34,19 +34,22 @@ class HomeViewModel @Inject constructor(
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
             is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty(), intent.action))
+            UiIntent.CheckSnackBarConfig -> checkSnackBarConfig()
             is UiIntent.RemoveService -> removeService(intent.service)
             is UiIntent.RestoreDeletedService -> restoreService(intent.service)
         }
     }
 
+    private fun checkSnackBarConfig() {
+        viewModelScope.launch {
+            val snackBarType = sharedSnackBarType.firstOrNull() ?: CustomSnackBarType.NONE
+            val showSnackBar = sharedSnackBarType.firstOrNull() != CustomSnackBarType.NONE
+            setState { copy(showSnackBarType = snackBarType, showSnackBar = showSnackBar) }
+        }
+    }
+
     init {
         if (preferencesHandler.hasToLogin) getServices()
-        viewModelScope.launch {
-            sharedSnackBarType.collect { snackBarType ->
-                val showSnackBar = snackBarType != CustomSnackBarType.NONE
-                setState { copy(showSnackBarType = snackBarType, showNewServiceSnackBar = showSnackBar) }
-            }
-        }
     }
 
     private fun Service.getDate(): LocalDate {
@@ -58,7 +61,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             servicesUseCase.createService(service.id, service)
         }
-        setState { copy(showServiceDeletedSnackBar = false) }
+        setState { copy(showSnackBar = false) }
     }
 
     private fun Service.updateDate() {
@@ -82,6 +85,8 @@ class HomeViewModel @Inject constructor(
                 isLoading = true
             )
         }
+
+        checkSnackBarConfig()
 
         /**
          * The second of wait is to complete the login process.
@@ -111,13 +116,13 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun removeService(service: Service) {
-        setState { copy(showServiceDeletedSnackBar = false) }
+        setState { copy(showSnackBar = false) }
         viewModelScope.launch {
-            setState { copy(serviceToRemove = service, showServiceDeletedSnackBar = true) }
+            setState { copy(serviceToRemove = service, showSnackBar = true, showSnackBarType = CustomSnackBarType.DELETE) }
             servicesUseCase.deleteService(service.id)
 
             delay(2000)
-            setState { copy(showServiceDeletedSnackBar = false) }
+            setState { copy(showSnackBar = false) }
         }
     }
 }

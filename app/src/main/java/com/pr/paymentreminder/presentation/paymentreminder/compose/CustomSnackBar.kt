@@ -23,6 +23,7 @@ import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.ui.theme.Visible
 import com.pr.paymentreminder.ui.theme.dimen24
 import com.pr.paymentreminder.ui.theme.dimen8
+import com.pr.paymentreminder.ui.theme.pastelBlue
 import com.pr.paymentreminder.ui.theme.pastelGreen
 import com.pr.paymentreminder.ui.theme.pastelRed
 import com.pr.paymentreminder.ui.theme.semiBlack
@@ -47,7 +48,7 @@ fun CustomSnackBar(
             when (config.type) {
                 CustomSnackBarType.CREATE -> pastelGreen
                 CustomSnackBarType.NONE -> pastelGreen
-                CustomSnackBarType.UPDATE -> pastelGreen
+                CustomSnackBarType.UPDATE -> pastelBlue
                 CustomSnackBarType.DELETE -> pastelRed
             },
             shape = RoundedCornerShape(dimen8)
@@ -74,7 +75,7 @@ fun CustomSnackBar(
             )
             Spacer(modifier = Modifier.width(spacing10))
             Text(
-                text = stringResource(id = R.string.service_removed),
+                text = config.text,
                 color = semiBlack,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )

@@ -63,4 +63,6 @@
     <string name="yearly_expenditure">Gastos anuales: %s€</string>
     <string name="yearly_total_expenditure">Gasto total anual: %s€</string>
     <string name="edit_service_title">Editar Servicio</string>
+    <string name="service_created">Servicio creado</string>
+    <string name="service_updated">Servicio actualizado</string>
 </resources>

@@ -52,4 +52,6 @@
     <string name="yearly_expenditure">Yearly expenditures: %s$</string>
     <string name="yearly_total_expenditure">Total yearly expenditure: %s$</string>
     <string name="edit_service_title">Edit Service</string>
+    <string name="service_created">Service created</string>
+    <string name="service_updated">Service updated</string>
 </resources>

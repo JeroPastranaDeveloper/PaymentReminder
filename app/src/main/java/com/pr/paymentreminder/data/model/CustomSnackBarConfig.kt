@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 
 data class CustomSnackBarConfig(
     @DrawableRes val image: Int,
+    val text: String,
     val type: CustomSnackBarType
 )
 

@@ -10,12 +10,12 @@ class HomeViewContract : BaseViewContract() {
         val serviceToRemove: Service = Service(),
         val services: List<Service> = emptyList(),
         val showSnackBarType: CustomSnackBarType = CustomSnackBarType.NONE,
-        val showServiceDeletedSnackBar: Boolean = false,
-        val showNewServiceSnackBar: Boolean = false
+        val showSnackBar: Boolean = false
     )
 
     sealed class UiIntent {
         data class AddEditService(val serviceId: String?, val action: String) : UiIntent()
+        data object CheckSnackBarConfig : UiIntent()
         data class RemoveService(val service: Service) : UiIntent()
         data class RestoreDeletedService(val service: Service) : UiIntent()
     }

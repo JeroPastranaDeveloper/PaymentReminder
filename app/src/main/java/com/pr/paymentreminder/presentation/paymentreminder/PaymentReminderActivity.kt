@@ -44,10 +44,10 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.androidVersions.hasT33
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicFragment
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeFragment
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

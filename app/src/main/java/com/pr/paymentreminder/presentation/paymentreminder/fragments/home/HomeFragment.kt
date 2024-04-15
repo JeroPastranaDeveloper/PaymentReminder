@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.ButtonActions
 import com.pr.paymentreminder.data.model.CustomSnackBarConfig
@@ -80,8 +81,8 @@ fun HomeFragment(viewModel: HomeViewModel) {
         if (state.isLoading) {
             CircularProgressIndicator(Modifier.align(Alignment.Center))
         } else {
-            val snackBarHeight = if (state.showServiceDeletedSnackBar) dimen72 else dimen0
-            val fabHeight = if (state.showServiceDeletedSnackBar) spacing144 else spacing72
+            val snackBarHeight = if (state.showSnackBar) dimen72 else dimen0
+            val fabHeight = if (state.showSnackBar) spacing144 else spacing72
             val animatedSnackBarHeight by animateDpAsState(
                 targetValue = snackBarHeight,
                 label = emptyString()
@@ -117,15 +118,37 @@ fun HomeFragment(viewModel: HomeViewModel) {
 
                     Spacer(modifier = Modifier.size(dimen56))
 
-                    Visible(state.showServiceDeletedSnackBar || state.showNewServiceSnackBar) {
+                    Visible(state.showSnackBar) {
                         CustomSnackBar(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .padding(bottom = animatedSnackBarHeight),
-                            config = CustomSnackBarConfig(
-                                if (state.showNewServiceSnackBar) R.drawable.add else R.drawable.baseline_delete_24,
-                                if (state.showNewServiceSnackBar) CustomSnackBarType.CREATE else CustomSnackBarType.DELETE
-                            )
+                            config = when (state.showSnackBarType) {
+                                CustomSnackBarType.CREATE -> CustomSnackBarConfig(
+                                    R.drawable.add,
+                                    stringResource(id = R.string.service_created),
+                                    CustomSnackBarType.CREATE
+                                )
+
+                                CustomSnackBarType.UPDATE -> CustomSnackBarConfig(
+                                    R.drawable.update_icon,
+                                    stringResource(id = R.string.service_updated),
+                                    CustomSnackBarType.UPDATE
+                                )
+
+                                CustomSnackBarType.DELETE -> CustomSnackBarConfig(
+                                    R.drawable.baseline_delete_24,
+                                    stringResource(id = R.string.service_removed),
+                                    CustomSnackBarType.DELETE
+                                )
+
+                                else -> CustomSnackBarConfig(
+                                    R.drawable.add,
+                                    stringResource(id = R.string.service_created),
+                                    CustomSnackBarType.NONE
+                                )
+                            }
+
                         ) {
                             viewModel.sendIntent(UiIntent.RestoreDeletedService(state.serviceToRemove))
                         }
