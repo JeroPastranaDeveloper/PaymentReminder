@@ -47,6 +47,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             servicesUseCase.createService(service.id, service)
         }
+        setState { copy(showServiceDeletedSnackBar = false) }
     }
 
     private fun Service.updateDate() {
@@ -99,12 +100,13 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun removeService(service: Service) {
+        setState { copy(showServiceDeletedSnackBar = false) }
         viewModelScope.launch {
-            setState { copy(serviceToRemove = service, showSnackBar = true) }
+            setState { copy(serviceToRemove = service, showServiceDeletedSnackBar = true) }
             servicesUseCase.deleteService(service.id)
 
             delay(2000)
-            setState { copy(showSnackBar = false) }
+            setState { copy(showServiceDeletedSnackBar = false) }
         }
     }
 }

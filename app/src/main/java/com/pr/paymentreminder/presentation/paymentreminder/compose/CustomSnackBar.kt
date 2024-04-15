@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.CustomSnackBarConfig
 import com.pr.paymentreminder.data.model.CustomSnackBarType
@@ -36,19 +35,19 @@ import com.pr.paymentreminder.ui.theme.spacing8
 
 @Composable
 fun CustomSnackBar(
+    modifier: Modifier,
     config: CustomSnackBarConfig,
     onClick: () -> Unit = {}
 ) {
-    Box(
-        Modifier
-            .padding(horizontal = spacing8)
-            .background(
-                when (config.type) {
-                    CustomSnackBarType.CREATE -> pastelGreen
-                    CustomSnackBarType.DELETE -> pastelRed
-                },
-                shape = RoundedCornerShape(dimen8)
-            )
+    Box(modifier = Modifier.then(modifier)
+        .padding(horizontal = spacing8)
+        .background(
+            when (config.type) {
+                CustomSnackBarType.CREATE -> pastelGreen
+                CustomSnackBarType.DELETE -> pastelRed
+            },
+            shape = RoundedCornerShape(dimen8)
+        )
     ) {
         Row(
             Modifier
@@ -89,6 +88,7 @@ fun CustomSnackBar(
     }
 }
 
+/*
 @Composable
 @Preview(showBackground = true)
 private fun SnackBarPreview() {
@@ -99,3 +99,4 @@ private fun SnackBarPreview() {
         )
     )
 }
+*/

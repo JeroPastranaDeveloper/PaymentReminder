@@ -8,7 +8,7 @@ class HomeViewContract : BaseViewContract() {
         val isLoading: Boolean = false,
         val serviceToRemove: Service = Service(),
         val services: List<Service> = emptyList(),
-        val showSnackBar: Boolean = false
+        val showServiceDeletedSnackBar: Boolean = false
     )
 
     sealed class UiIntent {

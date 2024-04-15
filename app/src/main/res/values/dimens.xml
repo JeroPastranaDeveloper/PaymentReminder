@@ -27,6 +27,7 @@
     <dimen name="spacing_18">18dp</dimen>
     <dimen name="spacing_20">20dp</dimen>
     <dimen name="spacing_24">24dp</dimen>
+    <dimen name="spacing_56">56dp</dimen>
     <dimen name="spacing_72">72dp</dimen>
     <dimen name="spacing_144">144dp</dimen>
 

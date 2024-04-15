@@ -60,7 +60,11 @@ fun HomeFragment(viewModel: HomeViewModel) {
 
     fun handleAction(action: UiAction) {
         when (action) {
-            is UiAction.AddEditService -> addOrEditService(action.serviceId.orEmpty(), action.action, context)
+            is UiAction.AddEditService -> addOrEditService(
+                action.serviceId.orEmpty(),
+                action.action,
+                context
+            )
         }
     }
 
@@ -76,53 +80,66 @@ fun HomeFragment(viewModel: HomeViewModel) {
         if (state.isLoading) {
             CircularProgressIndicator(Modifier.align(Alignment.Center))
         } else {
+            val snackBarHeight = if (state.showServiceDeletedSnackBar) dimen72 else dimen0
+            val fabHeight = if (state.showServiceDeletedSnackBar) spacing144 else spacing72
+            val animatedSnackBarHeight by animateDpAsState(
+                targetValue = snackBarHeight,
+                label = emptyString()
+            )
+            val animatedFABHeight by animateDpAsState(
+                targetValue = fabHeight,
+                label = emptyString()
+            )
+
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState),
+                modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-
-                val targetHeight = if (state.showSnackBar) dimen72 else dimen0
-                val animatedHeight by animateDpAsState(
-                    targetValue = targetHeight,
-                    label = emptyString()
-                )
-
                 Spacer(modifier = Modifier.height(dimen64))
-                state.services.map { service ->
-                    ServiceCard(
-                        service = service,
-                        onClick = {
-                            selectedService = service
-                            showDialog = true
-                        }
-                    )
-                }
 
-                //Spacer(modifier = Modifier.weight(1f))
-
-                Spacer(modifier = Modifier.size(dimen56))
-
-                // Sale debajo del todo después del último serviceCard
-                Visible(state.showSnackBar) {
-                    CustomSnackBar(
-                        config = CustomSnackBarConfig(
-                            R.drawable.baseline_delete_24,
-                            CustomSnackBarType.DELETE
-                        )
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = dimen56)
+                            .verticalScroll(scrollState)
                     ) {
-                        viewModel.sendIntent(UiIntent.RestoreDeletedService(state.serviceToRemove))
+                        state.services.forEach { service ->
+                            ServiceCard(
+                                service = service,
+                                onClick = {
+                                    selectedService = service
+                                    showDialog = true
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.size(dimen56))
+
+                    Visible(state.showServiceDeletedSnackBar) {
+                        CustomSnackBar(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = animatedSnackBarHeight),
+                            config = CustomSnackBarConfig(
+                                R.drawable.baseline_delete_24,
+                                CustomSnackBarType.DELETE
+                            )
+                        ) {
+                            viewModel.sendIntent(UiIntent.RestoreDeletedService(state.serviceToRemove))
+                        }
                     }
                 }
-                Spacer(modifier = Modifier.height(animatedHeight))
+
+                Spacer(modifier = Modifier.height(animatedSnackBarHeight))
             }
 
             FloatingActionButton(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(
-                        bottom = if (state.showSnackBar) spacing144 else spacing72,
+                        bottom = animatedFABHeight,
                         end = spacing16
                     ),
                 onClick = {
@@ -144,7 +161,12 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     },
                     onEdit = {
                         showDialog = false
-                        viewModel.sendIntent(UiIntent.AddEditService(selectedService?.id.orEmpty(), ButtonActions.EDIT.name))
+                        viewModel.sendIntent(
+                            UiIntent.AddEditService(
+                                selectedService?.id.orEmpty(),
+                                ButtonActions.EDIT.name
+                            )
+                        )
                     },
                     onRemove = {
                         showDialog = false
