@@ -8,5 +8,5 @@ data class CustomSnackBarConfig(
 )
 
 enum class CustomSnackBarType {
-    DELETE, CREATE
+    CREATE, NONE, UPDATE, DELETE
 }

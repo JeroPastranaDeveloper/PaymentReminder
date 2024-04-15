@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.CustomSnackBarConfig
 import com.pr.paymentreminder.data.model.CustomSnackBarType
+import com.pr.paymentreminder.ui.theme.Visible
 import com.pr.paymentreminder.ui.theme.dimen24
 import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.pastelGreen
@@ -39,11 +40,14 @@ fun CustomSnackBar(
     config: CustomSnackBarConfig,
     onClick: () -> Unit = {}
 ) {
-    Box(modifier = Modifier.then(modifier)
+    Box(modifier = Modifier
+        .then(modifier)
         .padding(horizontal = spacing8)
         .background(
             when (config.type) {
                 CustomSnackBarType.CREATE -> pastelGreen
+                CustomSnackBarType.NONE -> pastelGreen
+                CustomSnackBarType.UPDATE -> pastelGreen
                 CustomSnackBarType.DELETE -> pastelRed
             },
             shape = RoundedCornerShape(dimen8)
@@ -74,15 +78,17 @@ fun CustomSnackBar(
                 color = semiBlack,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
-            Spacer(modifier = Modifier.weight(1f))
-            TextButton(
-                onClick = { onClick() },
-                modifier = Modifier.padding(vertical = spacing4)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.undo),
-                    color = semiBlack
-                )
+            Visible(visible = config.type == CustomSnackBarType.DELETE) {
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(
+                    onClick = { onClick() },
+                    modifier = Modifier.padding(vertical = spacing4)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.undo),
+                        color = semiBlack
+                    )
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.pr.paymentreminder.presentation.paymentreminder.fragments.home
 
 import com.pr.paymentreminder.base.BaseViewContract
+import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.Service
 
 class HomeViewContract : BaseViewContract() {
@@ -8,7 +9,9 @@ class HomeViewContract : BaseViewContract() {
         val isLoading: Boolean = false,
         val serviceToRemove: Service = Service(),
         val services: List<Service> = emptyList(),
-        val showServiceDeletedSnackBar: Boolean = false
+        val showSnackBarType: CustomSnackBarType = CustomSnackBarType.NONE,
+        val showServiceDeletedSnackBar: Boolean = false,
+        val showNewServiceSnackBar: Boolean = false
     )
 
     sealed class UiIntent {

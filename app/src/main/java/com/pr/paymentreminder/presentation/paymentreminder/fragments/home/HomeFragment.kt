@@ -117,14 +117,14 @@ fun HomeFragment(viewModel: HomeViewModel) {
 
                     Spacer(modifier = Modifier.size(dimen56))
 
-                    Visible(state.showServiceDeletedSnackBar) {
+                    Visible(state.showServiceDeletedSnackBar || state.showNewServiceSnackBar) {
                         CustomSnackBar(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .padding(bottom = animatedSnackBarHeight),
                             config = CustomSnackBarConfig(
-                                R.drawable.baseline_delete_24,
-                                CustomSnackBarType.DELETE
+                                if (state.showNewServiceSnackBar) R.drawable.add else R.drawable.baseline_delete_24,
+                                if (state.showNewServiceSnackBar) CustomSnackBarType.CREATE else CustomSnackBarType.DELETE
                             )
                         ) {
                             viewModel.sendIntent(UiIntent.RestoreDeletedService(state.serviceToRemove))

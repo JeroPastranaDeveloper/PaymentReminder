@@ -7,6 +7,7 @@ import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.ButtonActions
+import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.model.ServiceItem
 import com.pr.paymentreminder.data.model.categoryItem
@@ -20,6 +21,7 @@ import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceView
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,8 +30,8 @@ import javax.inject.Inject
 class AddServiceViewModel @Inject constructor(
     private val servicesUseCase: ServicesUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
-
     override val initialViewState = UiState()
+
 
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
@@ -114,6 +116,8 @@ private fun createService(service: Service) {
         servicesUseCase.createService(id, service)
     }
 
+    SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.CREATE)
+
     dispatchAction(UiAction.GoBack)
 }
 
@@ -121,6 +125,7 @@ private fun updateService(serviceId: String, newServiceData: Service) {
     viewModelScope.launch {
         servicesUseCase.updateService(serviceId, newServiceData)
     }
+    SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.UPDATE)
     dispatchAction(UiAction.GoBack)
 }
 

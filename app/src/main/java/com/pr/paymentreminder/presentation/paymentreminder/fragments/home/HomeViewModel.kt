@@ -3,6 +3,7 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments.home
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
+import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
@@ -11,8 +12,10 @@ import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
+import com.pr.paymentreminder.ui.theme.orFalse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -26,6 +29,8 @@ class HomeViewModel @Inject constructor(
     preferencesHandler: PreferencesHandler
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
+    private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow.asSharedFlow()
+
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
             is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty(), intent.action))
@@ -36,6 +41,12 @@ class HomeViewModel @Inject constructor(
 
     init {
         if (preferencesHandler.hasToLogin) getServices()
+        viewModelScope.launch {
+            sharedSnackBarType.collect { snackBarType ->
+                val showSnackBar = snackBarType != CustomSnackBarType.NONE
+                setState { copy(showSnackBarType = snackBarType, showNewServiceSnackBar = showSnackBar) }
+            }
+        }
     }
 
     private fun Service.getDate(): LocalDate {
