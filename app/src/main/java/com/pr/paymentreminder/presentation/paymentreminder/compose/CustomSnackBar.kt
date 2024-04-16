@@ -2,6 +2,7 @@ package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,11 +23,12 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.CustomSnackBarConfig
 import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.ui.theme.Visible
+import com.pr.paymentreminder.ui.theme.blue
+import com.pr.paymentreminder.ui.theme.dimen05
 import com.pr.paymentreminder.ui.theme.dimen24
 import com.pr.paymentreminder.ui.theme.dimen8
-import com.pr.paymentreminder.ui.theme.pastelBlue
-import com.pr.paymentreminder.ui.theme.pastelGreen
-import com.pr.paymentreminder.ui.theme.pastelRed
+import com.pr.paymentreminder.ui.theme.green
+import com.pr.paymentreminder.ui.theme.red
 import com.pr.paymentreminder.ui.theme.semiBlack
 import com.pr.paymentreminder.ui.theme.snackBarColor
 import com.pr.paymentreminder.ui.theme.spacing10
@@ -54,13 +56,14 @@ fun CustomSnackBar(
             .padding(horizontal = spacing8)
             .background(
                 when (config.type) {
-                    CustomSnackBarType.CREATE -> pastelGreen
-                    CustomSnackBarType.UPDATE -> pastelBlue
-                    CustomSnackBarType.DELETE -> pastelRed
+                    CustomSnackBarType.CREATE -> green
+                    CustomSnackBarType.UPDATE -> blue
+                    CustomSnackBarType.DELETE -> red
                     else -> return
                 },
                 shape = RoundedCornerShape(dimen8)
             )
+            .border(dimen05, semiBlack, RoundedCornerShape(dimen8))
     ) {
         Row(
             Modifier

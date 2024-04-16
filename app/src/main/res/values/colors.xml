@@ -12,6 +12,7 @@
     <color name="red">#FF0000</color>
     <color name="pastel_red">#FF6961</color>
     <color name="green">#00FF00</color>
+    <color name="blue">#0000FF</color>
     <color name="pastel_green">#BDECB6</color>
     <color name="pastel_blue">#B2DAFA</color>
     <color name="snack_bar">#eadefe</color>

@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.TextUnit
 import com.pr.paymentreminder.R
 
 val dimen0: Dp @Composable get() = dimensionResource(id = R.dimen.dimen0)
+val dimen05: Dp @Composable get() = dimensionResource(id = R.dimen.dimen05)
 val dimen1: Dp @Composable get() = dimensionResource(id = R.dimen.dimen1)
 val dimen2: Dp @Composable get() = dimensionResource(id = R.dimen.dimen2)
 val dimen4: Dp @Composable get() = dimensionResource(id = R.dimen.dimen4)

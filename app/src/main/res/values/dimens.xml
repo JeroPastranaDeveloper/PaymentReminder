@@ -2,6 +2,7 @@
 <resources>
     <!-- Dimens -->
     <dimen name="dimen0">0dp</dimen>
+    <dimen name="dimen05">0.5dp</dimen>
     <dimen name="dimen1">1dp</dimen>
     <dimen name="dimen2">2dp</dimen>
     <dimen name="dimen4">4dp</dimen>
