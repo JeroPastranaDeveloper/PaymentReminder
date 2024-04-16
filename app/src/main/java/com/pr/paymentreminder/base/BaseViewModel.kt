@@ -14,7 +14,7 @@ abstract class BaseViewModel<UiState, UiIntent> : ViewModel() {
 
     object SharedShowSnackBarType {
         private val _showSnackBarType = MutableStateFlow(CustomSnackBarType.NONE)
-        val sharedSnackBarTypeFlow: MutableStateFlow<CustomSnackBarType> get() = _showSnackBarType
+        val sharedSnackBarTypeFlow: StateFlow<CustomSnackBarType> get() = _showSnackBarType
 
         fun updateSharedSnackBarType(newValue: CustomSnackBarType) {
             _showSnackBarType.value = newValue

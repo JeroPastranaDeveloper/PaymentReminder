@@ -33,6 +33,7 @@ val spacing18: Dp @Composable get() = dimensionResource(id = R.dimen.spacing_18)
 val spacing20: Dp @Composable get() = dimensionResource(id = R.dimen.spacing_20)
 val spacing24: Dp @Composable get() = dimensionResource(id = R.dimen.spacing_24)
 val spacing56: Dp @Composable get() = dimensionResource(id = R.dimen.spacing_56)
+val spacing64: Dp @Composable get() = dimensionResource(id = R.dimen.spacing_64)
 val spacing72: Dp @Composable get() = dimensionResource(id = R.dimen.spacing_72)
 val spacing144: Dp @Composable get() = dimensionResource(id = R.dimen.spacing_144)
 

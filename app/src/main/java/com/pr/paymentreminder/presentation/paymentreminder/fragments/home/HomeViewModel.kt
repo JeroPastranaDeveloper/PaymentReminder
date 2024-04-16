@@ -14,7 +14,6 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeVi
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -29,7 +28,7 @@ class HomeViewModel @Inject constructor(
     preferencesHandler: PreferencesHandler
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
-    private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow.asSharedFlow()
+    private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow
 
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
@@ -45,6 +44,8 @@ class HomeViewModel @Inject constructor(
             val snackBarType = sharedSnackBarType.firstOrNull() ?: CustomSnackBarType.NONE
             val showSnackBar = sharedSnackBarType.firstOrNull() != CustomSnackBarType.NONE
             setState { copy(showSnackBarType = snackBarType, showSnackBar = showSnackBar) }
+            delay(2000)
+            setState { copy(showSnackBarType = CustomSnackBarType.NONE, showSnackBar = false) }
         }
     }
 
@@ -85,8 +86,6 @@ class HomeViewModel @Inject constructor(
                 isLoading = true
             )
         }
-
-        checkSnackBarConfig()
 
         /**
          * The second of wait is to complete the login process.

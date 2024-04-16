@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.CustomSnackBarConfig
 import com.pr.paymentreminder.data.model.CustomSnackBarType
@@ -41,18 +42,25 @@ fun CustomSnackBar(
     config: CustomSnackBarConfig,
     onClick: () -> Unit = {}
 ) {
-    Box(modifier = Modifier
-        .then(modifier)
-        .padding(horizontal = spacing8)
-        .background(
-            when (config.type) {
-                CustomSnackBarType.CREATE -> pastelGreen
-                CustomSnackBarType.NONE -> pastelGreen
-                CustomSnackBarType.UPDATE -> pastelBlue
-                CustomSnackBarType.DELETE -> pastelRed
-            },
-            shape = RoundedCornerShape(dimen8)
-        )
+    val padding = if (config.type != CustomSnackBarType.DELETE) {
+        Modifier.padding(start = spacing8, top = spacing16, end = spacing16, bottom = spacing16)
+    } else {
+        Modifier.padding(start = spacing8)
+    }
+
+    Box(
+        modifier = Modifier
+            .then(modifier)
+            .padding(horizontal = spacing8)
+            .background(
+                when (config.type) {
+                    CustomSnackBarType.CREATE -> pastelGreen
+                    CustomSnackBarType.UPDATE -> pastelBlue
+                    CustomSnackBarType.DELETE -> pastelRed
+                    else -> return
+                },
+                shape = RoundedCornerShape(dimen8)
+            )
     ) {
         Row(
             Modifier
@@ -63,7 +71,7 @@ fun CustomSnackBar(
                     shape = RoundedCornerShape(topEnd = dimen8, bottomEnd = dimen8)
                 )
                 .fillMaxWidth()
-                .padding(start = spacing8, end = spacing16)
+                .then(padding)
         ) {
             Spacer(modifier = Modifier.width(spacing18))
             Image(
@@ -83,7 +91,7 @@ fun CustomSnackBar(
                 Spacer(modifier = Modifier.weight(1f))
                 TextButton(
                     onClick = { onClick() },
-                    modifier = Modifier.padding(vertical = spacing4)
+                    modifier = Modifier.padding(top = spacing4, bottom = spacing4, end = spacing8)
                 ) {
                     Text(
                         text = stringResource(id = R.string.undo),
@@ -95,15 +103,15 @@ fun CustomSnackBar(
     }
 }
 
-/*
 @Composable
 @Preview(showBackground = true)
 private fun SnackBarPreview() {
     CustomSnackBar(
+        modifier = Modifier,
         config = CustomSnackBarConfig(
             R.drawable.baseline_delete_24,
+            "Servicio creado",
             CustomSnackBarType.DELETE
         )
     )
 }
-*/
