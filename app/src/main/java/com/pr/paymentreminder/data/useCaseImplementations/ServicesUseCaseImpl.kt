@@ -28,6 +28,6 @@ class ServicesUseCaseImpl @Inject constructor(
     override suspend fun updateService(serviceId: String, newServiceData: Service) =
         servicesDataSource.updateService(serviceId, newServiceData)
 
-    override suspend fun deleteService(serviceId: String) =
-        servicesDataSource.deleteService(serviceId)
+    override suspend fun removeService(serviceId: String) =
+        servicesDataSource.removeService(serviceId)
 }

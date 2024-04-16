@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.presentation.paymentreminder.fragments
+package com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
@@ -25,10 +25,9 @@ import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.presentation.paymentreminder.compose.DonutChart
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServicesChip
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiAction
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiIntent
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiState
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiState
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.spacing16

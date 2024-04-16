@@ -24,6 +24,8 @@
     <string name="title_settings" translatable="false">settings</string>
     <string name="title_graphic" translatable="false">graphic</string>
     <string name="category">Categoría: %s</string>
+    <string name="service_removed">Servicio eliminado</string>
+    <string name="undo">Deshacer</string>
     <string name="service_name">Nombre del servicio</string>
     <string name="service_price">Precio del servicio</string>
     <string name="service_image_url">URL de la imagen</string>
@@ -61,4 +63,6 @@
     <string name="yearly_expenditure">Gastos anuales: %s€</string>
     <string name="yearly_total_expenditure">Gasto total anual: %s€</string>
     <string name="edit_service_title">Editar Servicio</string>
+    <string name="service_created">Servicio creado</string>
+    <string name="service_updated">Servicio actualizado</string>
 </resources>

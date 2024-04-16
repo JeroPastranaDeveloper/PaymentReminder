@@ -1,18 +1,20 @@
-package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home
+package com.pr.paymentreminder.presentation.paymentreminder.fragments.home
 
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
+import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiAction
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -26,11 +28,24 @@ class HomeViewModel @Inject constructor(
     preferencesHandler: PreferencesHandler
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
+    private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow
+
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
-            UiIntent.GetServices -> getServices()
             is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty(), intent.action))
-            is UiIntent.RemoveService -> removeService(intent.serviceId)
+            UiIntent.CheckSnackBarConfig -> checkSnackBarConfig()
+            is UiIntent.RemoveService -> removeService(intent.service)
+            is UiIntent.RestoreDeletedService -> restoreService(intent.service)
+        }
+    }
+
+    private fun checkSnackBarConfig() {
+        viewModelScope.launch {
+            val snackBarType = sharedSnackBarType.firstOrNull() ?: CustomSnackBarType.NONE
+            val showSnackBar = sharedSnackBarType.firstOrNull() != CustomSnackBarType.NONE
+            setState { copy(showSnackBarType = snackBarType, showSnackBar = showSnackBar) }
+            delay(2000)
+            setState { copy(showSnackBarType = CustomSnackBarType.NONE, showSnackBar = false) }
         }
     }
 
@@ -41,6 +56,13 @@ class HomeViewModel @Inject constructor(
     private fun Service.getDate(): LocalDate {
         val formatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
         return LocalDate.parse(this.date, formatter)
+    }
+
+    private fun restoreService(service: Service) {
+        viewModelScope.launch {
+            servicesUseCase.createService(service.id, service)
+        }
+        setState { copy(showSnackBar = false, showSnackBarType = CustomSnackBarType.NONE) }
     }
 
     private fun Service.updateDate() {
@@ -66,7 +88,7 @@ class HomeViewModel @Inject constructor(
         }
 
         /**
-         * The second wait is for the login process to complete.
+         * The second of wait is to complete the login process.
          */
         viewModelScope.launch {
             delay(1000)
@@ -92,10 +114,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun removeService(serviceId: String) {
+    private fun removeService(service: Service) {
+        setState { copy(showSnackBar = false) }
         viewModelScope.launch {
-            servicesUseCase.deleteService(serviceId)
+            setState { copy(serviceToRemove = service, showSnackBar = true, showSnackBarType = CustomSnackBarType.DELETE) }
+            servicesUseCase.removeService(service.id)
+
+            delay(2000)
+            setState { copy(showSnackBar = false) }
         }
-        dispatchAction(UiAction.RemoveService)
     }
 }

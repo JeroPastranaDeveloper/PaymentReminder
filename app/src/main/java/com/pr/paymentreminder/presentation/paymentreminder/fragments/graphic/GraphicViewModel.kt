@@ -1,12 +1,12 @@
-package com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic
+package com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic
 
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
-import  com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiIntent
-import  com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiState
-import  com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.graphic.GraphicViewContract.UiAction
+import  com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiIntent
+import  com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiState
+import  com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiAction
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.ui.theme.showTwoDecimals
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -49,8 +49,7 @@ fun ServiceCard(
             val imageLoader = ImageLoader.Builder(context)
                 .components {
                     add(SvgDecoder.Factory())
-                }
-                .build()
+                }.build()
 
             val imageUrl =
                 service.image.takeIf { it.orEmpty().isNotEmpty() }.orElse { Constants.DEFAULT_IMAGE }
@@ -92,5 +91,4 @@ fun ServiceCard(
             }
         }
     }
-
 }

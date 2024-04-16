@@ -4,9 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewModel
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiState
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.viewModels.home.HomeViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.ui.theme.emptyString
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi

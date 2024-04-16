@@ -6,6 +6,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
+import com.pr.paymentreminder.data.model.ButtonActions
+import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.model.ServiceItem
 import com.pr.paymentreminder.data.model.categoryItem
@@ -15,7 +17,6 @@ import com.pr.paymentreminder.data.model.priceItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.ButtonActions
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiState
@@ -28,7 +29,6 @@ import javax.inject.Inject
 class AddServiceViewModel @Inject constructor(
     private val servicesUseCase: ServicesUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
-
     override val initialViewState = UiState()
 
     override fun manageIntent(intent: UiIntent) {
@@ -50,7 +50,6 @@ class AddServiceViewModel @Inject constructor(
         if (!state.value.categoryHelperText && !state.value.dateHelperText && !state.value.nameHelperText && !state.value.priceHelperText && !state.value.rememberHelperText && !state.value.typeHelperText) {
             when (state.value.action) {
                 ButtonActions.EDIT.name -> updateService(
-                    service.id,
                     Service(
                         id = service.id,
                         category = service.category,
@@ -114,13 +113,15 @@ private fun createService(service: Service) {
         servicesUseCase.createService(id, service)
     }
 
+    SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.CREATE)
     dispatchAction(UiAction.GoBack)
 }
 
-private fun updateService(serviceId: String, newServiceData: Service) {
+private fun updateService(newServiceData: Service) {
     viewModelScope.launch {
-        servicesUseCase.updateService(serviceId, newServiceData)
+        servicesUseCase.updateService(newServiceData.id, newServiceData)
     }
+    SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.UPDATE)
     dispatchAction(UiAction.GoBack)
 }
 

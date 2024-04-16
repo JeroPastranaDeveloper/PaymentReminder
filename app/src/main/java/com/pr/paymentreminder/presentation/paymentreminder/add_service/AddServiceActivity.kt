@@ -401,21 +401,21 @@ class AddServiceActivity : BaseActivity() {
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        SaveButton(
-                            Service(
-                                id = serviceId,
-                                selectedCategory,
-                                color = emptyString(),
-                                serviceDate,
-                                serviceName,
-                                servicePrice,
-                                selectedRemember,
-                                selectedType,
-                                imageUrl,
-                                comments,
-                                serviceUrl
-                            )
+                        val newServiceData =Service(
+                            id = serviceId,
+                            selectedCategory,
+                            color = emptyString(),
+                            serviceDate,
+                            serviceName,
+                            servicePrice,
+                            selectedRemember,
+                            selectedType,
+                            imageUrl,
+                            comments,
+                            serviceUrl
                         )
+
+                        SaveButton(newServiceData)
                     }
                 }
             }
