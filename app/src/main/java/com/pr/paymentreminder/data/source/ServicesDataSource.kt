@@ -77,7 +77,7 @@ class ServicesDataSource @Inject constructor() {
         getServicesRef().child(serviceId).setValue(newServiceData)
     }
 
-    fun deleteService(serviceId: String) {
+    fun removeService(serviceId: String) {
         getServicesRef().child(serviceId).removeValue()
     }
 
