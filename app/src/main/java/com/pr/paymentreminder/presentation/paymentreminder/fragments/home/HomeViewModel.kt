@@ -45,6 +45,7 @@ class HomeViewModel @Inject constructor(
             val showSnackBar = sharedSnackBarType.firstOrNull() != CustomSnackBarType.NONE
             setState { copy(showSnackBarType = snackBarType, showSnackBar = showSnackBar) }
             delay(2000)
+            SharedShowSnackBarType.resetSharedSnackBarType()
             setState { copy(showSnackBarType = CustomSnackBarType.NONE, showSnackBar = false) }
         }
     }

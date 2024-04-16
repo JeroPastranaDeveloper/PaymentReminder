@@ -19,6 +19,10 @@ abstract class BaseViewModel<UiState, UiIntent> : ViewModel() {
         fun updateSharedSnackBarType(newValue: CustomSnackBarType) {
             _showSnackBarType.value = newValue
         }
+
+        fun resetSharedSnackBarType() {
+            _showSnackBarType.value = CustomSnackBarType.NONE
+        }
     }
 
     fun sendIntent(intent: UiIntent) {
