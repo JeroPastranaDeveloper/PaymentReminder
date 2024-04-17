@@ -71,15 +71,26 @@ class HomeViewModel @Inject constructor(
     private fun Service.updateDate() {
         val today = LocalDate.now()
         if (this.getDate().isEqual(today) || this.getDate().isBefore(today)) {
-            when (this.type) {
-                PaymentType.WEEKLY.type -> this.date = this.getDate().plus(1, ChronoUnit.WEEKS).format(
-                    DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
-                PaymentType.MONTHLY.type -> this.date = this.getDate().plus(1, ChronoUnit.MONTHS).format(
-                    DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
-                PaymentType.YEARLY.type -> this.date = this.getDate().plus(1, ChronoUnit.YEARS).format(
-                    DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
+            viewModelScope.launch {
+                serviceFormUseCase.setServiceForm(this@updateDate)
+                when (this@updateDate.type) {
+                    PaymentType.WEEKLY.type -> this@updateDate.date =
+                        this@updateDate.getDate().plus(1, ChronoUnit.WEEKS).format(
+                            DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
+                        )
+
+                    PaymentType.MONTHLY.type -> this@updateDate.date =
+                        this@updateDate.getDate().plus(1, ChronoUnit.MONTHS).format(
+                            DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
+                        )
+
+                    PaymentType.YEARLY.type -> this@updateDate.date =
+                        this@updateDate.getDate().plus(1, ChronoUnit.YEARS).format(
+                            DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
+                        )
+                }
+                updateService(this@updateDate.id, this@updateDate)
             }
-            updateService(this.id, this)
         }
     }
 
@@ -95,17 +106,17 @@ class HomeViewModel @Inject constructor(
          */
         viewModelScope.launch {
             delay(1000)
+
             servicesUseCase.getServices().collect { services ->
                 services.forEach { service ->
                     service.updateDate()
                     alarmScheduler.scheduleAlarm(service)
-                    serviceFormUseCase.setServiceForm(service)
                 }
 
                 setState {
                     copy(
-                        isLoading = false,
-                        services = services.sortedBy { it.getDate() }
+                        services = services.sortedBy { it.getDate() },
+                        isLoading = false
                     )
                 }
             }

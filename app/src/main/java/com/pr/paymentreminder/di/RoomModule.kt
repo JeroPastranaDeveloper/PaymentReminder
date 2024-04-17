@@ -1,6 +1,7 @@
-package com.pr.paymentreminder.data.room
+package com.pr.paymentreminder.di
 
 import android.content.Context
+import com.pr.paymentreminder.data.source.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

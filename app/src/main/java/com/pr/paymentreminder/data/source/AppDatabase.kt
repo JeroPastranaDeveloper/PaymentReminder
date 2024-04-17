@@ -1,9 +1,11 @@
-package com.pr.paymentreminder.data.room
+package com.pr.paymentreminder.data.source
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.pr.paymentreminder.data.room.ServiceDao
+import com.pr.paymentreminder.data.room.ServiceRoom
 
 @Database(
     entities = [

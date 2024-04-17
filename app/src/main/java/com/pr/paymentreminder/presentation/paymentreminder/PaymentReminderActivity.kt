@@ -16,6 +16,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
@@ -47,6 +50,8 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.Gra
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryFragment
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,6 +60,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class PaymentReminderActivity : AppCompatActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
     private val graphicViewModel: GraphicViewModel by viewModels()
+    private val paymentsHistoryViewModel: PaymentsHistoryViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -84,8 +90,16 @@ class PaymentReminderActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun checkNotificationPermissions() {
-        if (hasT33() && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100)
+        if (hasT33() && ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                100
+            )
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (!alarmManager.canScheduleExactAlarms()) {
                 val intent = Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
@@ -107,13 +121,13 @@ class PaymentReminderActivity : AppCompatActivity() {
             CurrentScreen.Graphic,
             CurrentScreen.Settings
         )
-
         Scaffold(
             topBar = {
                 Surface {
                     TopAppBar(
                         title = { Text(stringResource(id = R.string.app_name)) }
                     )
+
                 }
             },
             bottomBar = {
@@ -124,9 +138,40 @@ class PaymentReminderActivity : AppCompatActivity() {
                 navController = navController,
                 startDestination = CurrentScreen.Home.route
             ) {
-                composable(CurrentScreen.Home.route) { HomeFragment(homeViewModel) }
+                composable(CurrentScreen.Home.route) {
+                    PagerContent(
+                        homeViewModel,
+                        paymentsHistoryViewModel
+                    )
+                }
                 composable(CurrentScreen.Graphic.route) { GraphicFragment(graphicViewModel) }
+                composable(Constants.PAYMENTS_HISTORY) {
+                    PaymentsHistoryFragment(
+                        paymentsHistoryViewModel
+                    )
+                }
                 composable(CurrentScreen.Settings.route) { SettingsFragment(settingsViewModel) }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    private fun PagerContent(
+        homeViewModel: HomeViewModel,
+        paymentsHistoryViewModel: PaymentsHistoryViewModel
+    ) {
+        val pagerState = rememberPagerState(pageCount = { 2 })
+
+        HorizontalPager(state = pagerState) { page ->
+            when (page) {
+                0 -> {
+                    HomeFragment(homeViewModel)
+                }
+
+                1 -> {
+                    PaymentsHistoryFragment(paymentsHistoryViewModel)
+                }
             }
         }
     }

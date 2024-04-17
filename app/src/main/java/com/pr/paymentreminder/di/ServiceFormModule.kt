@@ -1,9 +1,9 @@
 package com.pr.paymentreminder.di
 
 import com.pr.paymentreminder.base.CoroutineIO
-import com.pr.paymentreminder.data.room.AppDatabase
+import com.pr.paymentreminder.data.source.AppDatabase
 import com.pr.paymentreminder.data.source.ServiceDatabaseDataSource
-import com.pr.paymentreminder.data.source.ServiceDatabaseDataSourceImpl
+import com.pr.paymentreminder.data.data_source_impls.ServiceDatabaseDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

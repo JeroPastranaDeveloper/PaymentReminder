@@ -103,41 +103,41 @@ class AddServiceViewModel @Inject constructor(
         }
     }
 
-private fun createService(service: Service) {
-    viewModelScope.launch {
-        val database = Firebase.database
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
-        val id = servicesRef.push().key.orEmpty()
-        service.id = id
-        servicesUseCase.createService(id, service)
+    private fun createService(service: Service) {
+        viewModelScope.launch {
+            val database = Firebase.database
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
+            val id = servicesRef.push().key.orEmpty()
+            service.id = id
+            servicesUseCase.createService(id, service)
+        }
+
+        SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.CREATE)
+        dispatchAction(UiAction.GoBack)
     }
 
-    SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.CREATE)
-    dispatchAction(UiAction.GoBack)
-}
-
-private fun updateService(newServiceData: Service) {
-    viewModelScope.launch {
-        servicesUseCase.updateService(newServiceData.id, newServiceData)
-    }
-    SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.UPDATE)
-    dispatchAction(UiAction.GoBack)
-}
-
-private fun validateServiceItem(item: ServiceItem, value: String) {
-    val isEmpty = value.isEmpty()
-    setState { copy(isLoading = true) }
-
-    when (item) {
-        ServiceItem.CATEGORY -> setState { copy(categoryHelperText = isEmpty) }
-        ServiceItem.DATE -> setState { copy(dateHelperText = isEmpty) }
-        ServiceItem.NAME -> setState { copy(nameHelperText = isEmpty) }
-        ServiceItem.PRICE -> setState { copy(priceHelperText = isEmpty) }
-        ServiceItem.REMEMBER -> setState { copy(rememberHelperText = isEmpty) }
-        ServiceItem.TYPE -> setState { copy(typeHelperText = isEmpty) }
+    private fun updateService(newServiceData: Service) {
+        viewModelScope.launch {
+            servicesUseCase.updateService(newServiceData.id, newServiceData)
+        }
+        SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.UPDATE)
+        dispatchAction(UiAction.GoBack)
     }
 
-    setState { copy(isLoading = false) }
-}
+    private fun validateServiceItem(item: ServiceItem, value: String) {
+        val isEmpty = value.isEmpty()
+        setState { copy(isLoading = true) }
+
+        when (item) {
+            ServiceItem.CATEGORY -> setState { copy(categoryHelperText = isEmpty) }
+            ServiceItem.DATE -> setState { copy(dateHelperText = isEmpty) }
+            ServiceItem.NAME -> setState { copy(nameHelperText = isEmpty) }
+            ServiceItem.PRICE -> setState { copy(priceHelperText = isEmpty) }
+            ServiceItem.REMEMBER -> setState { copy(rememberHelperText = isEmpty) }
+            ServiceItem.TYPE -> setState { copy(typeHelperText = isEmpty) }
+        }
+
+        setState { copy(isLoading = false) }
+    }
 }

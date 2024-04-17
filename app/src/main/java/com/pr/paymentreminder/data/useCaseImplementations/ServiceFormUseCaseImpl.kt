@@ -11,6 +11,9 @@ class ServiceFormUseCaseImpl @Inject constructor(
     override suspend fun getServiceForm(serviceId: String): Service? =
         serviceDatabaseDataSource.getServiceForm(serviceId)
 
+    override suspend fun getAllServicesForm(): List<Service>? =
+        serviceDatabaseDataSource.getAllServicesForm()
+
     override suspend fun setServiceForm(form: Service) =
         serviceDatabaseDataSource.setServiceForm(form)
 

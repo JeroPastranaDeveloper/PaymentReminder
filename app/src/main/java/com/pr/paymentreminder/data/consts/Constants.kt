@@ -14,6 +14,7 @@ class Constants {
         const val COMMENTS = "comments"
         const val EURO = "€"
         const val HOME = "home"
+        const val PAYMENTS_HISTORY = "paymentsHistory"
         const val GRAPHIC = "graphic"
         const val SETTINGS = "settings"
         const val AMAZON = "Amazon"

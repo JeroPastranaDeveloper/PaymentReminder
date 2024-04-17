@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.data.room
+package com.pr.paymentreminder.di
 
 import com.pr.paymentreminder.base.CoroutineIO
 import dagger.Module
