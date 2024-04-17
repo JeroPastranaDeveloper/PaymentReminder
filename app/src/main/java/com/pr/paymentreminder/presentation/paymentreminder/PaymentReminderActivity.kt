@@ -41,7 +41,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.pr.paymentreminder.R
-import com.pr.paymentreminder.androidVersions.hasT33
+import com.pr.paymentreminder.android_versions.hasT33
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewModel

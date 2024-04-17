@@ -7,6 +7,7 @@ import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
+import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val servicesUseCase: ServicesUseCase,
     private val alarmScheduler: AlarmScheduler,
-    preferencesHandler: PreferencesHandler
+    preferencesHandler: PreferencesHandler,
+    private val serviceFormUseCase: ServiceFormUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow
@@ -97,6 +99,7 @@ class HomeViewModel @Inject constructor(
                 services.forEach { service ->
                     service.updateDate()
                     alarmScheduler.scheduleAlarm(service)
+                    serviceFormUseCase.setServiceForm(service)
                 }
 
                 setState {
