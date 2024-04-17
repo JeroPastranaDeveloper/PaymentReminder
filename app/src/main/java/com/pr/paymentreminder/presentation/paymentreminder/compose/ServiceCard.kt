@@ -35,8 +35,8 @@ import com.pr.paymentreminder.ui.theme.spacing8
 @Composable
 fun ServiceCard(
     service: Service,
-    onClick: () -> Unit,
-    color: Color
+    onClick: () -> Unit
+    // color: Color
 ) {
     val context = LocalContext.current
 
@@ -44,13 +44,13 @@ fun ServiceCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(spacing8),
-        onClick = onClick,
-        colors = CardColors(
+        onClick = onClick
+        /*colors = CardColors(
             containerColor = color,
             contentColor = Color.White,
             disabledContainerColor = Color.Gray,
             disabledContentColor = Color.DarkGray
-        )
+        )*/
     ) {
         Row(
             horizontalArrangement = Arrangement.Start
