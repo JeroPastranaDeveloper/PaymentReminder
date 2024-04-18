@@ -26,9 +26,9 @@ import com.pr.paymentreminder.ui.theme.spacing8
 @Composable
 fun SmallServiceCard(
     service: Service,
-    color: Color
+    color: Color,
+    onClick: () -> Unit
 ) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth(0.5f)
@@ -38,7 +38,8 @@ fun SmallServiceCard(
             contentColor = Color.White,
             disabledContainerColor = Color.Gray,
             disabledContentColor = Color.DarkGray
-        )
+        ),
+        onClick = onClick
     ) {
         Row(
             horizontalArrangement = Arrangement.Start

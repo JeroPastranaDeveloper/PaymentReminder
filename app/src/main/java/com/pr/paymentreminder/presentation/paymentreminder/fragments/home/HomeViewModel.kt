@@ -44,7 +44,7 @@ class HomeViewModel @Inject constructor(
     private fun checkSnackBarConfig() {
         viewModelScope.launch {
             val snackBarType = sharedSnackBarType.firstOrNull() ?: CustomSnackBarType.NONE
-            val showSnackBar = sharedSnackBarType.firstOrNull() != CustomSnackBarType.NONE
+            val showSnackBar = !(sharedSnackBarType.firstOrNull() != CustomSnackBarType.NONE || sharedSnackBarType.firstOrNull() != CustomSnackBarType.UPDATE_PAID)
             setState { copy(showSnackBarType = snackBarType, showSnackBar = showSnackBar) }
             delay(2000)
             SharedShowSnackBarType.resetSharedSnackBarType()

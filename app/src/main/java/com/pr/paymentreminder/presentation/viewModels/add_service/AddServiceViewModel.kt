@@ -16,6 +16,7 @@ import com.pr.paymentreminder.data.model.nameItem
 import com.pr.paymentreminder.data.model.priceItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
+import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
@@ -23,11 +24,14 @@ import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class AddServiceViewModel @Inject constructor(
-    private val servicesUseCase: ServicesUseCase
+    private val servicesUseCase: ServicesUseCase,
+    private val servicesForm: ServiceFormUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
 
@@ -35,49 +39,43 @@ class AddServiceViewModel @Inject constructor(
         when (intent) {
             is UiIntent.CheckIntent -> checkIntent(intent.serviceId, intent.action)
             is UiIntent.ValidateAndSave -> validateAndSave(intent.service)
-            is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value)
+            is UiIntent.ValidateService -> validateServiceItem(intent.item, intent.value, state.value.service)
         }
     }
 
     private fun validateAndSave(service: Service) {
-        validateServiceItem(nameItem, service.name)
-        validateServiceItem(priceItem, service.price)
-        validateServiceItem(categoryItem, service.category)
-        validateServiceItem(dateItem, service.date)
-        validateServiceItem(typeItem, service.type)
-        validateServiceItem(rememberItem, service.remember)
+        if (state.value.action != ButtonActions.EDIT_PAID.name) {
 
-        if (!state.value.categoryHelperText && !state.value.dateHelperText && !state.value.nameHelperText && !state.value.priceHelperText && !state.value.rememberHelperText && !state.value.typeHelperText) {
-            when (state.value.action) {
-                ButtonActions.EDIT.name -> updateService(
-                    Service(
-                        id = service.id,
-                        category = service.category,
-                        price = service.price,
-                        name = service.name,
-                        date = service.date,
-                        type = service.type,
-                        remember = service.remember,
-                        image = service.image,
-                        comments = service.comments,
-                        url = service.url
-                    )
-                )
+            validateServiceItem(nameItem, service.name)
+            validateServiceItem(priceItem, service.price)
+            validateServiceItem(categoryItem, service.category)
+            validateServiceItem(dateItem, service.date)
+            validateServiceItem(typeItem, service.type)
+            validateServiceItem(rememberItem, service.remember)
 
-                else -> createService(
-                    Service(
-                        category = service.category,
-                        price = service.price,
-                        name = service.name,
-                        date = service.date,
-                        type = service.type,
-                        remember = service.remember,
-                        image = service.image,
-                        comments = service.comments,
-                        url = service.url
-                    )
-                )
+            if (!state.value.categoryHelperText && !state.value.dateHelperText && !state.value.nameHelperText && !state.value.priceHelperText && !state.value.rememberHelperText && !state.value.typeHelperText) {
+                when (state.value.action) {
+                    ButtonActions.EDIT.name -> updateService(service)
+                    else -> createService(service)
+                }
             }
+        } else updatePaidService(service)
+    }
+
+    private fun updatePaidService(service: Service) {
+        validateServiceItem(nameItem, service.name, service)
+        validateServiceItem(priceItem, service.price, service)
+        validateServiceItem(categoryItem, service.category, service)
+        validateServiceItem(dateItem, service.date, service)
+        validateServiceItem(typeItem, service.type, service)
+
+        if (!state.value.categoryHelperText && !state.value.dateHelperText && !state.value.nameHelperText && !state.value.priceHelperText && !state.value.typeHelperText) {
+            viewModelScope.launch {
+                servicesForm.setServiceForm(service)
+            }
+
+            SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.UPDATE_PAID)
+            dispatchAction(UiAction.GoBack)
         }
     }
 
@@ -89,8 +87,11 @@ class AddServiceViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val service = if (action == ButtonActions.EDIT.name)
-                servicesUseCase.getService(serviceId).firstOrNull() else null
+            val service = when(action) {
+                ButtonActions.EDIT.name -> servicesUseCase.getService(serviceId).firstOrNull()
+                ButtonActions.EDIT_PAID.name -> servicesForm.getServiceForm(serviceId)
+                else -> null
+            }
 
             setState {
                 copy(
@@ -125,19 +126,34 @@ class AddServiceViewModel @Inject constructor(
         dispatchAction(UiAction.GoBack)
     }
 
-    private fun validateServiceItem(item: ServiceItem, value: String) {
+    private fun Service.getDate(): LocalDate {
+        val formatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
+        return LocalDate.parse(this.date, formatter)
+    }
+
+    private fun validateServiceItem(
+        item: ServiceItem,
+        value: String,
+        service: Service = Service()
+    ) {
         val isEmpty = value.isEmpty()
+        val today = LocalDate.now()
+        val isDateAfter = if(state.value.action == ButtonActions.EDIT_PAID.name) {
+            service.getDate().isAfter(today)
+        } else false
+
         setState { copy(isLoading = true) }
 
         when (item) {
             ServiceItem.CATEGORY -> setState { copy(categoryHelperText = isEmpty) }
-            ServiceItem.DATE -> setState { copy(dateHelperText = isEmpty) }
+            ServiceItem.DATE -> setState { copy(dateHelperText = if (state.value.action == ButtonActions.EDIT_PAID.name) isDateAfter else isEmpty) }
             ServiceItem.NAME -> setState { copy(nameHelperText = isEmpty) }
             ServiceItem.PRICE -> setState { copy(priceHelperText = isEmpty) }
-            ServiceItem.REMEMBER -> setState { copy(rememberHelperText = isEmpty) }
             ServiceItem.TYPE -> setState { copy(typeHelperText = isEmpty) }
+            ServiceItem.REMEMBER -> if (state.value.action != ButtonActions.EDIT_PAID.name) setState { copy(rememberHelperText = isEmpty) }
         }
 
         setState { copy(isLoading = false) }
     }
+
 }

@@ -191,7 +191,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
 }
 
 @Composable
-fun getSnackBarConfig(type: CustomSnackBarType): CustomSnackBarConfig {
+private fun getSnackBarConfig(type: CustomSnackBarType): CustomSnackBarConfig {
     val (icon, message) = when (type) {
         CustomSnackBarType.CREATE -> Pair(
             R.drawable.add,
