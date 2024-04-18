@@ -7,6 +7,7 @@ import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
+import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val servicesUseCase: ServicesUseCase,
     private val alarmScheduler: AlarmScheduler,
-    preferencesHandler: PreferencesHandler
+    preferencesHandler: PreferencesHandler,
+    private val serviceFormUseCase: ServiceFormUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow
@@ -42,7 +44,7 @@ class HomeViewModel @Inject constructor(
     private fun checkSnackBarConfig() {
         viewModelScope.launch {
             val snackBarType = sharedSnackBarType.firstOrNull() ?: CustomSnackBarType.NONE
-            val showSnackBar = sharedSnackBarType.firstOrNull() != CustomSnackBarType.NONE
+            val showSnackBar = !(sharedSnackBarType.firstOrNull() != CustomSnackBarType.NONE || sharedSnackBarType.firstOrNull() != CustomSnackBarType.UPDATE_PAID)
             setState { copy(showSnackBarType = snackBarType, showSnackBar = showSnackBar) }
             delay(2000)
             SharedShowSnackBarType.resetSharedSnackBarType()
@@ -69,15 +71,26 @@ class HomeViewModel @Inject constructor(
     private fun Service.updateDate() {
         val today = LocalDate.now()
         if (this.getDate().isEqual(today) || this.getDate().isBefore(today)) {
-            when (this.type) {
-                PaymentType.WEEKLY.type -> this.date = this.getDate().plus(1, ChronoUnit.WEEKS).format(
-                    DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
-                PaymentType.MONTHLY.type -> this.date = this.getDate().plus(1, ChronoUnit.MONTHS).format(
-                    DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
-                PaymentType.YEARLY.type -> this.date = this.getDate().plus(1, ChronoUnit.YEARS).format(
-                    DateTimeFormatter.ofPattern(Constants.DATE_FORMAT))
+            viewModelScope.launch {
+                serviceFormUseCase.setServiceForm(this@updateDate)
+                when (this@updateDate.type) {
+                    PaymentType.WEEKLY.type -> this@updateDate.date =
+                        this@updateDate.getDate().plus(1, ChronoUnit.WEEKS).format(
+                            DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
+                        )
+
+                    PaymentType.MONTHLY.type -> this@updateDate.date =
+                        this@updateDate.getDate().plus(1, ChronoUnit.MONTHS).format(
+                            DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
+                        )
+
+                    PaymentType.YEARLY.type -> this@updateDate.date =
+                        this@updateDate.getDate().plus(1, ChronoUnit.YEARS).format(
+                            DateTimeFormatter.ofPattern(Constants.DATE_FORMAT)
+                        )
+                }
+                updateService(this@updateDate.id, this@updateDate)
             }
-            updateService(this.id, this)
         }
     }
 
@@ -93,6 +106,7 @@ class HomeViewModel @Inject constructor(
          */
         viewModelScope.launch {
             delay(1000)
+
             servicesUseCase.getServices().collect { services ->
                 services.forEach { service ->
                     service.updateDate()
@@ -101,8 +115,8 @@ class HomeViewModel @Inject constructor(
 
                 setState {
                     copy(
-                        isLoading = false,
-                        services = services.sortedBy { it.getDate() }
+                        services = services.sortedBy { it.getDate() },
+                        isLoading = false
                     )
                 }
             }

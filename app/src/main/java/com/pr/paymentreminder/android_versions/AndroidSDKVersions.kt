@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.androidVersions
+package com.pr.paymentreminder.android_versions
 
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast

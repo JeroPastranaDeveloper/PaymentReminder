@@ -65,6 +65,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val snackBarHeight = if (state.showSnackBar) dimen72 else dimen0
     val fabHeight = if (state.showSnackBar) spacing144 else spacing72
+    // val colors: List<Color> = listOf(pastelRed, pastelBlue, pastelGreen, pastelPurple, semiBlack)
     val animatedSnackBarHeight by animateDpAsState(
         targetValue = snackBarHeight,
         label = emptyString()
@@ -118,12 +119,14 @@ fun HomeFragment(viewModel: HomeViewModel) {
                         .verticalScroll(scrollState)
                 ) {
                     state.services.forEach { service ->
+                        // val randomColor = colors.random()
                         ServiceCard(
                             service = service,
                             onClick = {
                                 selectedService = service
                                 showDialog = true
                             }
+                            // randomColor
                         )
                     }
                 }
@@ -188,7 +191,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
 }
 
 @Composable
-fun getSnackBarConfig(type: CustomSnackBarType): CustomSnackBarConfig {
+private fun getSnackBarConfig(type: CustomSnackBarType): CustomSnackBarConfig {
     val (icon, message) = when (type) {
         CustomSnackBarType.CREATE -> Pair(
             R.drawable.add,

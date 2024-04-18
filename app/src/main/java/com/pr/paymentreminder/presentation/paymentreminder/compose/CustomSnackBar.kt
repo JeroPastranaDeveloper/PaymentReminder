@@ -58,6 +58,7 @@ fun CustomSnackBar(
                 when (config.type) {
                     CustomSnackBarType.CREATE -> green
                     CustomSnackBarType.UPDATE -> blue
+                    CustomSnackBarType.UPDATE_PAID -> blue
                     CustomSnackBarType.DELETE -> red
                     else -> return
                 },

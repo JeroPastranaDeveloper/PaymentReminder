@@ -2,9 +2,11 @@ package com.pr.paymentreminder.di
 
 import com.pr.paymentreminder.data.useCaseImplementations.LoginUseCaseImpl
 import com.pr.paymentreminder.data.useCaseImplementations.RegisterUseCaseImpl
+import com.pr.paymentreminder.data.useCaseImplementations.ServiceFormUseCaseImpl
 import com.pr.paymentreminder.data.useCaseImplementations.ServicesUseCaseImpl
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
 import com.pr.paymentreminder.domain.usecase.RegisterUseCase
+import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import dagger.Module
 import dagger.Provides
@@ -18,13 +20,18 @@ import javax.inject.Singleton
 class UseCaseModule {
     @Singleton
     @Provides
-    fun providesLoginUseCase(useCaseImpl: LoginUseCaseImpl) : LoginUseCase = useCaseImpl
+    fun providesLoginUseCase(useCaseImpl: LoginUseCaseImpl): LoginUseCase = useCaseImpl
 
     @Singleton
     @Provides
-    fun providesRegisterUseCase(useCaseImpl: RegisterUseCaseImpl) : RegisterUseCase = useCaseImpl
+    fun providesRegisterUseCase(useCaseImpl: RegisterUseCaseImpl): RegisterUseCase = useCaseImpl
 
     @Singleton
     @Provides
-    fun providesServicesUseCase(useCaseImpl: ServicesUseCaseImpl) : ServicesUseCase = useCaseImpl
+    fun providesServicesUseCase(useCaseImpl: ServicesUseCaseImpl): ServicesUseCase = useCaseImpl
+
+    @Singleton
+    @Provides
+    fun providesServiceFormUseCase(serviceFormUseCaseImpl: ServiceFormUseCaseImpl): ServiceFormUseCase =
+        serviceFormUseCaseImpl
 }

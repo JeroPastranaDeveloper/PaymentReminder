@@ -48,6 +48,7 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.base.BaseActivity
 import com.pr.paymentreminder.base.addRepeatingJob
 import com.pr.paymentreminder.data.consts.Constants
+import com.pr.paymentreminder.data.model.ButtonActions
 import com.pr.paymentreminder.data.model.Categories
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
@@ -274,40 +275,29 @@ class AddServiceActivity : BaseActivity() {
                             }
                         }
 
-                        Column(modifier = Modifier.wrapContentSize()) {
-                            val rememberDays: List<Int> = listOf(1, 2, 3)
-                            var daysExpanded by remember { mutableStateOf(false) }
+                        Visible(visible = state.action != ButtonActions.EDIT_PAID.name) {
+                            Column(modifier = Modifier.wrapContentSize()) {
+                                val rememberDays: List<Int> = listOf(1, 2, 3)
+                                var daysExpanded by remember { mutableStateOf(false) }
 
-                            Text(
-                                text = stringResource(
-                                    id = if (selectedRemember == rememberDays[0].toString()) R.string.remember_day_before else R.string.remember_days_before,
-                                    selectedRemember
-                                ),
-                                modifier = Modifier.clickable { daysExpanded = !daysExpanded }
-                            )
+                                Text(
+                                    text = stringResource(
+                                        id = if (selectedRemember == rememberDays[0].toString()) R.string.remember_day_before else R.string.remember_days_before,
+                                        selectedRemember
+                                    ),
+                                    modifier = Modifier.clickable { daysExpanded = !daysExpanded }
+                                )
 
-                            Visible(state.rememberHelperText.orFalse()){
-                                Spacer(modifier = Modifier.height(dimen4))
-                                HelperText(stringResource(R.string.invalid_service_remember))
-                            }
-
-                            Spacer(modifier = Modifier.height(dimen16))
-
-                            DropdownMenu(
-                                expanded = daysExpanded,
-                                onDismissRequest = {
-                                    daysExpanded = false
-                                    viewModel.sendIntent(
-                                        UiIntent.ValidateService(
-                                            rememberItem,
-                                            selectedRemember
-                                        )
-                                    )
+                                Visible(state.rememberHelperText.orFalse()) {
+                                    Spacer(modifier = Modifier.height(dimen4))
+                                    HelperText(stringResource(R.string.invalid_service_remember))
                                 }
-                            ) {
-                                rememberDays.forEach { day ->
-                                    DropdownMenuItem(onClick = {
-                                        selectedRemember = day.toString()
+
+                                Spacer(modifier = Modifier.height(dimen16))
+
+                                DropdownMenu(
+                                    expanded = daysExpanded,
+                                    onDismissRequest = {
                                         daysExpanded = false
                                         viewModel.sendIntent(
                                             UiIntent.ValidateService(
@@ -315,8 +305,21 @@ class AddServiceActivity : BaseActivity() {
                                                 selectedRemember
                                             )
                                         )
-                                    }) {
-                                        Text(text = day.toString())
+                                    }
+                                ) {
+                                    rememberDays.forEach { day ->
+                                        DropdownMenuItem(onClick = {
+                                            selectedRemember = day.toString()
+                                            daysExpanded = false
+                                            viewModel.sendIntent(
+                                                UiIntent.ValidateService(
+                                                    rememberItem,
+                                                    selectedRemember
+                                                )
+                                            )
+                                        }) {
+                                            Text(text = day.toString())
+                                        }
                                     }
                                 }
                             }
@@ -367,28 +370,29 @@ class AddServiceActivity : BaseActivity() {
                                 }
                             }
                         }
+                        Visible(visible = state.action != ButtonActions.EDIT_PAID.name) {
+                            TextField(
+                                value = imageUrl,
+                                onValueChange = { imageUrl = it },
+                                label = { Text(stringResource(id = R.string.service_image_url)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = spacing8)
+                                    .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                                singleLine = true
+                            )
 
-                        TextField(
-                            value = imageUrl,
-                            onValueChange = { imageUrl = it },
-                            label = { Text(stringResource(id = R.string.service_image_url)) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = spacing8)
-                                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
-                            singleLine = true
-                        )
-
-                        TextField(
-                            value = serviceUrl,
-                            onValueChange = { serviceUrl = it },
-                            label = { Text(stringResource(id = R.string.service_url)) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = spacing8)
-                                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
-                            singleLine = true
-                        )
+                            TextField(
+                                value = serviceUrl,
+                                onValueChange = { serviceUrl = it },
+                                label = { Text(stringResource(id = R.string.service_url)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = spacing8)
+                                    .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                                singleLine = true
+                            )
+                        }
 
                         TextField(
                             value = comments,
