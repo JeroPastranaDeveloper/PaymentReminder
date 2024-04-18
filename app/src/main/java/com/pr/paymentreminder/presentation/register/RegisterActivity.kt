@@ -29,10 +29,9 @@ import com.pr.paymentreminder.presentation.paymentreminder.compose.ImageLogo
 import com.pr.paymentreminder.presentation.paymentreminder.compose.PasswordField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLoginButton
 import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
-import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiAction
-import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiState
-import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiIntent
-import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewModel
+import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiAction
+import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiState
+import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiIntent
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.spacing16
 import dagger.hilt.android.AndroidEntryPoint

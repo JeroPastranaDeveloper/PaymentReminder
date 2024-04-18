@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.presentation.viewModels.login
+package com.pr.paymentreminder.presentation.login
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.ui.theme.emptyString

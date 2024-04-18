@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.presentation.viewModels.add_service
+package com.pr.paymentreminder.presentation.paymentreminder.add_service
 
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -18,9 +18,9 @@ import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
 import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
-import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiAction
-import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
-import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch

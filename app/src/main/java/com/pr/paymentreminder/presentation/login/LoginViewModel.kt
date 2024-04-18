@@ -1,13 +1,13 @@
-package com.pr.paymentreminder.presentation.viewModels.login
+package com.pr.paymentreminder.presentation.login
 
 import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiAction
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiState
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

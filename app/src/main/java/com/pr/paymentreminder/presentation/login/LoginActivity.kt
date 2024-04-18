@@ -33,10 +33,9 @@ import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLogin
 import com.pr.paymentreminder.presentation.paymentreminder.compose.PasswordField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
 import com.pr.paymentreminder.presentation.register.RegisterActivity
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewModel
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiAction
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiState
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiAction
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.spacing16
 import dagger.hilt.android.AndroidEntryPoint

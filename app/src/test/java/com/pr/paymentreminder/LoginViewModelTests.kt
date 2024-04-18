@@ -1,10 +1,11 @@
 package com.pr.paymentreminder
 
 import androidx.lifecycle.viewModelScope
+import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.LoginUseCase
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiIntent
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewContract.UiState
-import com.pr.paymentreminder.presentation.viewModels.login.LoginViewModel
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiState
+import com.pr.paymentreminder.presentation.login.LoginViewModel
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -27,9 +28,13 @@ class LoginViewModelTests {
     @Mock
     private lateinit var loginUseCase: LoginUseCase
 
+    @Mock
+    private lateinit var preferencesHandler: PreferencesHandler
+
     private fun setUpViewModel() {
         vm = LoginViewModel(
-            loginUseCase = loginUseCase
+            loginUseCase = loginUseCase,
+            preferencesHandler = preferencesHandler
         )
     }
 

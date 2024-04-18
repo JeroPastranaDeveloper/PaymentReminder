@@ -57,10 +57,9 @@ import com.pr.paymentreminder.data.model.dateItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
 import com.pr.paymentreminder.presentation.paymentreminder.compose.HelperText
-import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiAction
-import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiIntent
-import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewContract.UiState
-import com.pr.paymentreminder.presentation.viewModels.add_service.AddServiceViewModel
+import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiState
 import com.pr.paymentreminder.ui.theme.Visible
 import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16

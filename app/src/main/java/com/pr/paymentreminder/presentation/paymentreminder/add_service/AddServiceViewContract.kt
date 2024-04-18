@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.presentation.viewModels.add_service
+package com.pr.paymentreminder.presentation.paymentreminder.add_service
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.data.model.Service

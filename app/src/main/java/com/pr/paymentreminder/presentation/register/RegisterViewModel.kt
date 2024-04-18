@@ -1,13 +1,13 @@
-package com.pr.paymentreminder.presentation.viewModels.register
+package com.pr.paymentreminder.presentation.register
 
 import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.RegisterUseCase
-import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiIntent
-import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiAction
-import com.pr.paymentreminder.presentation.viewModels.register.RegisterViewContract.UiState
+import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiIntent
+import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiAction
+import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
