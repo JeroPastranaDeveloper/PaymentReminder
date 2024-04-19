@@ -27,7 +27,7 @@ class HomeViewModel @Inject constructor(
     private val servicesUseCase: ServicesUseCase,
     private val alarmScheduler: AlarmScheduler,
     preferencesHandler: PreferencesHandler,
-    private val serviceFormUseCase: ServiceFormUseCase
+    private val serviceForm: ServiceFormUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow
@@ -44,7 +44,7 @@ class HomeViewModel @Inject constructor(
     private fun checkSnackBarConfig() {
         viewModelScope.launch {
             val snackBarType = sharedSnackBarType.firstOrNull() ?: CustomSnackBarType.NONE
-            val showSnackBar = !(sharedSnackBarType.firstOrNull() != CustomSnackBarType.NONE || sharedSnackBarType.firstOrNull() != CustomSnackBarType.UPDATE_PAID)
+            val showSnackBar = !(sharedSnackBarType.firstOrNull() == CustomSnackBarType.NONE || sharedSnackBarType.firstOrNull() == CustomSnackBarType.UPDATE_PAID)
             setState { copy(showSnackBarType = snackBarType, showSnackBar = showSnackBar) }
             delay(2000)
             SharedShowSnackBarType.resetSharedSnackBarType()
@@ -72,7 +72,7 @@ class HomeViewModel @Inject constructor(
         val today = LocalDate.now()
         if (this.getDate().isEqual(today) || this.getDate().isBefore(today)) {
             viewModelScope.launch {
-                serviceFormUseCase.setServiceForm(this@updateDate)
+                serviceForm.setServiceForm(this@updateDate)
                 when (this@updateDate.type) {
                     PaymentType.WEEKLY.type -> this@updateDate.date =
                         this@updateDate.getDate().plus(1, ChronoUnit.WEEKS).format(
