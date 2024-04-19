@@ -21,9 +21,9 @@ import org.mockito.junit.MockitoJUnitRunner
 class LoginViewModelTests {
     private lateinit var vm: LoginViewModel
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+  /*  @OptIn(ExperimentalCoroutinesApi::class)
     @get:Rule
-    var coroutineRule = MainCoroutineRule()
+    var coroutineRule = MainCoroutineRule()*/
 
     @Mock
     private lateinit var loginUseCase: LoginUseCase

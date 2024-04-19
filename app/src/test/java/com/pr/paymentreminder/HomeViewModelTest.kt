@@ -1,26 +1,30 @@
 package com.pr.paymentreminder
 
+import com.pr.paymentreminder.base.BaseViewModel
+import com.pr.paymentreminder.data.model.ButtonActions
+import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import com.pr.paymentreminder.mothers.ServiceMother
 import com.pr.paymentreminder.notifications.AlarmScheduler
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
+import com.pr.paymentreminder.ui.theme.emptyString
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.MockitoAnnotations
 
-@RunWith(MockitoJUnitRunner::class)
 class HomeViewModelTest {
-    private lateinit var vm: HomeViewModel
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @get:Rule
-    var coroutineRule = MainCoroutineRule()
+    private lateinit var vm: HomeViewModel
 
     @Mock
     private lateinit var servicesUseCase: ServicesUseCase
@@ -34,46 +38,60 @@ class HomeViewModelTest {
     @Mock
     private lateinit var serviceForm: ServiceFormUseCase
 
-    private fun setUpViewModel() {
+    @get:Rule
+    val coroutineScope = CoroutineTestRule()
+
+    @Before
+    fun setUpViewModel() {
+        MockitoAnnotations.openMocks(this)
         vm = HomeViewModel(
             servicesUseCase = servicesUseCase,
             alarmScheduler = alarmScheduler,
             preferencesHandler = preferencesHandler,
-            serviceFormUseCase = serviceForm
+            serviceForm = serviceForm
         )
     }
 
     @Test
-    fun `WHEN a item is empty THEN has helper text`() {
-        setUpViewModel()
-        val stateChannel = Channel<UiState>()
+    fun `when AddEditService intent is sent, AddEditService action is dispatched`() = runTest {
+        val action = ButtonActions.EDIT.name
+        val serviceId = "1234"
+        val emittedAction = vm.actions.first()
 
-        /*val job = vm.viewModelScope.launch {
-            vm.state.collect { state ->
-                stateChannel.send(state)
-            }
-        }
+        vm.sendIntent(UiIntent.AddEditService(serviceId, action))
 
-        // vm.sendIntent(UiIntent.ValidateService(nameItem, ""))
-        vm.sendIntent(UiIntent.CreateService(
-            Service(
-                "hola",
-                emptyString(),
-                emptyString(),
-                emptyString(),
-                emptyString(),
-                emptyString(),
-                emptyString(),
-                emptyString(),
-                emptyString(),
-                emptyString()
-            )))
+        assertTrue(emittedAction is UiAction.AddEditService)
+        assertEquals(serviceId, (emittedAction as UiAction.AddEditService).serviceId)
+        assertEquals(action, emittedAction.action)
+    }
 
-        runBlocking {
-            val state = stateChannel.receive()
-            assertTrue(state.serviceNameHelperText)
-        }
+    @Test
+    fun checkSnackBar() = runTest {
+        val state = vm.state.value
 
-        job.cancel()*/
+        BaseViewModel.SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.UPDATE)
+        vm.sendIntent(UiIntent.CheckSnackBarConfig)
+
+        assertTrue(!state.showSnackBar)
+        assertTrue(state.showSnackBarType == CustomSnackBarType.NONE)
+    }
+
+    @Test
+    fun restoreService() = runTest {
+        val state = vm.state.value
+        val service = ServiceMother.buildService(
+            "1234",
+            "Hola",
+            emptyString(),
+            "27/05/2024",
+            "prueba",
+            "7",
+            "2",
+            "Amazon"
+        )
+
+        vm.sendIntent(UiIntent.RestoreDeletedService(service))
+
+        assertTrue(state.services == listOf(service))
     }
 }
