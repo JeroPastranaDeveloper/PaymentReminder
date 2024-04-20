@@ -7,7 +7,6 @@ import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiState
 import com.pr.paymentreminder.presentation.login.LoginViewModel
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -21,9 +20,8 @@ import org.mockito.junit.MockitoJUnitRunner
 class LoginViewModelTests {
     private lateinit var vm: LoginViewModel
 
-  /*  @OptIn(ExperimentalCoroutinesApi::class)
     @get:Rule
-    var coroutineRule = MainCoroutineRule()*/
+    val coroutineScope = CoroutineTestRule()
 
     @Mock
     private lateinit var loginUseCase: LoginUseCase
