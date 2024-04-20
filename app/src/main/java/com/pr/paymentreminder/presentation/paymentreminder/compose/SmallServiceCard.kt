@@ -1,6 +1,8 @@
 package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,24 +24,29 @@ import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
 
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SmallServiceCard(
     service: Service,
     color: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth(0.5f)
-            .padding(spacing8),
+            .padding(spacing8)
+            .combinedClickable(
+                onClick = { onClick() },
+                onLongClick = { onLongClick() }
+            ),
         colors = CardColors(
             containerColor = color,
             contentColor = Color.White,
             disabledContainerColor = Color.Gray,
             disabledContentColor = Color.DarkGray
-        ),
-        onClick = onClick
+        )
     ) {
         Row(
             horizontalArrangement = Arrangement.Start

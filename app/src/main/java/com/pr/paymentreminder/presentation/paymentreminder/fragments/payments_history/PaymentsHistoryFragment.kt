@@ -24,11 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.ButtonActions
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceActivity
+import com.pr.paymentreminder.presentation.paymentreminder.compose.RemovePaidServiceDialog
 import com.pr.paymentreminder.presentation.paymentreminder.compose.SmallServiceCard
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiIntent
@@ -51,7 +54,7 @@ fun PaymentsHistoryFragment(viewModel: PaymentsHistoryViewModel) {
     val context = LocalContext.current
 
     fun handleAction(action: UiAction) {
-        when(action) {
+        when (action) {
             is UiAction.EditService -> editService(
                 action.serviceId,
                 ButtonActions.EDIT_PAID.name,
@@ -98,6 +101,15 @@ fun PaymentsHistoryFragment(viewModel: PaymentsHistoryViewModel) {
                     ServicesFlowRow(state.services, viewModel)
                 }
 
+                if (state.showRemoveServiceDialog) {
+                    RemovePaidServiceDialog(
+                        titleText = stringResource(id = R.string.remove_service_title),
+                        bodyText = stringResource(id = R.string.remove_service_body),
+                        onRemove = { viewModel.sendIntent(UiIntent.DeleteService) },
+                        onCancel = { viewModel.sendIntent(UiIntent.CloseRemoveServiceDialog) }
+                    )
+                }
+
                 Spacer(modifier = Modifier.size(dimen56))
             }
         }
@@ -118,9 +130,13 @@ private fun ServicesFlowRow(
     ) {
         services.forEach { service ->
             val randomColor = colors.random()
-            SmallServiceCard(service, randomColor) {
-                viewModel.sendIntent(UiIntent.EditService(service.id))
-            }
+            SmallServiceCard(service, randomColor,
+                onLongClick = {
+                    viewModel.sendIntent(UiIntent.ShowDeleteServiceDialog(service.id))
+                }, onClick = {
+                    viewModel.sendIntent(UiIntent.EditService(service.id))
+                }
+            )
         }
     }
 }

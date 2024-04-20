@@ -13,20 +13,6 @@ class ServiceDatabaseDataSourceImpl(
     private val serviceDao: ServiceDao,
     @CoroutineIO private val coroutineContext: CoroutineContext
 ) : ServiceDatabaseDataSource {
-    override suspend fun getServiceForm(serviceId: String): Service =
-        withContext(coroutineContext) {
-            serviceDao.getServiceForm(serviceId).toDomain()
-        }
-
-    override suspend fun getAllServicesForm(): List<Service>? =
-        withContext(coroutineContext) {
-            serviceDao.getAllForms()?.map { it.toDomain() }
-        }
-
-    override suspend fun setServiceForm(form: Service) =
-        withContext(coroutineContext) {
-            serviceDao.setServiceRoom(form.toEntity())
-        }
 
     override suspend fun clearServiceForm() =
         withContext(coroutineContext) {
@@ -34,5 +20,27 @@ class ServiceDatabaseDataSourceImpl(
             allForms.orEmpty().forEach {
                 serviceDao.deleteForm(it)
             }
+        }
+
+    override suspend fun getAllServicesForm(): List<Service>? =
+        withContext(coroutineContext) {
+            serviceDao.getAllForms()?.map { it.toDomain() }
+        }
+
+
+    override suspend fun getServiceForm(serviceId: String): Service =
+        withContext(coroutineContext) {
+            serviceDao.getServiceForm(serviceId).toDomain()
+        }
+
+    override suspend fun removeService(serviceId: String) =
+        withContext(coroutineContext) {
+            val service = serviceDao.getServiceForm(serviceId)
+            serviceDao.deleteForm(service)
+        }
+
+    override suspend fun setServiceForm(form: Service) =
+        withContext(coroutineContext) {
+            serviceDao.setServiceRoom(form.toEntity())
         }
 }

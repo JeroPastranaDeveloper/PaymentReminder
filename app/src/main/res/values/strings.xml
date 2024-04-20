@@ -65,4 +65,6 @@
     <string name="edit_service_title">Editar Servicio</string>
     <string name="service_created">Servicio creado</string>
     <string name="service_updated">Servicio actualizado</string>
+    <string name="remove_service_title">¿Borrar servicio?</string>
+    <string name="remove_service_body">El servicio eliminado no se podrá recuperar</string>
 </resources>
