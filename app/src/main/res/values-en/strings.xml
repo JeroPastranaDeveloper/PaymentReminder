@@ -55,5 +55,5 @@
     <string name="service_created">Service created</string>
     <string name="service_updated">Service updated</string>
     <string name="remove_service_title">Remove Service?</string>
-    <string name="remove_service_body">The deleted service cannot be recovered</string>
+    <string name="remove_service_body">The deleted service cannot be recovered.</string>
 </resources>
