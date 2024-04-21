@@ -31,7 +31,7 @@ import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.ButtonActions
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceActivity
-import com.pr.paymentreminder.presentation.paymentreminder.compose.RemovePaidServiceDialog
+import com.pr.paymentreminder.presentation.paymentreminder.compose.CustomDialog
 import com.pr.paymentreminder.presentation.paymentreminder.compose.SmallServiceCard
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiIntent
@@ -102,11 +102,11 @@ fun PaymentsHistoryFragment(viewModel: PaymentsHistoryViewModel) {
                 }
 
                 if (state.showRemoveServiceDialog) {
-                    RemovePaidServiceDialog(
+                    CustomDialog(
                         titleText = stringResource(id = R.string.remove_service_title),
                         bodyText = stringResource(id = R.string.remove_service_body),
-                        onRemove = { viewModel.sendIntent(UiIntent.DeleteService) },
-                        onCancel = { viewModel.sendIntent(UiIntent.CloseRemoveServiceDialog) }
+                        onAccept = { viewModel.sendIntent(UiIntent.DeleteService) },
+                        onCancel = { viewModel.sendIntent(UiIntent.ShowDeleteServiceDialog(hasToShow = false)) }
                     )
                 }
 
@@ -132,7 +132,7 @@ private fun ServicesFlowRow(
             val randomColor = colors.random()
             SmallServiceCard(service, randomColor,
                 onLongClick = {
-                    viewModel.sendIntent(UiIntent.ShowDeleteServiceDialog(service.id))
+                    viewModel.sendIntent(UiIntent.ShowDeleteServiceDialog(service.id, true))
                 }, onClick = {
                     viewModel.sendIntent(UiIntent.EditService(service.id))
                 }

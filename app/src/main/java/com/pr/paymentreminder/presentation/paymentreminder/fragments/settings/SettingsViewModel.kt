@@ -18,7 +18,7 @@ class SettingsViewModel @Inject constructor(
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
             UiIntent.SignOut -> signOut()
-            UiIntent.ShowSignOutDialog -> dispatchAction(UiAction.SignOut)
+            is UiIntent.ShowSignOutDialog -> setState { copy(signOut = intent.hasToShow) }
         }
     }
 

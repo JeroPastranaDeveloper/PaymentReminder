@@ -4,12 +4,14 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import com.pr.paymentreminder.R
+import androidx.compose.ui.res.stringResource
 
 @Composable
-fun RemovePaidServiceDialog(
+fun CustomDialog(
     titleText: String,
     bodyText: String,
-    onRemove: () -> Unit,
+    onAccept: () -> Unit,
     onCancel: () -> Unit
 ) {
     AlertDialog(
@@ -19,10 +21,10 @@ fun RemovePaidServiceDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    onRemove()
+                    onAccept()
                 }
             ) {
-                Text("Aceptar")
+                Text(stringResource(id = R.string.accept_button))
             }
         },
         dismissButton = {
@@ -31,7 +33,7 @@ fun RemovePaidServiceDialog(
                     onCancel()
                 }
             ) {
-                Text("Cancelar")
+                Text(stringResource(id = R.string.cancel_button))
             }
         }
     )

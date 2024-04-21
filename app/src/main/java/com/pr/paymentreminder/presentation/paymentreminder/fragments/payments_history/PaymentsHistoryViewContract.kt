@@ -2,6 +2,7 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_h
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.data.model.Service
+import com.pr.paymentreminder.ui.theme.emptyString
 
 class PaymentsHistoryViewContract : BaseViewContract() {
     data class UiState(
@@ -12,11 +13,10 @@ class PaymentsHistoryViewContract : BaseViewContract() {
     )
 
     sealed class UiIntent {
-        data object CloseRemoveServiceDialog : UiIntent()
         data object DeleteService : UiIntent()
         data class EditService(val serviceId: String) : UiIntent()
         data object GetServices : UiIntent()
-        data class ShowDeleteServiceDialog(val serviceId: String) : UiIntent()
+        data class ShowDeleteServiceDialog(val serviceId: String = emptyString(), val hasToShow: Boolean) : UiIntent()
     }
 
     sealed class UiAction {

@@ -56,4 +56,6 @@
     <string name="service_updated">Service updated</string>
     <string name="remove_service_title">Remove Service?</string>
     <string name="remove_service_body">The deleted service cannot be recovered.</string>
+    <string name="accept_button">Accept</string>
+    <string name="cancel_button">Cancel</string>
 </resources>
