@@ -39,8 +39,12 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_hi
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.pastelBlue
 import com.pr.paymentreminder.ui.theme.pastelGreen
+import com.pr.paymentreminder.ui.theme.pastelGrey
+import com.pr.paymentreminder.ui.theme.pastelMint
+import com.pr.paymentreminder.ui.theme.pastelPink
 import com.pr.paymentreminder.ui.theme.pastelPurple
 import com.pr.paymentreminder.ui.theme.pastelRed
+import com.pr.paymentreminder.ui.theme.pastelSand
 import com.pr.paymentreminder.ui.theme.semiBlack
 import com.pr.paymentreminder.ui.theme.spacing56
 import com.pr.paymentreminder.ui.theme.spacing64
@@ -122,19 +126,20 @@ private fun ServicesFlowRow(
     services: List<Service>,
     viewModel: PaymentsHistoryViewModel
 ) {
-    val colors: List<Color> = listOf(pastelRed, pastelBlue, pastelGreen, pastelPurple, semiBlack)
+    val colors: List<Color> = listOf(pastelRed, pastelPink, pastelBlue, pastelGrey, pastelGreen, pastelSand, pastelPurple, semiBlack, pastelMint)
     FlowRow(
         modifier = Modifier.fillMaxSize(),
         maxItemsInEachRow = 2,
         verticalArrangement = Arrangement.spacedBy(spacing8)
     ) {
-        services.forEach { service ->
-            val randomColor = colors.random()
-            SmallServiceCard(service, randomColor,
+        services.forEachIndexed { index, service ->
+            val color = colors[index % colors.size]
+            SmallServiceCard(service, color,
+                onClick = {
+                    viewModel.sendIntent(UiIntent.EditService(service.id))
+                },
                 onLongClick = {
                     viewModel.sendIntent(UiIntent.ShowDeleteServiceDialog(service.id, true))
-                }, onClick = {
-                    viewModel.sendIntent(UiIntent.EditService(service.id))
                 }
             )
         }

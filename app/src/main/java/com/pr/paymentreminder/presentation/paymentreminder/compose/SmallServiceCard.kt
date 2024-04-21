@@ -21,8 +21,10 @@ import androidx.compose.ui.graphics.Color
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.ui.theme.dimen8
+import com.pr.paymentreminder.ui.theme.semiBlack
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
+import com.pr.paymentreminder.ui.theme.white
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -33,6 +35,7 @@ fun SmallServiceCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
+    val textColor = if (color == semiBlack) white else semiBlack
     Card(
         modifier = Modifier
             .fillMaxWidth(0.5f)
@@ -60,13 +63,15 @@ fun SmallServiceCard(
                 Text(
                     text = service.name,
                     modifier = Modifier.padding(spacing4),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = textColor
                 )
                 Spacer(modifier = Modifier.height(dimen8))
                 Text(
                     text = service.date,
                     modifier = Modifier.padding(spacing4),
                     style = MaterialTheme.typography.bodyMedium,
+                    color = textColor
                 )
                 Spacer(modifier = Modifier.height(dimen8))
                 Row(
@@ -80,6 +85,7 @@ fun SmallServiceCard(
                             .align(Alignment.CenterVertically)
                             .padding(spacing4),
                         style = MaterialTheme.typography.bodyMedium,
+                        color = textColor
                     )
                     Text(
                         text = service.type,
@@ -88,6 +94,7 @@ fun SmallServiceCard(
                             .align(Alignment.CenterVertically)
                             .padding(spacing4),
                         style = MaterialTheme.typography.bodyMedium,
+                        color = textColor
                     )
                 }
             }

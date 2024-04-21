@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -49,6 +50,15 @@ import com.pr.paymentreminder.ui.theme.dimen0
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen72
 import com.pr.paymentreminder.ui.theme.emptyString
+import com.pr.paymentreminder.ui.theme.pastelBlue
+import com.pr.paymentreminder.ui.theme.pastelGreen
+import com.pr.paymentreminder.ui.theme.pastelGrey
+import com.pr.paymentreminder.ui.theme.pastelMint
+import com.pr.paymentreminder.ui.theme.pastelPink
+import com.pr.paymentreminder.ui.theme.pastelPurple
+import com.pr.paymentreminder.ui.theme.pastelRed
+import com.pr.paymentreminder.ui.theme.pastelSand
+import com.pr.paymentreminder.ui.theme.semiBlack
 import com.pr.paymentreminder.ui.theme.spacing144
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing56
@@ -65,7 +75,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val snackBarHeight = if (state.showSnackBar) dimen72 else dimen0
     val fabHeight = if (state.showSnackBar) spacing144 else spacing72
-    // val colors: List<Color> = listOf(pastelRed, pastelBlue, pastelGreen, pastelPurple, semiBlack)
+    val colors: List<Color> = listOf(pastelRed, pastelPink, pastelBlue, pastelGrey, pastelGreen, pastelSand, pastelPurple, semiBlack, pastelMint)
     val animatedSnackBarHeight by animateDpAsState(
         targetValue = snackBarHeight,
         label = emptyString()
@@ -118,15 +128,15 @@ fun HomeFragment(viewModel: HomeViewModel) {
                         .padding(bottom = spacing56)
                         .verticalScroll(scrollState)
                 ) {
-                    state.services.forEach { service ->
-                        // val randomColor = colors.random()
+                    state.services.forEachIndexed { index, service ->
+                        val color = colors[index % colors.size]
                         ServiceCard(
                             service = service,
                             onClick = {
                                 selectedService = service
                                 showDialog = true
-                            }
-                            // randomColor
+                            },
+                            color = color
                         )
                     }
                 }

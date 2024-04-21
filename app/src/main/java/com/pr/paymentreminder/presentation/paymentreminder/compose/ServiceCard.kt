@@ -28,29 +28,32 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.ui.theme.dimen100
 import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.orElse
+import com.pr.paymentreminder.ui.theme.semiBlack
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
+import com.pr.paymentreminder.ui.theme.white
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ServiceCard(
     service: Service,
-    onClick: () -> Unit
-    // color: Color
+    onClick: () -> Unit,
+    color: Color
 ) {
     val context = LocalContext.current
+    val textColor = if (color == semiBlack) white else semiBlack
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(spacing8),
-        onClick = onClick
-        /*colors = CardColors(
+        onClick = onClick,
+        colors = CardColors(
             containerColor = color,
             contentColor = Color.White,
             disabledContainerColor = Color.Gray,
             disabledContentColor = Color.DarkGray
-        )*/
+        )
     ) {
         Row(
             horizontalArrangement = Arrangement.Start
@@ -83,19 +86,22 @@ fun ServiceCard(
                 Text(
                     text = service.name,
                     modifier = Modifier.padding(spacing4),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = textColor
                 )
                 Spacer(modifier = Modifier.height(dimen8))
                 Text(
                     text = service.date,
                     modifier = Modifier.padding(spacing4),
                     style = MaterialTheme.typography.bodyMedium,
+                    color = textColor
                 )
                 Spacer(modifier = Modifier.height(dimen8))
                 Text(
                     text = "${service.price}${Constants.EURO}",
                     modifier = Modifier.padding(spacing4),
                     style = MaterialTheme.typography.bodyMedium,
+                    color = textColor
                 )
             }
         }
