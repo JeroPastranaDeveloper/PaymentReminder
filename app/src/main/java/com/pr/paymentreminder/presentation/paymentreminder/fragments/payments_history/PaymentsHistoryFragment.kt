@@ -24,11 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.model.ButtonActions
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceActivity
+import com.pr.paymentreminder.presentation.paymentreminder.compose.CustomDialog
 import com.pr.paymentreminder.presentation.paymentreminder.compose.SmallServiceCard
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiIntent
@@ -36,8 +39,12 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_hi
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.pastelBlue
 import com.pr.paymentreminder.ui.theme.pastelGreen
+import com.pr.paymentreminder.ui.theme.pastelGrey
+import com.pr.paymentreminder.ui.theme.pastelMint
+import com.pr.paymentreminder.ui.theme.pastelPink
 import com.pr.paymentreminder.ui.theme.pastelPurple
 import com.pr.paymentreminder.ui.theme.pastelRed
+import com.pr.paymentreminder.ui.theme.pastelSand
 import com.pr.paymentreminder.ui.theme.semiBlack
 import com.pr.paymentreminder.ui.theme.spacing56
 import com.pr.paymentreminder.ui.theme.spacing64
@@ -51,7 +58,7 @@ fun PaymentsHistoryFragment(viewModel: PaymentsHistoryViewModel) {
     val context = LocalContext.current
 
     fun handleAction(action: UiAction) {
-        when(action) {
+        when (action) {
             is UiAction.EditService -> editService(
                 action.serviceId,
                 ButtonActions.EDIT_PAID.name,
@@ -98,6 +105,15 @@ fun PaymentsHistoryFragment(viewModel: PaymentsHistoryViewModel) {
                     ServicesFlowRow(state.services, viewModel)
                 }
 
+                if (state.showRemoveServiceDialog) {
+                    CustomDialog(
+                        titleText = stringResource(id = R.string.remove_service_title),
+                        bodyText = stringResource(id = R.string.remove_service_body),
+                        onAccept = { viewModel.sendIntent(UiIntent.DeleteService) },
+                        onCancel = { viewModel.sendIntent(UiIntent.ShowDeleteServiceDialog(hasToShow = false)) }
+                    )
+                }
+
                 Spacer(modifier = Modifier.size(dimen56))
             }
         }
@@ -110,17 +126,22 @@ private fun ServicesFlowRow(
     services: List<Service>,
     viewModel: PaymentsHistoryViewModel
 ) {
-    val colors: List<Color> = listOf(pastelRed, pastelBlue, pastelGreen, pastelPurple, semiBlack)
+    val colors: List<Color> = listOf(pastelRed, pastelPink, pastelBlue, pastelGrey, pastelGreen, pastelSand, pastelPurple, semiBlack, pastelMint)
     FlowRow(
         modifier = Modifier.fillMaxSize(),
         maxItemsInEachRow = 2,
         verticalArrangement = Arrangement.spacedBy(spacing8)
     ) {
-        services.forEach { service ->
-            val randomColor = colors.random()
-            SmallServiceCard(service, randomColor) {
-                viewModel.sendIntent(UiIntent.EditService(service.id))
-            }
+        services.forEachIndexed { index, service ->
+            val color = colors[index % colors.size]
+            SmallServiceCard(service, color,
+                onClick = {
+                    viewModel.sendIntent(UiIntent.EditService(service.id))
+                },
+                onLongClick = {
+                    viewModel.sendIntent(UiIntent.ShowDeleteServiceDialog(service.id, true))
+                }
+            )
         }
     }
 }

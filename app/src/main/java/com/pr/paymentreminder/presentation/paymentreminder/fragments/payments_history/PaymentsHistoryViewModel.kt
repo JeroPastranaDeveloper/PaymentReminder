@@ -22,8 +22,34 @@ class PaymentsHistoryViewModel @Inject constructor(
 
     override fun manageIntent(intent: UiIntent) {
         when(intent) {
+            UiIntent.DeleteService -> deleteService()
             is UiIntent.EditService -> dispatchAction(UiAction.EditService(intent.serviceId))
             UiIntent.GetServices -> getServices()
+            is UiIntent.ShowDeleteServiceDialog -> showServiceRemoveDialog(intent.serviceId, intent.hasToShow)
+        }
+    }
+
+    private fun deleteService() {
+        viewModelScope.launch {
+            servicesForm.removeService(state.value.serviceToRemove.id)
+            setState { copy(serviceToRemove = Service(), showRemoveServiceDialog = false) }
+            getServices()
+        }
+    }
+
+    private fun showServiceRemoveDialog(serviceId: String, hasToShow: Boolean) {
+        viewModelScope.launch {
+            if (hasToShow) {
+                val service = servicesForm.getServiceForm(serviceId)
+                setState {
+                    copy(
+                        showRemoveServiceDialog = true,
+                        serviceToRemove = service ?: Service()
+                    )
+                }
+            } else {
+                setState { copy(showRemoveServiceDialog = false) }
+            }
         }
     }
 

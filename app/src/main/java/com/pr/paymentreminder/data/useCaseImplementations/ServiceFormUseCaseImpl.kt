@@ -8,15 +8,18 @@ import javax.inject.Inject
 class ServiceFormUseCaseImpl @Inject constructor(
     private val serviceDatabaseDataSource: ServiceDatabaseDataSource
 ) : ServiceFormUseCase {
-    override suspend fun getServiceForm(serviceId: String): Service? =
-        serviceDatabaseDataSource.getServiceForm(serviceId)
+    override suspend fun clearServiceForm() =
+        serviceDatabaseDataSource.clearServiceForm()
 
     override suspend fun getAllServicesForm(): List<Service>? =
         serviceDatabaseDataSource.getAllServicesForm()
 
+    override suspend fun getServiceForm(serviceId: String): Service? =
+        serviceDatabaseDataSource.getServiceForm(serviceId)
+
+    override suspend fun removeService(serviceId: String) =
+        serviceDatabaseDataSource.removeService(serviceId)
+
     override suspend fun setServiceForm(form: Service) =
         serviceDatabaseDataSource.setServiceForm(form)
-
-    override suspend fun clearServiceForm() =
-        serviceDatabaseDataSource.clearServiceForm()
 }
