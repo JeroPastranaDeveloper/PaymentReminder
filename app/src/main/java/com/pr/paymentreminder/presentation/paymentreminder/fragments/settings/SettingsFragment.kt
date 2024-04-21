@@ -56,7 +56,6 @@ fun SettingsFragment(viewModel: SettingsViewModel) {
             )
         }
 
-        /* Content here */
         Spacer(modifier = Modifier.weight(1f))
         OutlinedButton(
             onClick = {
