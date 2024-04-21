@@ -28,6 +28,7 @@ import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.ui.theme.dimen100
 import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.orElse
+import com.pr.paymentreminder.ui.theme.pastelRed
 import com.pr.paymentreminder.ui.theme.semiBlack
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
@@ -41,7 +42,7 @@ fun ServiceCard(
     color: Color
 ) {
     val context = LocalContext.current
-    val textColor = if (color == semiBlack) white else semiBlack
+    val textColor = if (color == semiBlack || color == pastelRed) white else semiBlack
 
     Card(
         modifier = Modifier

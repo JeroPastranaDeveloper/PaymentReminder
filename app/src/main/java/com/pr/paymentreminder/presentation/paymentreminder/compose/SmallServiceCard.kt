@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.ui.theme.dimen8
+import com.pr.paymentreminder.ui.theme.pastelRed
 import com.pr.paymentreminder.ui.theme.semiBlack
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
@@ -35,7 +36,7 @@ fun SmallServiceCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
-    val textColor = if (color == semiBlack) white else semiBlack
+    val textColor = if (color == semiBlack || color == pastelRed) white else semiBlack
     Card(
         modifier = Modifier
             .fillMaxWidth(0.5f)
