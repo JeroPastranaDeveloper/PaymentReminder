@@ -14,7 +14,7 @@ class ServiceDatabaseDataSourceImpl(
     @CoroutineIO private val coroutineContext: CoroutineContext
 ) : ServiceDatabaseDataSource {
 
-    override suspend fun clearServiceForm() =
+    override suspend fun clearAllServicesForm() =
         withContext(coroutineContext) {
             val allForms = serviceDao.getAllForms()
             allForms.orEmpty().forEach {

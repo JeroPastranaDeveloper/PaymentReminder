@@ -3,7 +3,6 @@ package com.pr.paymentreminder.presentation.paymentreminder
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlarmManager
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -32,6 +31,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -43,9 +43,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.pr.paymentreminder.PaymentReminderViewContract.UiIntent
+import com.pr.paymentreminder.PaymentReminderViewContract.UiState
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.android_versions.hasT33
 import com.pr.paymentreminder.data.consts.Constants
+import com.pr.paymentreminder.presentation.paymentreminder.compose.CustomDialog
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeFragment
@@ -62,6 +65,7 @@ class PaymentReminderActivity : AppCompatActivity() {
     private val graphicViewModel: GraphicViewModel by viewModels()
     private val paymentsHistoryViewModel: PaymentsHistoryViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
+    private val paymentReminderViewModel: PaymentReminderViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,15 +75,7 @@ class PaymentReminderActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                val dialog = AlertDialog.Builder(this@PaymentReminderActivity)
-                    .setTitle(R.string.exit_question)
-                    .setMessage(R.string.exit_confirmation)
-                    .setPositiveButton(R.string.yes) { _, _ ->
-                        finish()
-                    }
-                    .setNegativeButton(R.string.no, null)
-                    .create()
-                dialog.show()
+                paymentReminderViewModel.sendIntent(UiIntent.ShowCloseApp(true))
             }
         })
 
@@ -114,13 +110,23 @@ class PaymentReminderActivity : AppCompatActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
     private fun Content() {
+        val state by paymentReminderViewModel.state.collectAsState(UiState())
         val navController = rememberNavController()
-
         val screens = listOf(
             CurrentScreen.Home,
             CurrentScreen.Graphic,
             CurrentScreen.Settings
         )
+
+        if (state.showDialog) {
+            CustomDialog(
+                titleText = stringResource(id = R.string.exit_question),
+                bodyText = stringResource(id = R.string.exit_confirmation),
+                onAccept = { finish() },
+                onCancel = { paymentReminderViewModel.sendIntent(UiIntent.ShowCloseApp(false)) }
+            )
+        }
+        
         Scaffold(
             topBar = {
                 Surface {

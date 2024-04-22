@@ -39,7 +39,7 @@ class HomeViewModelTest {
             servicesUseCase = servicesUseCase,
             alarmScheduler = alarmScheduler,
             preferencesHandler = preferencesHandler,
-            serviceFormUseCase = serviceForm
+            serviceForm= serviceForm
         )
     }
 
