@@ -1,4 +1,4 @@
-package com.pr.paymentreminder
+package com.pr.paymentreminder.presentation.paymentreminder
 
 import com.pr.paymentreminder.base.BaseViewContract
 

@@ -1,8 +1,8 @@
 package com.pr.paymentreminder.presentation.paymentreminder
 
-import com.pr.paymentreminder.PaymentReminderViewContract.UiIntent
-import com.pr.paymentreminder.PaymentReminderViewContract.UiState
-import com.pr.paymentreminder.PaymentReminderViewContract.UiAction
+import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderViewContract.UiIntent
+import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderViewContract.UiAction
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 
 class PaymentReminderViewModel : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
