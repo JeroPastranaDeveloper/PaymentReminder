@@ -12,6 +12,5 @@ class SettingsViewContract : BaseViewContract() {
         data class ShowSignOutDialog(val hasToShow: Boolean) : UiIntent()
     }
 
-    sealed class UiAction {
-    }
+    sealed class UiAction
 }
