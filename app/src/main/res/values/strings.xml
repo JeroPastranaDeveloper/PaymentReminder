@@ -53,7 +53,7 @@
     <string name="dialog_pryce">Precio: %s</string>
     <string name="all_services">Todos</string>
     <string name="weekly_services">Semanales</string>
-    <string name="monthly_services">Menusales</string>
+    <string name="monthly_services">Mensuales</string>
     <string name="yearly_services">Anuales</string>
     <string name="services">Servicios</string>
     <string name="no_services">No hay servicios</string>
