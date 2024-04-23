@@ -29,7 +29,7 @@ class SettingsViewModel @Inject constructor(
     private fun signOut() {
         viewModelScope.launch {
             preferencesHandler.hasToLogin = false
-            serviceForm.clearAllServicesForm()
+            // serviceForm.clearAllServicesForm()
             loginUseCase.signOut()
         }
     }

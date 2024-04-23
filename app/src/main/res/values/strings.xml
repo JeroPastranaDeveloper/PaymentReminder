@@ -69,4 +69,6 @@
     <string name="remove_service_body">El servicio eliminado no se podrá recuperar.</string>
     <string name="accept_button">Aceptar</string>
     <string name="cancel_button">Cancelar</string>
+    <string name="fingerprint_access_title">Acceso con huella dactilar</string>
+    <string name="fingerprint_access_body">Introduce tu huella</string>
 </resources>
