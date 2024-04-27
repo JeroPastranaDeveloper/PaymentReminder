@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -32,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -65,7 +67,6 @@ class PaymentReminderActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 paymentReminderViewModel.sendIntent(UiIntent.ShowCloseApp(true))
@@ -73,7 +74,9 @@ class PaymentReminderActivity : AppCompatActivity() {
         })
 
         setContent {
-            if (hasT33()) CheckNotificationPermissions()
+            val state by paymentReminderViewModel.state.collectAsState(UiState())
+            paymentReminderViewModel.sendIntent(UiIntent.CheckNotifications)
+            if (hasT33() && !state.notificationsGranted) CheckNotificationPermissions()
             Content()
         }
     }
@@ -81,9 +84,17 @@ class PaymentReminderActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @Composable
     private fun CheckNotificationPermissions() {
+        val context = LocalContext.current
         val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-        ) {}
+        ) { permissions ->
+            if (permissions[Manifest.permission.POST_NOTIFICATIONS] == true) {
+                paymentReminderViewModel.sendIntent(UiIntent.NotificationsGranted)
+                Toast.makeText(context, context.getString(R.string.notifications_enabled), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, context.getString(R.string.cannot_notificate), Toast.LENGTH_SHORT).show()
+            }
+        }
 
         LaunchedEffect(Unit) {
             permissionLauncher.launch(arrayOf(
@@ -91,6 +102,14 @@ class PaymentReminderActivity : AppCompatActivity() {
                 Manifest.permission.SCHEDULE_EXACT_ALARM
             ))
         }
+
+        /*val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (!alarmManager.canScheduleExactAlarms()) {
+            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
+        }*/
     }
 
     @OptIn(ExperimentalMaterial3Api::class)

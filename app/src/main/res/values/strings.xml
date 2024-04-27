@@ -71,4 +71,6 @@
     <string name="cancel_button">Cancelar</string>
     <string name="fingerprint_access_title">Acceso con huella dactilar</string>
     <string name="fingerprint_access_body">Introduce tu huella</string>
+    <string name="notifications_enabled">Notificaciones habilitadas</string>
+    <string name="cannot_notificate">No se pueden publicar notificaciones</string>
 </resources>

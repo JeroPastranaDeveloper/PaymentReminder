@@ -15,10 +15,17 @@ class PreferencesHandlerImpl(context: Context) : PreferencesHandler {
     }
 
     companion object {
-        private const val HAS_TO_LOGIN = "hasToLogin"
         private const val EMAIL = "email"
+        private const val HAS_TO_LOGIN = "hasToLogin"
+        private const val NOTIFICATIONS_GRANTED = "notificationsGranted"
         private const val PASSWORD = "password"
     }
+
+    override var email: String?
+        get() = sharedPreferences.getString(EMAIL, null)
+        set(value) {
+            this.edit.putString(EMAIL, value)?.apply()
+        }
 
     override var hasToLogin: Boolean
         get() = sharedPreferences.getBoolean(HAS_TO_LOGIN, false)
@@ -26,10 +33,10 @@ class PreferencesHandlerImpl(context: Context) : PreferencesHandler {
             this.edit.putBoolean(HAS_TO_LOGIN, value)?.apply()
         }
 
-    override var email: String?
-        get() = sharedPreferences.getString(EMAIL, null)
+    override var notificationsGranted: Boolean
+        get() = sharedPreferences.getBoolean(NOTIFICATIONS_GRANTED, false)
         set(value) {
-            this.edit.putString(EMAIL, value)?.apply()
+            this.edit.putBoolean(NOTIFICATIONS_GRANTED, value)?.apply()
         }
 
     override var password: String?
