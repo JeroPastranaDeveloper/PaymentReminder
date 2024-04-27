@@ -23,6 +23,7 @@ import androidx.lifecycle.Lifecycle
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.base.BaseActivity
 import com.pr.paymentreminder.base.addRepeatingJob
+import com.pr.paymentreminder.data.authentication.BiometricAuthenticator
 import com.pr.paymentreminder.data.model.DefaultTextFieldParams
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiAction
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
@@ -41,6 +42,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LoginActivity : BaseActivity() {
     private val viewModel: LoginViewModel by viewModels()
+    private lateinit var biometricAuthenticator: BiometricAuthenticator
 
     @Composable
     override fun ComposableContent() {
@@ -61,6 +63,7 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun doBiometricAuth() {
+        biometricAuthenticator = BiometricAuthenticator(this)
         biometricAuthenticator.authenticate(
             onSuccess = { viewModel.sendIntent(UiIntent.DoLogin()) }
         )

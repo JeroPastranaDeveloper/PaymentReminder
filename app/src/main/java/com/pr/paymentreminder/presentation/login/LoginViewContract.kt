@@ -13,8 +13,8 @@ class LoginViewContract : BaseViewContract() {
     )
 
     sealed class UiIntent {
-        data object GoRegister : UiIntent()
         data class DoLogin(val email: String = emptyString(), val password: String = emptyString()) : UiIntent()
+        data object GoRegister : UiIntent()
         data class ValidateEmail(val email: String) : UiIntent()
         data class ValidatePassword(val password: String) : UiIntent()
     }
