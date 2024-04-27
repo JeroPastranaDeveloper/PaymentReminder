@@ -1,7 +1,7 @@
 package com.pr.paymentreminder.di
 
-import com.pr.paymentreminder.data.useCaseImplementations.ServiceFormUseCaseImpl
-import com.pr.paymentreminder.data.useCaseImplementations.ServicesUseCaseImpl
+import com.pr.paymentreminder.data.use_case_implementations.ServiceFormUseCaseImpl
+import com.pr.paymentreminder.data.use_case_implementations.ServicesUseCaseImpl
 import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
 import com.pr.paymentreminder.domain.usecase.ServicesUseCase
 import dagger.Module

@@ -22,26 +22,36 @@ class LoginViewModel @Inject constructor(
 
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
-            is UiIntent.ValidateEmail -> validateEmail(intent.email)
-            is UiIntent.ValidatePassword -> validatePassword(intent.password)
             is UiIntent.DoLogin -> login(intent.email, intent.password)
             UiIntent.GoRegister -> dispatchAction(UiAction.GoRegister)
+            is UiIntent.ValidateEmail -> validateEmail(intent.email)
+            is UiIntent.ValidatePassword -> validatePassword(intent.password)
         }
     }
 
     private fun login(email: String, password: String) {
+        val loginEmail = email.ifEmpty { preferencesHandler.email.orEmpty() }
+        val loginPassword = password.ifEmpty { preferencesHandler.password.orEmpty() }
+
         viewModelScope.launch {
-            loginUseCase.login(email, password)
+            loginUseCase.login(loginEmail, loginPassword)
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                preferencesHandler.hasToLogin = true
+                preferencesHandler.email = loginEmail
+                preferencesHandler.password = loginPassword
+            }
         }
-        preferencesHandler.hasToLogin = true
-        preferencesHandler.email = email
-        preferencesHandler.password = password
         dispatchAction(UiAction.Login)
     }
 
+
     init {
+        checkLogin()
+    }
+
+    private fun checkLogin() {
         if (preferencesHandler.hasToLogin) {
-            login(preferencesHandler.email.orEmpty(), preferencesHandler.password.orEmpty())
+            dispatchAction(UiAction.DoBiometricAuthentication)
         }
     }
 

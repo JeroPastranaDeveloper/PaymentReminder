@@ -20,30 +20,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.base.BaseActivity
 import com.pr.paymentreminder.base.addRepeatingJob
+import com.pr.paymentreminder.data.authentication.BiometricAuthenticator
 import com.pr.paymentreminder.data.model.DefaultTextFieldParams
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiAction
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiState
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
 import com.pr.paymentreminder.presentation.paymentreminder.compose.DefaultTextField
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ImageLogo
-import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLoginButton
 import com.pr.paymentreminder.presentation.paymentreminder.compose.PasswordField
+import com.pr.paymentreminder.presentation.paymentreminder.compose.RegisterLoginButton
 import com.pr.paymentreminder.presentation.paymentreminder.compose.UnderlinedText
 import com.pr.paymentreminder.presentation.register.RegisterActivity
-import com.pr.paymentreminder.presentation.login.LoginViewContract.UiState
-import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
-import com.pr.paymentreminder.presentation.login.LoginViewContract.UiAction
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.spacing16
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : BaseActivity() {
     private val viewModel: LoginViewModel by viewModels()
+    private lateinit var biometricAuthenticator: BiometricAuthenticator
 
     @Composable
     override fun ComposableContent() {
@@ -51,15 +50,23 @@ class LoginActivity : BaseActivity() {
 
         addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect(::handleAction) }
         val state by viewModel.state.collectAsState(UiState())
-        checkLogin(state)
+
         Content(state)
     }
 
     private fun handleAction(action: UiAction) {
         when(action) {
-            UiAction.Login -> doLogin()
+            UiAction.DoBiometricAuthentication -> doBiometricAuth()
             UiAction.GoRegister -> goRegister()
+            UiAction.Login -> doLogin()
         }
+    }
+
+    private fun doBiometricAuth() {
+        biometricAuthenticator = BiometricAuthenticator(this)
+        biometricAuthenticator.authenticate(
+            onSuccess = { viewModel.sendIntent(UiIntent.DoLogin()) }
+        )
     }
 
     @Composable
@@ -136,16 +143,6 @@ class LoginActivity : BaseActivity() {
         val isPasswordValid = !state.hasPasswordHelperText
 
         return isEmailValid && isPasswordValid
-    }
-
-    private fun checkLogin(state: UiState) {
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                if (state.isLoginSuccessful) {
-                    viewModel.sendIntent(UiIntent.DoLogin(state.email, state.password))
-                }
-            }
-        }
     }
 
     private fun goRegister() {

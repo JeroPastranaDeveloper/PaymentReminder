@@ -58,4 +58,6 @@
     <string name="remove_service_body">The deleted service cannot be recovered.</string>
     <string name="accept_button">Accept</string>
     <string name="cancel_button">Cancel</string>
+    <string name="fingerprint_access_title">Fingerprint access</string>
+    <string name="fingerprint_access_body">Enter your fingerprint</string>
 </resources>

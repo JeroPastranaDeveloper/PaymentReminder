@@ -9,7 +9,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.data.consts.Constants
-import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderActivity
+import com.pr.paymentreminder.presentation.login.LoginActivity
 import com.pr.paymentreminder.ui.theme.orZero
 
 class AlarmReceiver : BroadcastReceiver() {
@@ -30,7 +30,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val serviceRemember = intent?.getStringExtra(Constants.SERVICE_REMEMBER)
         val servicePrice = intent?.getStringExtra(Constants.SERVICE_PRICE)
 
-        val activityIntent = Intent(context, PaymentReminderActivity::class.java)
+        val activityIntent = Intent(context, LoginActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, PendingIntent.FLAG_MUTABLE)
 
         val notification = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)

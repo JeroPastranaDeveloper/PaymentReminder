@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.data.useCaseImplementations
+package com.pr.paymentreminder.data.use_case_implementations
 
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.source.ServicesDataSource
