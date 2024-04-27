@@ -1,18 +1,18 @@
 package com.pr.paymentreminder.data.authentication
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import com.pr.paymentreminder.R
 import java.util.concurrent.Executor
+import javax.inject.Inject
 
-class BiometricAuthenticator(private val context: Context) {
-    private val executor: Executor = ContextCompat.getMainExecutor(context)
+class BiometricAuthenticator @Inject constructor(private val activity: AppCompatActivity) {
+    private val executor: Executor = ContextCompat.getMainExecutor(activity)
 
     fun authenticate(onSuccess: () -> Unit) {
-        val biometricPrompt = BiometricPrompt(context as AppCompatActivity, executor,
+        val biometricPrompt = BiometricPrompt(activity, executor,
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
@@ -28,8 +28,8 @@ class BiometricAuthenticator(private val context: Context) {
 
     private fun createPrompt(): BiometricPrompt.PromptInfo =
         BiometricPrompt.PromptInfo.Builder()
-            .setTitle(context.getString(R.string.fingerprint_access_title) )
-            .setSubtitle(context.getString(R.string.fingerprint_access_body))
+            .setTitle(activity.getString(R.string.fingerprint_access_title) )
+            .setSubtitle(activity.getString(R.string.fingerprint_access_body))
             .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL)
             .build()
 }
