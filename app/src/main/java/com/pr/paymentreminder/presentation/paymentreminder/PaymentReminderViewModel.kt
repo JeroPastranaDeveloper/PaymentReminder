@@ -4,6 +4,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderViewCo
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderViewContract.UiState
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderViewContract.UiAction
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
+import com.pr.paymentreminder.data.model.Permissions
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -16,17 +17,28 @@ class PaymentReminderViewModel @Inject constructor(
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
             UiIntent.CheckNotifications -> checkNotifications()
-            UiIntent.NotificationsGranted -> notificationsGranted()
+            is UiIntent.NotificationsGranted -> notificationsGranted(intent.permission)
             is UiIntent.ShowCloseApp -> setState { copy(showDialog = intent.hasToShow) }
         }
     }
 
     private fun checkNotifications() {
-        setState { copy(notificationsGranted = preferencesHandler.notificationsGranted) }
+        setState { copy(
+            exactAlarmGranted = preferencesHandler.exactAlarmGranted,
+            notificationsGranted = preferencesHandler.notificationsGranted
+        ) }
     }
 
-    private fun notificationsGranted() {
-        preferencesHandler.notificationsGranted = true
-        setState { copy(notificationsGranted = true) }
+    private fun notificationsGranted(permission: Permissions) {
+        when (permission) {
+            Permissions.EXACT_ALARM -> {
+                preferencesHandler.exactAlarmGranted = true
+                setState { copy(exactAlarmGranted = true) }
+            }
+            Permissions.NOTIFICATIONS -> {
+                preferencesHandler.notificationsGranted = true
+                setState { copy(notificationsGranted = true) }
+            }
+        }
     }
 }

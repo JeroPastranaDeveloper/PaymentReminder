@@ -61,5 +61,6 @@
     <string name="fingerprint_access_title">Fingerprint access</string>
     <string name="fingerprint_access_body">Enter your fingerprint</string>
     <string name="notifications_enabled">Notifications enabled</string>
+    <string name="exact_alarm_enabled">Set alarms enabled</string>
     <string name="cannot_notificate">Notifications cannot be published</string>
 </resources>

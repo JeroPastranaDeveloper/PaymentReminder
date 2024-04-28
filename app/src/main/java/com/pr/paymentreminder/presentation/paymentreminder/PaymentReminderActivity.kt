@@ -43,6 +43,7 @@ import androidx.navigation.compose.rememberNavController
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.android_versions.hasT33
 import com.pr.paymentreminder.data.consts.Constants
+import com.pr.paymentreminder.data.model.Permissions
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.PaymentReminderViewContract.UiState
 import com.pr.paymentreminder.presentation.paymentreminder.compose.CustomDialog
@@ -89,7 +90,12 @@ class PaymentReminderActivity : AppCompatActivity() {
         ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
             if (permissions[Manifest.permission.POST_NOTIFICATIONS] == true) {
-                paymentReminderViewModel.sendIntent(UiIntent.NotificationsGranted)
+                paymentReminderViewModel.sendIntent(
+                    UiIntent.NotificationsGranted(Permissions.NOTIFICATIONS)
+                )
+                paymentReminderViewModel.sendIntent(
+                    UiIntent.NotificationsGranted(Permissions.EXACT_ALARM)
+                )
                 Toast.makeText(context, context.getString(R.string.notifications_enabled), Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, context.getString(R.string.cannot_notificate), Toast.LENGTH_SHORT).show()
@@ -102,14 +108,6 @@ class PaymentReminderActivity : AppCompatActivity() {
                 Manifest.permission.SCHEDULE_EXACT_ALARM
             ))
         }
-
-        /*val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if (!alarmManager.canScheduleExactAlarms()) {
-            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                data = Uri.fromParts("package", packageName, null)
-            }
-            startActivity(intent)
-        }*/
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
