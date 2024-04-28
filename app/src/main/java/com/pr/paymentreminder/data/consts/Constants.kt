@@ -32,7 +32,7 @@ class Constants {
         const val SERVICE_REMEMBER = "SERVICE_REMEMBER"
         const val SERVICE_PRICE = "SERVICE_PRICE"
         const val NOTIFICATION_CHANNEL_ID = "ServiceChannel"
-        const val NOTIFICATION_CHANNEL_NAME = "Service Channel"
+        const val NOTIFICATION_CHANNEL_NAME = "Service payment notification"
         const val ALL_SERVICES = "Todos"
     }
 }
