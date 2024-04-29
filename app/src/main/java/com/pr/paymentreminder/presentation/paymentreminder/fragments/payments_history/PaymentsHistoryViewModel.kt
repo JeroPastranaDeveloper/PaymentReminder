@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiState

@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.domain.usecase
+package com.pr.paymentreminder.domain.usecase.register
 
 import kotlinx.coroutines.flow.StateFlow
 

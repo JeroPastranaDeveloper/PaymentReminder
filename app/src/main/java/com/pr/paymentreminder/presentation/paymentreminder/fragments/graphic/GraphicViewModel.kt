@@ -7,7 +7,7 @@ import com.pr.paymentreminder.data.model.Service
 import  com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiIntent
 import  com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiState
 import  com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiAction
-import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service.ServicesUseCase
 import com.pr.paymentreminder.ui.theme.showTwoDecimals
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

@@ -1,8 +1,8 @@
 package com.pr.paymentreminder
 
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
-import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
-import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
+import com.pr.paymentreminder.domain.usecase.service.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewModel

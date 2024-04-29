@@ -1,8 +1,8 @@
-package com.pr.paymentreminder.data.use_case_implementations
+package com.pr.paymentreminder.data.use_case_implementations.services
 
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.source.ServicesDataSource
-import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service.ServicesUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -19,8 +19,11 @@ class ServicesUseCaseImpl @Inject constructor(
         return services
     }
 
-    override fun getService(id: String): Flow<Service> =
+    override operator fun invoke(id: String): Flow<Service> =
         servicesDataSource.getService(id)
+
+    /*override fun getService(id: String): Flow<Service> =
+        servicesDataSource.getService(id)*/
 
     override suspend fun createService(id: String, service: Service) =
         servicesDataSource.createService(id, service)

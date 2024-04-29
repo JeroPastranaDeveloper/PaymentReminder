@@ -7,8 +7,8 @@ import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
-import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
-import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
+import com.pr.paymentreminder.domain.usecase.service.ServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiIntent

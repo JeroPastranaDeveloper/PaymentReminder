@@ -1,8 +1,8 @@
-package com.pr.paymentreminder.data.use_case_implementations
+package com.pr.paymentreminder.data.use_case_implementations.service_form
 
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.source.ServiceDatabaseDataSource
-import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
 import javax.inject.Inject
 
 class ServiceFormUseCaseImpl @Inject constructor(

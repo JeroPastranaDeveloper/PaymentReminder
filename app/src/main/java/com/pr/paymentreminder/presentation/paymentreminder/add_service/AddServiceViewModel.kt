@@ -16,8 +16,8 @@ import com.pr.paymentreminder.data.model.nameItem
 import com.pr.paymentreminder.data.model.priceItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
-import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
-import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
+import com.pr.paymentreminder.domain.usecase.service.ServicesUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiState
@@ -88,7 +88,7 @@ class AddServiceViewModel @Inject constructor(
 
         viewModelScope.launch {
             val service = when(action) {
-                ButtonActions.EDIT.name -> servicesUseCase.getService(serviceId).firstOrNull()
+                ButtonActions.EDIT.name -> servicesUseCase.invoke(serviceId).firstOrNull()
                 ButtonActions.EDIT_PAID.name -> servicesForm.getServiceForm(serviceId)
                 else -> null
             }

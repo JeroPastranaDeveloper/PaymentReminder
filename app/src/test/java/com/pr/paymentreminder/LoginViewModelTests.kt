@@ -2,7 +2,7 @@ package com.pr.paymentreminder
 
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
-import com.pr.paymentreminder.domain.usecase.LoginUseCase
+import com.pr.paymentreminder.domain.usecase.login.LoginUseCase
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiState
 import com.pr.paymentreminder.presentation.login.LoginViewModel
