@@ -16,8 +16,10 @@ import com.pr.paymentreminder.data.model.nameItem
 import com.pr.paymentreminder.data.model.priceItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
+import com.pr.paymentreminder.domain.usecase.service.CreateServiceUseCase
+import com.pr.paymentreminder.domain.usecase.service.GetServiceUseCase
+import com.pr.paymentreminder.domain.usecase.service.UpdateServiceUseCase
 import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
-import com.pr.paymentreminder.domain.usecase.service.ServicesUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiState
@@ -30,7 +32,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddServiceViewModel @Inject constructor(
-    private val servicesUseCase: ServicesUseCase,
+    private val getServiceUseCase: GetServiceUseCase,
+    private val createServiceUseCase: CreateServiceUseCase,
+    private val updateServiceUseCase: UpdateServiceUseCase,
     private val servicesForm: ServiceFormUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
@@ -88,7 +92,7 @@ class AddServiceViewModel @Inject constructor(
 
         viewModelScope.launch {
             val service = when(action) {
-                ButtonActions.EDIT.name -> servicesUseCase.invoke(serviceId).firstOrNull()
+                ButtonActions.EDIT.name -> getServiceUseCase(serviceId).firstOrNull()
                 ButtonActions.EDIT_PAID.name -> servicesForm.getServiceForm(serviceId)
                 else -> null
             }
@@ -111,7 +115,7 @@ class AddServiceViewModel @Inject constructor(
             val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
             val id = servicesRef.push().key.orEmpty()
             service.id = id
-            servicesUseCase.createService(id, service)
+            createServiceUseCase(id, service)
         }
 
         SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.CREATE)
@@ -120,7 +124,7 @@ class AddServiceViewModel @Inject constructor(
 
     private fun updateService(newServiceData: Service) {
         viewModelScope.launch {
-            servicesUseCase.updateService(newServiceData.id, newServiceData)
+            updateServiceUseCase(newServiceData.id, newServiceData)
         }
         SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.UPDATE)
         dispatchAction(UiAction.GoBack)
@@ -155,5 +159,4 @@ class AddServiceViewModel @Inject constructor(
 
         setState { copy(isLoading = false) }
     }
-
 }

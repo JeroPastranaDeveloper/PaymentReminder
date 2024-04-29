@@ -7,7 +7,7 @@ import com.pr.paymentreminder.data.model.Service
 import  com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiIntent
 import  com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiState
 import  com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiAction
-import com.pr.paymentreminder.domain.usecase.service.ServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service.GetServicesUseCase
 import com.pr.paymentreminder.ui.theme.showTwoDecimals
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GraphicViewModel @Inject constructor(
-    private val servicesUseCase: ServicesUseCase
+    private val getServicesUseCase: GetServicesUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
 
@@ -50,7 +50,7 @@ class GraphicViewModel @Inject constructor(
 
     private fun filterServices(filter: String) {
         viewModelScope.launch {
-            servicesUseCase.getServices().collect { services ->
+            getServicesUseCase().collect { services ->
                 calculateExpenditure(services)
                 setState {
                     copy(services = if (filter == Constants.ALL_SERVICES) {

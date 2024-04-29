@@ -8,5 +8,4 @@ class SignOutUseCaseImpl @Inject constructor(
     private val loginDataSource: LoginDataSource
 ) : SignOutUseCase {
     override fun invoke() = loginDataSource.signOut()
-
 }

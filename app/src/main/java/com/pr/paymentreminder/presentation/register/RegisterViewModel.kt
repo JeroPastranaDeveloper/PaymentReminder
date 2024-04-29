@@ -96,7 +96,7 @@ class RegisterViewModel @Inject constructor(
 
     private fun register(email: String?, password: String?) {
         viewModelScope.launch {
-            registerUseCase.register(email.orEmpty(), password.orEmpty())
+            registerUseCase(email.orEmpty(), password.orEmpty())
         }
         preferencesHandler.email = email
         preferencesHandler.password = password

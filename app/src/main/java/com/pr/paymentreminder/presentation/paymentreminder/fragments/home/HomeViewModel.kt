@@ -7,8 +7,11 @@ import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
+import com.pr.paymentreminder.domain.usecase.service.CreateServiceUseCase
 import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
-import com.pr.paymentreminder.domain.usecase.service.ServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service.GetServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service.RemoveServiceUseCase
+import com.pr.paymentreminder.domain.usecase.service.UpdateServiceUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiIntent
@@ -24,7 +27,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val servicesUseCase: ServicesUseCase,
+    private val getServicesUseCase: GetServicesUseCase,
+    private val createServiceUseCase: CreateServiceUseCase,
+    private val removeServiceUseCase: RemoveServiceUseCase,
+    private val updateServiceUseCase: UpdateServiceUseCase,
     private val alarmScheduler: AlarmScheduler,
     preferencesHandler: PreferencesHandler,
     private val serviceForm: ServiceFormUseCase
@@ -63,7 +69,7 @@ class HomeViewModel @Inject constructor(
 
     private fun restoreService(service: Service) {
         viewModelScope.launch {
-            servicesUseCase.createService(service.id, service)
+            createServiceUseCase(service.id, service)
         }
         setState { copy(showSnackBar = false, showSnackBarType = CustomSnackBarType.NONE) }
     }
@@ -107,7 +113,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             delay(1000)
 
-            servicesUseCase.getServices().collect { services ->
+            getServicesUseCase().collect { services ->
                 services.forEach { service ->
                     service.updateDate()
                     alarmScheduler.scheduleAlarm(service)
@@ -125,7 +131,7 @@ class HomeViewModel @Inject constructor(
 
     private fun updateService(serviceId: String, newServiceData: Service) {
         viewModelScope.launch {
-            servicesUseCase.updateService(serviceId, newServiceData)
+            updateServiceUseCase(serviceId, newServiceData)
         }
     }
 
@@ -133,7 +139,7 @@ class HomeViewModel @Inject constructor(
         setState { copy(showSnackBar = false) }
         viewModelScope.launch {
             setState { copy(serviceToRemove = service, showSnackBar = true, showSnackBarType = CustomSnackBarType.DELETE) }
-            servicesUseCase.removeService(service.id)
+            removeServiceUseCase(service.id)
 
             delay(2000)
             setState { copy(showSnackBar = false) }
