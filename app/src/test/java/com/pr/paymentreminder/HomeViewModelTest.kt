@@ -1,8 +1,8 @@
 package com.pr.paymentreminder
 
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
-import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
-import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.ClearAllServiceFormsUseCase
+import com.pr.paymentreminder.domain.usecase.service.GetServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewModel
@@ -23,7 +23,7 @@ class HomeViewModelTest {
     var coroutineRule = MainCoroutineRule()
 
     @Mock
-    private lateinit var servicesUseCase: ServicesUseCase
+    private lateinit var getServicesUseCase: GetServicesUseCase
 
     @Mock
     private lateinit var alarmScheduler: AlarmScheduler
@@ -32,11 +32,11 @@ class HomeViewModelTest {
     private lateinit var preferencesHandler: PreferencesHandler
 
     @Mock
-    private lateinit var serviceForm: ServiceFormUseCase
+    private lateinit var serviceForm: ClearAllServiceFormsUseCase
 
     private fun setUpViewModel() {
         vm = HomeViewModel(
-            servicesUseCase = servicesUseCase,
+            getServices = getServicesUseCase,
             alarmScheduler = alarmScheduler,
             preferencesHandler = preferencesHandler,
             serviceForm= serviceForm

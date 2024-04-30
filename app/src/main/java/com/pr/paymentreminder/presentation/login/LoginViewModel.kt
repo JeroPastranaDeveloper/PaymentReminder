@@ -4,7 +4,7 @@ import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
-import com.pr.paymentreminder.domain.usecase.LoginUseCase
+import com.pr.paymentreminder.domain.usecase.login.LoginUseCase
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiState
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiAction
@@ -34,7 +34,7 @@ class LoginViewModel @Inject constructor(
         val loginPassword = password.ifEmpty { preferencesHandler.password.orEmpty() }
 
         viewModelScope.launch {
-            loginUseCase.login(loginEmail, loginPassword)
+            loginUseCase(loginEmail, loginPassword)
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 preferencesHandler.hasToLogin = true
                 preferencesHandler.email = loginEmail

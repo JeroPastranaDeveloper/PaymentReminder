@@ -16,8 +16,11 @@ import com.pr.paymentreminder.data.model.nameItem
 import com.pr.paymentreminder.data.model.priceItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
-import com.pr.paymentreminder.domain.usecase.ServiceFormUseCase
-import com.pr.paymentreminder.domain.usecase.ServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service.CreateServiceUseCase
+import com.pr.paymentreminder.domain.usecase.service.GetServiceUseCase
+import com.pr.paymentreminder.domain.usecase.service.UpdateServiceUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.GetServiceFormUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.SaveServiceFormUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiState
@@ -30,8 +33,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddServiceViewModel @Inject constructor(
-    private val servicesUseCase: ServicesUseCase,
-    private val servicesForm: ServiceFormUseCase
+    private val getService: GetServiceUseCase,
+    private val createService: CreateServiceUseCase,
+    private val updateService: UpdateServiceUseCase,
+    private val saveServiceForm: SaveServiceFormUseCase,
+    private val getServiceForm: GetServiceFormUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
 
@@ -71,7 +77,7 @@ class AddServiceViewModel @Inject constructor(
 
         if (!state.value.categoryHelperText && !state.value.dateHelperText && !state.value.nameHelperText && !state.value.priceHelperText && !state.value.typeHelperText) {
             viewModelScope.launch {
-                servicesForm.setServiceForm(service)
+                saveServiceForm(service)
             }
 
             SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.UPDATE_PAID)
@@ -88,8 +94,8 @@ class AddServiceViewModel @Inject constructor(
 
         viewModelScope.launch {
             val service = when(action) {
-                ButtonActions.EDIT.name -> servicesUseCase.getService(serviceId).firstOrNull()
-                ButtonActions.EDIT_PAID.name -> servicesForm.getServiceForm(serviceId)
+                ButtonActions.EDIT.name -> getService(serviceId).firstOrNull()
+                ButtonActions.EDIT_PAID.name -> getServiceForm(serviceId)
                 else -> null
             }
 
@@ -111,7 +117,7 @@ class AddServiceViewModel @Inject constructor(
             val servicesRef = database.getReference("$userId/${Constants.SERVICES}")
             val id = servicesRef.push().key.orEmpty()
             service.id = id
-            servicesUseCase.createService(id, service)
+            createService(id, service)
         }
 
         SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.CREATE)
@@ -120,7 +126,7 @@ class AddServiceViewModel @Inject constructor(
 
     private fun updateService(newServiceData: Service) {
         viewModelScope.launch {
-            servicesUseCase.updateService(newServiceData.id, newServiceData)
+            updateService(newServiceData.id, newServiceData)
         }
         SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.UPDATE)
         dispatchAction(UiAction.GoBack)
@@ -155,5 +161,4 @@ class AddServiceViewModel @Inject constructor(
 
         setState { copy(isLoading = false) }
     }
-
 }

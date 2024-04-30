@@ -12,7 +12,7 @@ interface ServiceDao {
     fun getServiceForm(serviceId: String): ServiceRoom
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun setServiceRoom(form: ServiceRoom)
+    fun saveServiceRoom(form: ServiceRoom)
 
     @Query("SELECT * from services")
     fun getAllForms(): List<ServiceRoom>?

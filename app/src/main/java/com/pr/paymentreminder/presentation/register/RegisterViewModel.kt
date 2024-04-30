@@ -4,7 +4,7 @@ import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
-import com.pr.paymentreminder.domain.usecase.RegisterUseCase
+import com.pr.paymentreminder.domain.usecase.register.RegisterUseCase
 import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiIntent
 import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiAction
 import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiState
@@ -96,7 +96,7 @@ class RegisterViewModel @Inject constructor(
 
     private fun register(email: String?, password: String?) {
         viewModelScope.launch {
-            registerUseCase.register(email.orEmpty(), password.orEmpty())
+            registerUseCase(email.orEmpty(), password.orEmpty())
         }
         preferencesHandler.email = email
         preferencesHandler.password = password

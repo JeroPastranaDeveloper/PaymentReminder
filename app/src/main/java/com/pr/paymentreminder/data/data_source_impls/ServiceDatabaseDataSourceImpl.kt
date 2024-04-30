@@ -39,8 +39,8 @@ class ServiceDatabaseDataSourceImpl(
             serviceDao.deleteForm(service)
         }
 
-    override suspend fun setServiceForm(form: Service) =
+    override suspend fun saveServiceForm(form: Service) =
         withContext(coroutineContext) {
-            serviceDao.setServiceRoom(form.toEntity())
+            serviceDao.saveServiceRoom(form.toEntity())
         }
 }
