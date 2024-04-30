@@ -4,7 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.Service
-import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.GetAllServiceFormsUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.GetServiceFormUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.RemoveServiceFormUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiState
@@ -16,7 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PaymentsHistoryViewModel @Inject constructor(
-    private val servicesForm: ServiceFormUseCase
+    private val removeServiceForm: RemoveServiceFormUseCase,
+    private val getServiceForm: GetServiceFormUseCase,
+    private val getAllServiceForms: GetAllServiceFormsUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
 
@@ -31,7 +35,7 @@ class PaymentsHistoryViewModel @Inject constructor(
 
     private fun deleteService() {
         viewModelScope.launch {
-            servicesForm.removeService(state.value.serviceToRemove.id)
+            removeServiceForm(state.value.serviceToRemove.id)
             setState { copy(serviceToRemove = Service(), showRemoveServiceDialog = false) }
             getServices()
         }
@@ -40,7 +44,7 @@ class PaymentsHistoryViewModel @Inject constructor(
     private fun showServiceRemoveDialog(serviceId: String, hasToShow: Boolean) {
         viewModelScope.launch {
             if (hasToShow) {
-                val service = servicesForm.getServiceForm(serviceId)
+                val service = getServiceForm(serviceId)
                 setState {
                     copy(
                         showRemoveServiceDialog = true,
@@ -65,7 +69,7 @@ class PaymentsHistoryViewModel @Inject constructor(
     private fun getServices() {
         setState { copy(isLoading = true) }
         viewModelScope.launch {
-            val services = servicesForm.getAllServicesForm()
+            val services = getAllServiceForms()
             setState {
                 copy(
                     services = services.orEmpty().sortedByDescending { it.getDate() },

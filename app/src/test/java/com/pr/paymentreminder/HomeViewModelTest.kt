@@ -1,7 +1,7 @@
 package com.pr.paymentreminder
 
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
-import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.ClearAllServiceFormsUseCase
 import com.pr.paymentreminder.domain.usecase.service.GetServicesUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
@@ -32,11 +32,11 @@ class HomeViewModelTest {
     private lateinit var preferencesHandler: PreferencesHandler
 
     @Mock
-    private lateinit var serviceForm: ServiceFormUseCase
+    private lateinit var serviceForm: ClearAllServiceFormsUseCase
 
     private fun setUpViewModel() {
         vm = HomeViewModel(
-            getServicesUseCase = getServicesUseCase,
+            getServices = getServicesUseCase,
             alarmScheduler = alarmScheduler,
             preferencesHandler = preferencesHandler,
             serviceForm= serviceForm

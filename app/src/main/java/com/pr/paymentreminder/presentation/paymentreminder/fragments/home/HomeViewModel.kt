@@ -8,10 +8,10 @@ import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.service.CreateServiceUseCase
-import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
 import com.pr.paymentreminder.domain.usecase.service.GetServicesUseCase
 import com.pr.paymentreminder.domain.usecase.service.RemoveServiceUseCase
 import com.pr.paymentreminder.domain.usecase.service.UpdateServiceUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.SaveServiceFormUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiIntent
@@ -33,7 +33,7 @@ class HomeViewModel @Inject constructor(
     private val updateServiceUseCase: UpdateServiceUseCase,
     private val alarmScheduler: AlarmScheduler,
     preferencesHandler: PreferencesHandler,
-    private val serviceForm: ServiceFormUseCase
+    private val saveServiceForm: SaveServiceFormUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow
@@ -78,7 +78,7 @@ class HomeViewModel @Inject constructor(
         val today = LocalDate.now()
         if (this.getDate().isEqual(today) || this.getDate().isBefore(today)) {
             viewModelScope.launch {
-                serviceForm.setServiceForm(this@updateDate)
+                saveServiceForm(this@updateDate)
                 when (this@updateDate.type) {
                     PaymentType.WEEKLY.type -> this@updateDate.date =
                         this@updateDate.getDate().plus(1, ChronoUnit.WEEKS).format(

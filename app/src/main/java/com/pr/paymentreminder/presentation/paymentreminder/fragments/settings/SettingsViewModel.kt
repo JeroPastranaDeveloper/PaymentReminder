@@ -7,7 +7,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.Se
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsViewContract.UiIntent
 import com.pr.paymentreminder.domain.usecase.login.SignOutUseCase
-import com.pr.paymentreminder.domain.usecase.service_form.ServiceFormUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.ClearAllServiceFormsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val preferencesHandler: PreferencesHandler,
-    private val serviceForm: ServiceFormUseCase
+    private val serviceForm: ClearAllServiceFormsUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     override fun manageIntent(intent: UiIntent) {
@@ -29,7 +29,7 @@ class SettingsViewModel @Inject constructor(
     private fun signOut() {
         viewModelScope.launch {
             preferencesHandler.hasToLogin = false
-            serviceForm.clearAllServicesForm()
+            serviceForm.invoke()
             signOutUseCase()
         }
     }
