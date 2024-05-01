@@ -4,17 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.pr.paymentreminder.data.room.NotificationDao
-import com.pr.paymentreminder.data.room.NotificationRoom
 import com.pr.paymentreminder.data.room.ServiceDao
 import com.pr.paymentreminder.data.room.ServiceRoom
 
 @Database(
     entities = [
-        ServiceRoom::class,
-        NotificationRoom::class
+        ServiceRoom::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 
@@ -31,5 +28,4 @@ abstract class AppDatabase : RoomDatabase() {
     }
 
     abstract fun serviceDao(): ServiceDao
-    abstract fun notificationDao(): NotificationDao
 }
