@@ -1,11 +1,14 @@
 package com.pr.paymentreminder.data.source
 
 import com.google.firebase.auth.FirebaseAuth
+import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
-class LoginDataSource @Inject constructor() {
+class LoginDataSource @Inject constructor(
+    private val preferencesHandler: PreferencesHandler
+) {
     private val auth = FirebaseAuth.getInstance()
 
     private val _loginState = MutableStateFlow(false)
@@ -21,5 +24,6 @@ class LoginDataSource @Inject constructor() {
     fun signOut() {
         auth.signOut()
         _loginState.value = false
+        preferencesHandler.hasToLogin = false
     }
 }

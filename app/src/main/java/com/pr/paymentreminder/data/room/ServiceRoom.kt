@@ -15,5 +15,5 @@ data class ServiceRoom(
     @ColumnInfo("name") var name: String,
     @ColumnInfo("price") var price: String,
     @ColumnInfo("type") var type: String,
-    @ColumnInfo("comments") var comments: String,
+    @ColumnInfo("comments") var comments: String
 )

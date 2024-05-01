@@ -16,6 +16,7 @@ import com.pr.paymentreminder.data.model.nameItem
 import com.pr.paymentreminder.data.model.priceItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
+import com.pr.paymentreminder.domain.usecase.notification_form.SaveNotificationFormUseCase
 import com.pr.paymentreminder.domain.usecase.service.CreateServiceUseCase
 import com.pr.paymentreminder.domain.usecase.service.GetServiceUseCase
 import com.pr.paymentreminder.domain.usecase.service.UpdateServiceUseCase
@@ -24,6 +25,7 @@ import com.pr.paymentreminder.domain.usecase.service_form.SaveServiceFormUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.toNotification
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -37,7 +39,8 @@ class AddServiceViewModel @Inject constructor(
     private val createService: CreateServiceUseCase,
     private val updateService: UpdateServiceUseCase,
     private val saveServiceForm: SaveServiceFormUseCase,
-    private val getServiceForm: GetServiceFormUseCase
+    private val getServiceForm: GetServiceFormUseCase,
+    private val saveNotificationForm: SaveNotificationFormUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
 
@@ -118,6 +121,7 @@ class AddServiceViewModel @Inject constructor(
             val id = servicesRef.push().key.orEmpty()
             service.id = id
             createService(id, service)
+            saveNotificationForm(service.toNotification())
         }
 
         SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.CREATE)
@@ -127,6 +131,7 @@ class AddServiceViewModel @Inject constructor(
     private fun updateService(newServiceData: Service) {
         viewModelScope.launch {
             updateService(newServiceData.id, newServiceData)
+            saveNotificationForm(newServiceData.toNotification())
         }
         SharedShowSnackBarType.updateSharedSnackBarType(CustomSnackBarType.UPDATE)
         dispatchAction(UiAction.GoBack)

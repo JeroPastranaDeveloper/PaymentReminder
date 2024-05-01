@@ -11,6 +11,7 @@ data class Service(
     val price: String = emptyString(),
     val remember: String = emptyString(),
     val type: String = emptyString(),
+    val isNotified: Boolean = false,
     val image: String? = emptyString(),
     val comments: String? = emptyString(),
     val url: String? = emptyString()

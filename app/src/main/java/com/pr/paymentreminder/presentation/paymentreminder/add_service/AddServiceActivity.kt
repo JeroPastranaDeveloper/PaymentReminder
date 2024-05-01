@@ -404,7 +404,7 @@ class AddServiceActivity : BaseActivity() {
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        val newServiceData =Service(
+                        val newServiceData = Service(
                             id = serviceId,
                             selectedCategory,
                             color = emptyString(),
@@ -413,6 +413,7 @@ class AddServiceActivity : BaseActivity() {
                             servicePrice,
                             selectedRemember,
                             selectedType,
+                            false,
                             imageUrl,
                             comments,
                             serviceUrl
