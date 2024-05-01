@@ -93,6 +93,7 @@ class ServicesDataSource @Inject constructor() {
             snapshot.child(Constants.PRICE).value as? String ?: emptyString(),
             snapshot.child(Constants.REMEMBER).value as? String ?: emptyString(),
             snapshot.child(Constants.TYPE).value as? String ?: emptyString(),
+            snapshot.child(Constants.NOTIFIED).value as? Boolean ?: false,
             imageUriString,
             snapshot.child(Constants.COMMENTS).value as? String ?: emptyString(),
             url

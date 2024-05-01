@@ -1,8 +1,11 @@
 package com.pr.paymentreminder
 
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
-import com.pr.paymentreminder.domain.usecase.service_form.ClearAllServiceFormsUseCase
+import com.pr.paymentreminder.domain.usecase.service.CreateServiceUseCase
 import com.pr.paymentreminder.domain.usecase.service.GetServicesUseCase
+import com.pr.paymentreminder.domain.usecase.service.RemoveServiceUseCase
+import com.pr.paymentreminder.domain.usecase.service.UpdateServiceUseCase
+import com.pr.paymentreminder.domain.usecase.service_form.SaveServiceFormUseCase
 import com.pr.paymentreminder.notifications.AlarmScheduler
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewModel
@@ -26,20 +29,32 @@ class HomeViewModelTest {
     private lateinit var getServicesUseCase: GetServicesUseCase
 
     @Mock
+    private lateinit var createServiceUseCase: CreateServiceUseCase
+
+    @Mock
+    private lateinit var removeServiceUseCase: RemoveServiceUseCase
+
+    @Mock
+    private lateinit var updateServiceUseCase: UpdateServiceUseCase
+
+    @Mock
+    private lateinit var saveServiceFormUseCase: SaveServiceFormUseCase
+
+    @Mock
     private lateinit var alarmScheduler: AlarmScheduler
 
     @Mock
     private lateinit var preferencesHandler: PreferencesHandler
 
-    @Mock
-    private lateinit var serviceForm: ClearAllServiceFormsUseCase
-
     private fun setUpViewModel() {
         vm = HomeViewModel(
-            getServices = getServicesUseCase,
+            getServicesUseCase = getServicesUseCase,
+            createServiceUseCase = createServiceUseCase,
+            removeServiceUseCase = removeServiceUseCase,
+            updateServiceUseCase = updateServiceUseCase,
             alarmScheduler = alarmScheduler,
             preferencesHandler = preferencesHandler,
-            serviceForm= serviceForm
+            saveServiceForm = saveServiceFormUseCase
         )
     }
 

@@ -10,6 +10,7 @@ class Constants {
         const val CATEGORY = "category"
         const val COLOR = "color"
         const val TYPE = "type"
+        const val NOTIFIED = "notified"
         const val REMEMBER = "remember"
         const val COMMENTS = "comments"
         const val EURO = "€"
