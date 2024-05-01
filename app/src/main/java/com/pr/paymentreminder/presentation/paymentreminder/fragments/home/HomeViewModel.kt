@@ -7,8 +7,6 @@ import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
-import com.pr.paymentreminder.domain.usecase.notification_form.RemoveNotificationFormUseCase
-import com.pr.paymentreminder.domain.usecase.notification_form.SaveNotificationFormUseCase
 import com.pr.paymentreminder.domain.usecase.service.CreateServiceUseCase
 import com.pr.paymentreminder.domain.usecase.service.GetServicesUseCase
 import com.pr.paymentreminder.domain.usecase.service.RemoveServiceUseCase
@@ -34,10 +32,8 @@ class HomeViewModel @Inject constructor(
     private val removeServiceUseCase: RemoveServiceUseCase,
     private val updateServiceUseCase: UpdateServiceUseCase,
     private val alarmScheduler: AlarmScheduler,
-    preferencesHandler: PreferencesHandler,
-    private val saveServiceForm: SaveServiceFormUseCase,
-    private val saveNotificationForm: SaveNotificationFormUseCase,
-    private val removeNotificationForm: RemoveNotificationFormUseCase
+    private val preferencesHandler: PreferencesHandler,
+    private val saveServiceForm: SaveServiceFormUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow
@@ -69,7 +65,6 @@ class HomeViewModel @Inject constructor(
     private fun restoreService(service: Service) {
         viewModelScope.launch {
             createServiceUseCase(service.id, service)
-            saveNotificationForm(service.toNotification())
         }
         setState { copy(showSnackBar = false, showSnackBarType = CustomSnackBarType.NONE) }
     }
@@ -119,10 +114,11 @@ class HomeViewModel @Inject constructor(
                 servicesCopy.forEach { service ->
                     service.updateDate()
 
-                    saveNotificationForm(service.toNotification())
-                    alarmScheduler.scheduleAlarm(service.id)
+                    alarmScheduler.scheduleAlarm(service)
                     updateServiceUseCase(service.id, service.copy(isNotified = true))
                 }
+
+                preferencesHandler.firstTime = false
 
                 setState {
                     copy(
@@ -145,8 +141,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             setState { copy(serviceToRemove = service, showSnackBar = true, showSnackBarType = CustomSnackBarType.DELETE) }
             removeServiceUseCase(service.id)
-            removeNotificationForm(service.id)
-
             delay(2000)
             setState { copy(showSnackBar = false) }
         }

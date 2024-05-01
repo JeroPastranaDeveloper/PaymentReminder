@@ -17,6 +17,7 @@ class PreferencesHandlerImpl(context: Context) : PreferencesHandler {
     companion object {
         private const val EMAIL = "email"
         private const val EXACT_ALARM_GRANTED = "exactAlarmGranted"
+        private const val FIRST_TIME = "firstTime"
         private const val HAS_TO_LOGIN = "hasToLogin"
         private const val NOTIFICATIONS_GRANTED = "notificationsGranted"
         private const val PASSWORD = "password"
@@ -32,6 +33,12 @@ class PreferencesHandlerImpl(context: Context) : PreferencesHandler {
         get() = sharedPreferences.getBoolean(EXACT_ALARM_GRANTED, false)
         set(value) {
             this.edit.putBoolean(EXACT_ALARM_GRANTED, value)?.apply()
+        }
+
+    override var firstTime: Boolean
+        get() = sharedPreferences.getBoolean(FIRST_TIME, true)
+        set(value) {
+            this.edit.putBoolean(FIRST_TIME, value)?.apply()
         }
 
     override var hasToLogin: Boolean

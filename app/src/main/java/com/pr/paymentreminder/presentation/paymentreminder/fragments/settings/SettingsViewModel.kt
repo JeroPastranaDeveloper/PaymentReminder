@@ -2,8 +2,8 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments.settings
 
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
+import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.login.SignOutUseCase
-import com.pr.paymentreminder.domain.usecase.notification_form.ClearAllNotificationFormsUseCase
 import com.pr.paymentreminder.domain.usecase.service_form.ClearAllServiceFormsUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsViewContract.UiIntent
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val clearAllServiceForms: ClearAllServiceFormsUseCase,
-    private val clearAllNotificationForms: ClearAllNotificationFormsUseCase
+    private val preferencesHandler: PreferencesHandler
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     override fun manageIntent(intent: UiIntent) {
@@ -28,8 +28,8 @@ class SettingsViewModel @Inject constructor(
 
     private fun signOut() {
         viewModelScope.launch {
-            clearAllNotificationForms()
             clearAllServiceForms()
+            preferencesHandler.firstTime = true
             signOutUseCase()
         }
     }
