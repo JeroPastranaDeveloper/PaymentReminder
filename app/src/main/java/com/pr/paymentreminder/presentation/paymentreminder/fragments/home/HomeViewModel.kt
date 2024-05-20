@@ -107,7 +107,6 @@ class HomeViewModel @Inject constructor(
          */
         viewModelScope.launch {
             delay(1000)
-
             getServicesUseCase().collect { services ->
                 val servicesCopy = services.toList()
 

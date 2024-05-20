@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -39,6 +38,7 @@ import com.pr.paymentreminder.data.model.CustomSnackBarConfig
 import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceActivity
+import com.pr.paymentreminder.presentation.paymentreminder.compose.CardPlaceHolder
 import com.pr.paymentreminder.presentation.paymentreminder.compose.CustomSnackBar
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceCard
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceDialog
@@ -59,6 +59,7 @@ import com.pr.paymentreminder.ui.theme.pastelPurple
 import com.pr.paymentreminder.ui.theme.pastelRed
 import com.pr.paymentreminder.ui.theme.pastelSand
 import com.pr.paymentreminder.ui.theme.semiBlack
+import com.pr.paymentreminder.ui.theme.spacing0
 import com.pr.paymentreminder.ui.theme.spacing144
 import com.pr.paymentreminder.ui.theme.spacing16
 import com.pr.paymentreminder.ui.theme.spacing56
@@ -70,7 +71,6 @@ fun HomeFragment(viewModel: HomeViewModel) {
     val state by viewModel.state.collectAsState(UiState())
     var selectedService by remember { mutableStateOf<Service?>(null) }
     var showDialog by remember { mutableStateOf(false) }
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val snackBarHeight = if (state.showSnackBar) dimen72 else dimen0
@@ -112,12 +112,13 @@ fun HomeFragment(viewModel: HomeViewModel) {
             lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
         }
     }
-
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(top = if (state.isLoading) spacing64 else spacing0)
     ) {
         if (state.isLoading) {
-            CircularProgressIndicator(Modifier.align(Alignment.Center))
+            Column(modifier = Modifier.fillMaxSize()) {
+                CreateCardPlaceHolder()
+            }
         } else {
             Box(modifier = Modifier
                 .fillMaxSize()
@@ -126,7 +127,7 @@ fun HomeFragment(viewModel: HomeViewModel) {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = spacing56)
-                        .verticalScroll(scrollState)
+                        .verticalScroll(rememberScrollState())
                 ) {
                     state.services.forEachIndexed { index, service ->
                         val color = colors[index % colors.size]
@@ -136,7 +137,8 @@ fun HomeFragment(viewModel: HomeViewModel) {
                                 selectedService = service
                                 showDialog = true
                             },
-                            color = color
+                            color = color,
+                            context = context
                         )
                     }
                 }
@@ -197,6 +199,13 @@ fun HomeFragment(viewModel: HomeViewModel) {
                 }
             )
         }
+    }
+}
+
+@Composable
+private fun CreateCardPlaceHolder() {
+    for (i in 0 until 10) {
+        CardPlaceHolder()
     }
 }
 
