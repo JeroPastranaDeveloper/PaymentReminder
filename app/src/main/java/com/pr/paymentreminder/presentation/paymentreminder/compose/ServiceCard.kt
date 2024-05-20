@@ -1,6 +1,7 @@
 package com.pr.paymentreminder.presentation.paymentreminder.compose
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,8 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
+import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.SvgDecoder
 import com.pr.paymentreminder.data.consts.Constants
@@ -29,6 +30,7 @@ import com.pr.paymentreminder.ui.theme.dimen100
 import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.orElse
 import com.pr.paymentreminder.ui.theme.pastelRed
+import com.pr.paymentreminder.ui.theme.pastelSand
 import com.pr.paymentreminder.ui.theme.semiBlack
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
@@ -39,9 +41,9 @@ import com.pr.paymentreminder.ui.theme.white
 fun ServiceCard(
     service: Service,
     onClick: () -> Unit,
-    color: Color
+    color: Color = pastelSand,
+    context: Context
 ) {
-    val context = LocalContext.current
     val textColor = if (color == semiBlack || color == pastelRed) white else semiBlack
 
     Card(
@@ -67,6 +69,7 @@ fun ServiceCard(
             val imageUrl =
                 service.image.takeIf { it.orEmpty().isNotEmpty() }.orElse { Constants.DEFAULT_IMAGE }
             val image = rememberAsyncImagePainter(model = imageUrl, imageLoader = imageLoader)
+            val isLoadingImage = image.state is AsyncImagePainter.State.Loading
 
             Image(
                 painter = image,
@@ -74,7 +77,8 @@ fun ServiceCard(
                 modifier = Modifier
                     .size(dimen100)
                     .padding(start = spacing4)
-                    .align(Alignment.CenterVertically),
+                    .align(Alignment.CenterVertically)
+                    .placeholder(visible = isLoadingImage),
                 contentScale = ContentScale.Fit,
             )
 

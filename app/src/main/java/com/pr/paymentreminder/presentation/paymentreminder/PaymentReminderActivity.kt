@@ -62,8 +62,8 @@ class PaymentReminderActivity : AppCompatActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
     private val graphicViewModel: GraphicViewModel by viewModels()
     private val paymentsHistoryViewModel: PaymentsHistoryViewModel by viewModels()
-    private val settingsViewModel: SettingsViewModel by viewModels()
     private val paymentReminderViewModel: PaymentReminderViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +87,7 @@ class PaymentReminderActivity : AppCompatActivity() {
     private fun CheckNotificationPermissions() {
         val context = LocalContext.current
         val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
+            ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
             if (permissions[Manifest.permission.POST_NOTIFICATIONS] == true) {
                 paymentReminderViewModel.sendIntent(

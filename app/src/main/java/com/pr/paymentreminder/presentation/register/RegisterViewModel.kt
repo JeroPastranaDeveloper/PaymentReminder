@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.register.RegisterUseCase
-import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiIntent
 import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiAction
+import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiIntent
 import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -61,7 +61,6 @@ class RegisterViewModel @Inject constructor(
             }
         }
     }
-
 
     private fun validateEmail(email: String?) {
         val isEmailInvalid =

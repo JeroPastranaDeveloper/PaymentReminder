@@ -5,6 +5,7 @@ import com.pr.paymentreminder.R
 
 val semiBlack @Composable get() = colorResource(id = R.color.semi_black)
 val white @Composable get() = colorResource(id = R.color.white)
+val light_grey @Composable get() = colorResource(id = R.color.light_grey)
 val green @Composable get() = colorResource(id = R.color.green)
 val red @Composable get() = colorResource(id = R.color.red)
 val blue @Composable get() = colorResource(id = R.color.blue)
