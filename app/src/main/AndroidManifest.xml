@@ -39,5 +39,9 @@
             android:name=".presentation.paymentreminder.add_service.AddServiceActivity"
             android:exported="false"
             android:theme="@style/Theme.PaymentReminder" />
+        <activity
+            android:name=".presentation.paymentreminder.edit_categories.EditCategoriesActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PaymentReminder" />
     </application>
 </manifest>

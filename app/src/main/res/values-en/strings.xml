@@ -27,6 +27,7 @@
     <string name="select_category">Select a category</string>
     <string name="btn_save">Save</string>
     <string name="logout">Log out</string>
+    <string name="edit_categories">Edit categories</string>
     <string name="logout_question">You are going to log out, are you sure?</string>
     <string name="invalid_service_name">Invalid service name</string>
     <string name="invalid_service_category">Invalid service category</string>
@@ -52,6 +53,7 @@
     <string name="yearly_expenditure">Yearly expenditures: %s$</string>
     <string name="yearly_total_expenditure">Total yearly expenditure: %s$</string>
     <string name="edit_service_title">Edit Service</string>
+    <string name="edit_categories_title">Edit Categories</string>
     <string name="service_created">Service created</string>
     <string name="service_updated">Service updated</string>
     <string name="remove_service_title">Remove Service?</string>

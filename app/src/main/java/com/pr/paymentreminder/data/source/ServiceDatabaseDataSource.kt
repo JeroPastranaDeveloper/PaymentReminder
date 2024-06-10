@@ -6,6 +6,6 @@ interface ServiceDatabaseDataSource {
     suspend fun clearAllServicesForm()
     suspend fun getAllServicesForm() : List<Service>?
     suspend fun getServiceForm(serviceId: String) : Service?
-    suspend fun removeService(serviceId: String)
+    suspend fun removeServiceForm(serviceId: String)
     suspend fun saveServiceForm(form: Service)
 }

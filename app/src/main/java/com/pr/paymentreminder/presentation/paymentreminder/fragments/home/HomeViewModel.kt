@@ -3,10 +3,13 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments.home
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.consts.Constants
+import com.pr.paymentreminder.data.model.Category
 import com.pr.paymentreminder.data.model.CustomSnackBarType
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
+import com.pr.paymentreminder.domain.usecase.category_form.GetAllCategoryFormsUseCase
+import com.pr.paymentreminder.domain.usecase.category_form.SaveCategoryFormUseCase
 import com.pr.paymentreminder.domain.usecase.service.CreateServiceUseCase
 import com.pr.paymentreminder.domain.usecase.service.GetServicesUseCase
 import com.pr.paymentreminder.domain.usecase.service.RemoveServiceUseCase
@@ -33,14 +36,22 @@ class HomeViewModel @Inject constructor(
     private val updateServiceUseCase: UpdateServiceUseCase,
     private val alarmScheduler: AlarmScheduler,
     private val preferencesHandler: PreferencesHandler,
-    private val saveServiceForm: SaveServiceFormUseCase
+    private val saveServiceForm: SaveServiceFormUseCase,
+    private val getCategoriesUseCase: GetAllCategoryFormsUseCase,
+    private val saveCategoryFormUseCase: SaveCategoryFormUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow
 
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
-            is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty(), intent.action))
+            is UiIntent.AddEditService -> dispatchAction(
+                UiAction.AddEditService(
+                    intent.serviceId.orEmpty(),
+                    intent.action
+                )
+            )
+
             UiIntent.CheckSnackBarConfig -> checkSnackBarConfig()
             UiIntent.OnDismissSnackBar -> setState { copy(showSnackBar = false) }
             is UiIntent.RemoveService -> removeService(intent.service)
@@ -50,8 +61,10 @@ class HomeViewModel @Inject constructor(
 
     private fun checkSnackBarConfig() {
         viewModelScope.launch {
+
             val snackBarType = sharedSnackBarType.firstOrNull() ?: CustomSnackBarType.NONE
-            val showSnackBar = !(sharedSnackBarType.firstOrNull() == CustomSnackBarType.NONE || sharedSnackBarType.firstOrNull() == CustomSnackBarType.UPDATE_PAID)
+            val showSnackBar =
+                !(sharedSnackBarType.firstOrNull() == CustomSnackBarType.NONE || sharedSnackBarType.firstOrNull() == CustomSnackBarType.UPDATE_PAID)
             setState { copy(showSnackBarType = snackBarType, showSnackBar = showSnackBar) }
             delay(2000)
             SharedShowSnackBarType.resetSharedSnackBarType()
@@ -60,7 +73,30 @@ class HomeViewModel @Inject constructor(
     }
 
     init {
-        if (preferencesHandler.hasToLogin) getServices()
+        viewModelScope.launch {
+            if (preferencesHandler.hasToLogin) {
+                getServices()
+            }
+        }
+    }
+
+    private fun createCategories(services: List<Service>) {
+        viewModelScope.launch {
+            if (services.isEmpty()) {
+                saveCategoryFormUseCase(Category(name = "Entertainment"))
+                saveCategoryFormUseCase(Category(name = "Platforms"))
+            } else {
+                services.map { service ->
+                    val categories = getCategoriesUseCase()
+                    if (categories.orEmpty().isEmpty()) {
+                        val existingCategory = categories?.find { it.name == service.category }
+                        if (existingCategory == null) {
+                            saveCategoryFormUseCase(Category(name = service.category))
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun restoreService(service: Service) {
@@ -107,6 +143,8 @@ class HomeViewModel @Inject constructor(
             getServicesUseCase().collect { services ->
                 val servicesCopy = services.toList()
 
+                createCategories(services)
+
                 servicesCopy.forEach { service ->
                     service.updateDate()
 
@@ -135,7 +173,13 @@ class HomeViewModel @Inject constructor(
     private fun removeService(service: Service) {
         viewModelScope.launch {
             removeServiceUseCase(service.id)
-            setState { copy(serviceToRemove = service, showSnackBar = true, showSnackBarType = CustomSnackBarType.DELETE) }
+            setState {
+                copy(
+                    serviceToRemove = service,
+                    showSnackBar = true,
+                    showSnackBarType = CustomSnackBarType.DELETE
+                )
+            }
         }
     }
 }

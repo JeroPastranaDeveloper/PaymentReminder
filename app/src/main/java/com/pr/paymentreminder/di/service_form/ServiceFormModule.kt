@@ -1,8 +1,10 @@
 package com.pr.paymentreminder.di.service_form
 
 import com.pr.paymentreminder.base.CoroutineIO
+import com.pr.paymentreminder.data.data_source_impls.CategoryDatabaseDataSourceImpl
 import com.pr.paymentreminder.data.data_source_impls.ServiceDatabaseDataSourceImpl
 import com.pr.paymentreminder.data.source.AppDatabase
+import com.pr.paymentreminder.data.source.CategoryDatabaseDataSource
 import com.pr.paymentreminder.data.source.ServiceDatabaseDataSource
 import com.pr.paymentreminder.data.use_case_implementations.service_form.ClearAllServiceFormsUseCaseImpl
 import com.pr.paymentreminder.data.use_case_implementations.service_form.GetAllServiceFormsUseCaseImpl

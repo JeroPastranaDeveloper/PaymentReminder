@@ -46,7 +46,6 @@ import com.pr.paymentreminder.base.BaseActivity
 import com.pr.paymentreminder.base.addRepeatingJob
 import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.ButtonActions
-import com.pr.paymentreminder.data.model.Categories
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.data.model.Service
 import com.pr.paymentreminder.data.model.categoryItem
@@ -105,7 +104,7 @@ class AddServiceActivity : BaseActivity() {
         var servicePrice by remember { mutableStateOf(state.service.price) }
 
         var selectedCategory by remember { mutableStateOf(state.service.category) }
-        val categories = listOf(Categories.AMAZON, Categories.HOBBY, Categories.PLATFORMS)
+        val categories = state.categories
 
         var serviceDate by remember { mutableStateOf(state.service.date) }
 
@@ -349,9 +348,9 @@ class AddServiceActivity : BaseActivity() {
                             ) {
                                 categories.forEach { category ->
                                     DropdownMenuItem(
-                                        text = { Text(text = category.category) },
+                                        text = { Text(text = category.name) },
                                         onClick = {
-                                            selectedCategory = category.category
+                                            selectedCategory = category.name
                                             categoryExpanded = false
                                             viewModel.sendIntent(
                                                 UiIntent.ValidateService(

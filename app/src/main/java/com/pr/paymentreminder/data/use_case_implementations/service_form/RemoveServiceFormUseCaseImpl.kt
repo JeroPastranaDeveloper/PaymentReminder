@@ -8,5 +8,5 @@ class RemoveServiceFormUseCaseImpl @Inject constructor(
     private val serviceDatabaseDataSource: ServiceDatabaseDataSource
 ) : RemoveServiceFormUseCase {
     override suspend fun invoke(serviceId: String) =
-        serviceDatabaseDataSource.removeService(serviceId)
+        serviceDatabaseDataSource.removeServiceForm(serviceId)
 }

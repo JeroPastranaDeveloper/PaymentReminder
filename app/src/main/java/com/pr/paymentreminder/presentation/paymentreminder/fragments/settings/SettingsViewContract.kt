@@ -8,9 +8,12 @@ class SettingsViewContract : BaseViewContract() {
     )
 
     sealed class UiIntent {
+        data object EditCategories : UiIntent()
         data object SignOut : UiIntent()
         data class ShowSignOutDialog(val hasToShow: Boolean) : UiIntent()
     }
 
-    sealed class UiAction
+    sealed class UiAction {
+        data object EditCategories : UiAction()
+    }
 }

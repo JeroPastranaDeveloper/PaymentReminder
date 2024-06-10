@@ -21,6 +21,7 @@ class SettingsViewModel @Inject constructor(
     override val initialViewState = UiState()
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
+            UiIntent.EditCategories -> dispatchAction(UiAction.EditCategories)
             UiIntent.SignOut -> signOut()
             is UiIntent.ShowSignOutDialog -> setState { copy(signOut = intent.hasToShow) }
         }

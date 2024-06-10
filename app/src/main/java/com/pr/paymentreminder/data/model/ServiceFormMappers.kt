@@ -1,6 +1,6 @@
 package com.pr.paymentreminder.data.model
 
-import com.pr.paymentreminder.data.room.ServiceRoom
+import com.pr.paymentreminder.data.room.service.ServiceRoom
 
 fun ServiceRoom.toDomain() = Service(
     id = serviceId,

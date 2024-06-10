@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.data.room
+package com.pr.paymentreminder.data.room.service
 
 import androidx.room.Dao
 import androidx.room.Delete

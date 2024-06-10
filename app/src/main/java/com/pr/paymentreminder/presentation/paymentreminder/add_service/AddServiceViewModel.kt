@@ -16,6 +16,7 @@ import com.pr.paymentreminder.data.model.nameItem
 import com.pr.paymentreminder.data.model.priceItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
+import com.pr.paymentreminder.domain.usecase.category_form.GetAllCategoryFormsUseCase
 import com.pr.paymentreminder.domain.usecase.service.CreateServiceUseCase
 import com.pr.paymentreminder.domain.usecase.service.GetServiceUseCase
 import com.pr.paymentreminder.domain.usecase.service.UpdateServiceUseCase
@@ -38,6 +39,7 @@ class AddServiceViewModel @Inject constructor(
     private val updateService: UpdateServiceUseCase,
     private val saveServiceForm: SaveServiceFormUseCase,
     private val getServiceForm: GetServiceFormUseCase,
+    private val getAllCategoryForms: GetAllCategoryFormsUseCase
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
 
@@ -99,11 +101,14 @@ class AddServiceViewModel @Inject constructor(
                 else -> null
             }
 
+            val categories = getAllCategoryForms()
+
             setState {
                 copy(
                     action = action,
                     serviceId = serviceId,
                     service = service ?: Service(),
+                    categories = categories.orEmpty(),
                     isLoading = false
                 )
             }

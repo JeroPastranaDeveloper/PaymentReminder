@@ -38,6 +38,7 @@
     <string name="select_category">Selecciona categoría</string>
     <string name="btn_save">Guardar</string>
     <string name="logout">Cerrar sesión</string>
+    <string name="edit_categories">Editar categorías</string>
     <string name="logout_question">Vas a cerrar sesión, ¿Estás seguro?</string>
     <string name="invalid_service_name">Nombre del servicio inválido</string>
     <string name="invalid_service_category">Categoría del servicio inválida</string>
@@ -63,6 +64,7 @@
     <string name="yearly_expenditure">Gastos anuales: %s€</string>
     <string name="yearly_total_expenditure">Gasto total anual: %s€</string>
     <string name="edit_service_title">Editar Servicio</string>
+    <string name="edit_categories_title">Editar Categorías</string>
     <string name="service_created">Servicio creado</string>
     <string name="service_updated">Servicio actualizado</string>
     <string name="remove_service_title">¿Borrar servicio?</string>

@@ -1,4 +1,4 @@
-package com.pr.paymentreminder.data.room
+package com.pr.paymentreminder.data.room.service
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
