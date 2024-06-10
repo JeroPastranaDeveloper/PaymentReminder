@@ -59,6 +59,8 @@ class RegisterViewModel @Inject constructor(
                 && !state.value.hasEmailHelperText && !state.value.hasPasswordHelperText && !state.value.hasPasswordValidationHelperText
             ) {
                 register(email, password)
+            } else {
+                setState { copy(isRegisterSuccessful = false) }
             }
         }
     }
@@ -95,11 +97,14 @@ class RegisterViewModel @Inject constructor(
 
     private fun register(email: String?, password: String?) {
         viewModelScope.launch {
-            registerUseCase(email.orEmpty(), password.orEmpty())
+            val isRegisterSuccess = registerUseCase(email.orEmpty(), password.orEmpty())
+            if (isRegisterSuccess) {
+                preferencesHandler.email = email
+                preferencesHandler.password = password
+                preferencesHandler.hasToLogin = true
+                dispatchAction(UiAction.Register)
+                setState { copy(isRegisterSuccessful = true) }
+            } else setState { copy(isRegisterSuccessful = false) }
         }
-        preferencesHandler.email = email
-        preferencesHandler.password = password
-        preferencesHandler.hasToLogin = true
-        dispatchAction(UiAction.Register)
     }
 }

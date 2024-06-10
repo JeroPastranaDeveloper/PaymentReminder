@@ -7,5 +7,6 @@ data class DefaultTextFieldParams(
     val onTextChange: (TextFieldValue) -> Unit,
     val hasHelperText: Boolean,
     val textHelperText: String,
-    val placeHolder: String
+    val placeHolder: String,
+    val isEmail: Boolean = false
 )

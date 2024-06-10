@@ -1,6 +1,7 @@
 package com.pr.paymentreminder.presentation.register
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +46,12 @@ class RegisterActivity : BaseActivity() {
     override fun ComposableContent() {
         addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect(::handleAction) }
         val state by viewModel.state.collectAsState(UiState())
+        LaunchedEffect(state.isRegisterSuccessful) {
+            if (!state.isRegisterSuccessful) {
+                Toast.makeText(this@RegisterActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
+            }
+        }
+
         Content(state)
     }
 
@@ -86,7 +94,8 @@ class RegisterActivity : BaseActivity() {
                     },
                     placeHolder = stringResource(R.string.email),
                     hasHelperText = state.hasEmailHelperText,
-                    textHelperText = stringResource(id = R.string.invalid_email)
+                    textHelperText = stringResource(id = R.string.invalid_email),
+                    isEmail = true
                 )
             )
 

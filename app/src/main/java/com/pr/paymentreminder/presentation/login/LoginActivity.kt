@@ -101,7 +101,8 @@ class LoginActivity : BaseActivity() {
                     },
                     placeHolder = stringResource(R.string.email),
                     hasHelperText = state.hasEmailHelperText,
-                    textHelperText = stringResource(id = R.string.invalid_email)
+                    textHelperText = stringResource(id = R.string.invalid_email),
+                    isEmail = true
                 )
             )
 

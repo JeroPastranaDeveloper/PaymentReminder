@@ -11,7 +11,7 @@ class RegisterViewContract : BaseViewContract() {
         val hasEmailHelperText: Boolean = false,
         val hasPasswordHelperText: Boolean = false,
         val hasPasswordValidationHelperText: Boolean = false,
-        val isLoginSuccessful: Boolean = false
+        val isRegisterSuccessful: Boolean = true
     )
 
     sealed class UiIntent {
