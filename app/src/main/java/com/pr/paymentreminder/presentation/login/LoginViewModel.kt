@@ -52,7 +52,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             val isLoginSuccessful = loginUseCase(loginEmail, loginPassword)
 
-            if (isLoginSuccessful && email.isNotEmpty() && password.isNotEmpty()) {
+            if (isLoginSuccessful && loginEmail.isNotEmpty() && loginPassword.isNotEmpty()) {
                 preferencesHandler.hasToLogin = true
                 preferencesHandler.email = loginEmail
                 preferencesHandler.password = loginPassword
