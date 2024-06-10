@@ -1,6 +1,7 @@
 package com.pr.paymentreminder.ui.theme
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import com.pr.paymentreminder.R
 
 val semiBlack @Composable get() = colorResource(id = R.color.semi_black)
@@ -20,3 +21,16 @@ val pastelPink @Composable get() = colorResource(id = R.color.pastel_pink)
 val pastelPurple @Composable get() = colorResource(id = R.color.pastel_purple)
 val pastelRed @Composable get() = colorResource(id = R.color.pastel_red)
 val pastelSand @Composable get() = colorResource(id = R.color.pastel_sand)
+
+@Composable
+fun getPastelColors(): List<Color> = listOf(
+    pastelRed,
+    pastelPink,
+    pastelBlue,
+    pastelGrey,
+    pastelGreen,
+    pastelSand,
+    pastelPurple,
+    semiBlack,
+    pastelMint
+)

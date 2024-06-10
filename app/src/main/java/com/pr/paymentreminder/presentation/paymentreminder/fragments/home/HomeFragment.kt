@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -50,15 +49,7 @@ import com.pr.paymentreminder.ui.theme.dimen0
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen72
 import com.pr.paymentreminder.ui.theme.emptyString
-import com.pr.paymentreminder.ui.theme.pastelBlue
-import com.pr.paymentreminder.ui.theme.pastelGreen
-import com.pr.paymentreminder.ui.theme.pastelGrey
-import com.pr.paymentreminder.ui.theme.pastelMint
-import com.pr.paymentreminder.ui.theme.pastelPink
-import com.pr.paymentreminder.ui.theme.pastelPurple
-import com.pr.paymentreminder.ui.theme.pastelRed
-import com.pr.paymentreminder.ui.theme.pastelSand
-import com.pr.paymentreminder.ui.theme.semiBlack
+import com.pr.paymentreminder.ui.theme.getPastelColors
 import com.pr.paymentreminder.ui.theme.spacing0
 import com.pr.paymentreminder.ui.theme.spacing144
 import com.pr.paymentreminder.ui.theme.spacing16
@@ -75,7 +66,6 @@ fun HomeFragment(viewModel: HomeViewModel) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val snackBarHeight = if (state.showSnackBar) dimen72 else dimen0
     val fabHeight = if (state.showSnackBar) spacing144 else spacing72
-    val colors: List<Color> = listOf(pastelRed, pastelPink, pastelBlue, pastelGrey, pastelGreen, pastelSand, pastelPurple, semiBlack, pastelMint)
     val animatedSnackBarHeight by animateDpAsState(
         targetValue = snackBarHeight,
         label = emptyString()
@@ -112,8 +102,11 @@ fun HomeFragment(viewModel: HomeViewModel) {
             lifecycleOwner.lifecycle.removeObserver(lifecycleObserver)
         }
     }
+
     Box(
-        modifier = Modifier.fillMaxSize().padding(top = if (state.isLoading) spacing64 else spacing0)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = if (state.isLoading) spacing64 else spacing0)
     ) {
         if (state.isLoading) {
             Column(modifier = Modifier.fillMaxSize()) {
@@ -123,14 +116,13 @@ fun HomeFragment(viewModel: HomeViewModel) {
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(top = spacing64)) {
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = spacing56)
-                        .verticalScroll(rememberScrollState())
                 ) {
-                    state.services.forEachIndexed { index, service ->
-                        val color = colors[index % colors.size]
+                    itemsIndexed(state.services) { index, service ->
+                        val color = getPastelColors()[index % getPastelColors().size]
                         ServiceCard(
                             service = service,
                             onClick = {
@@ -150,10 +142,10 @@ fun HomeFragment(viewModel: HomeViewModel) {
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(bottom = animatedSnackBarHeight),
-                        config = getSnackBarConfig(state.showSnackBarType)
-                    ) {
-                        viewModel.sendIntent(UiIntent.RestoreDeletedService(state.serviceToRemove))
-                    }
+                        config = getSnackBarConfig(state.showSnackBarType),
+                        onClick = { viewModel.sendIntent(UiIntent.RestoreDeletedService(state.serviceToRemove)) },
+                        onDismiss = { viewModel.sendIntent(UiIntent.OnDismissSnackBar) }
+                    )
                 }
             }
 

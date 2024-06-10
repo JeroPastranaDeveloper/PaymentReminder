@@ -1,61 +1,105 @@
 package com.pr.paymentreminder
 
-import androidx.lifecycle.viewModelScope
+import com.nhaarman.mockitokotlin2.mock
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.login.LoginUseCase
+import com.pr.paymentreminder.presentation.login.EmailValidator
+import com.pr.paymentreminder.presentation.login.LoginViewContract.UiAction
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
-import com.pr.paymentreminder.presentation.login.LoginViewContract.UiState
 import com.pr.paymentreminder.presentation.login.LoginViewModel
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-class LoginViewModelTests {
-    private lateinit var vm: LoginViewModel
+class LoginViewModelTests: BaseViewModelTest() {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @get:Rule
-    var coroutineRule = MainCoroutineRule()
+    @Test
+    fun `WHEN email is valid THEN has not helper text`() {
+        val loginUseCase = mock<LoginUseCase>()
+        val preferencesHandler = mock<PreferencesHandler>()
+        val emailValidator = mock<EmailValidator>()
 
-    @Mock
-    private lateinit var loginUseCase: LoginUseCase
-
-    @Mock
-    private lateinit var preferencesHandler: PreferencesHandler
-
-    private fun setUpViewModel() {
-        vm = LoginViewModel(
+        val vm = LoginViewModel(
             loginUseCase = loginUseCase,
-            preferencesHandler = preferencesHandler
+            preferencesHandler = preferencesHandler,
+            emailValidator
         )
+
+        vm.sendIntent(UiIntent.ValidateEmail("cuentadepruebas@gmail.com"))
+
+        assertTrue(!vm.state.value.hasPasswordHelperText)
     }
 
-     @Test
-     fun `WHEN email is not valid THEN has helper text`() {
-         setUpViewModel()
-         val stateChannel = Channel<UiState>()
+    // TODO: Fix this test
+    @Test
+    fun `WHEN email is not valid THEN has helper text`() {
+        val loginUseCase = mock<LoginUseCase>()
+        val preferencesHandler = mock<PreferencesHandler>()
+        val emailValidator = mock<EmailValidator>()
 
-         val job = vm.viewModelScope.launch {
-             vm.state.collect { state ->
-                 stateChannel.send(state)
-             }
-         }
+        val vm = LoginViewModel(
+            loginUseCase = loginUseCase,
+            preferencesHandler = preferencesHandler,
+            emailValidator
+        )
 
-         vm.sendIntent(UiIntent.ValidateEmail(""))
+        vm.sendIntent(UiIntent.ValidateEmail(""))
 
-         runBlocking {
-             val state = stateChannel.receive()
-             assertTrue(state.hasEmailHelperText)
-         }
+        assertTrue(vm.state.value.hasPasswordHelperText)
+    }
 
-         job.cancel()
-     }
+    @Test
+    fun `WHEN password is not valid THEN has helper text`() {
+        val loginUseCase = mock<LoginUseCase>()
+        val preferencesHandler = mock<PreferencesHandler>()
+        val emailValidator = mock<EmailValidator>()
+
+        val vm = LoginViewModel(
+            loginUseCase = loginUseCase,
+            preferencesHandler = preferencesHandler,
+            emailValidator
+        )
+
+        vm.sendIntent(UiIntent.ValidatePassword(""))
+
+        assertTrue(vm.state.value.hasPasswordHelperText)
+    }
+
+    @Test
+    fun `WHEN password is valid THEN has not helper text`() {
+        val loginUseCase = mock<LoginUseCase>()
+        val preferencesHandler = mock<PreferencesHandler>()
+        val emailValidator = mock<EmailValidator>()
+
+        val vm = LoginViewModel(
+            loginUseCase = loginUseCase,
+            preferencesHandler = preferencesHandler,
+            emailValidator
+        )
+
+        vm.sendIntent(UiIntent.ValidatePassword("123456Aa."))
+
+        assertTrue(!vm.state.value.hasPasswordHelperText)
+    }
+
+    @Test
+    fun `WHEN go to register THEN go to register`() {
+        val loginUseCase = mock<LoginUseCase>()
+        val preferencesHandler = mock<PreferencesHandler>()
+        val emailValidator = mock<EmailValidator>()
+
+        val vm = LoginViewModel(
+            loginUseCase = loginUseCase,
+            preferencesHandler = preferencesHandler,
+            emailValidator
+        )
+
+        val actionObserver = vm.actions.observe()
+
+        vm.sendIntent(UiIntent.GoRegister)
+
+        actionObserver.assertLastEquals(UiAction.GoRegister)
+    }
 }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -37,17 +38,24 @@ import com.pr.paymentreminder.ui.theme.spacing18
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing6
 import com.pr.paymentreminder.ui.theme.spacing8
+import kotlinx.coroutines.delay
 
 @Composable
 fun CustomSnackBar(
     modifier: Modifier,
     config: CustomSnackBarConfig,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onDismiss: () -> Unit
 ) {
     val padding = if (config.type != CustomSnackBarType.DELETE) {
         Modifier.padding(start = spacing8, top = spacing16, end = spacing16, bottom = spacing16)
     } else {
         Modifier.padding(start = spacing8)
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        delay(2000)
+        onDismiss()
     }
 
     Box(
@@ -116,6 +124,7 @@ private fun SnackBarPreview() {
             R.drawable.baseline_delete_24,
             "Servicio creado",
             CustomSnackBarType.DELETE
-        )
+        ),
+        onDismiss = {}
     )
 }

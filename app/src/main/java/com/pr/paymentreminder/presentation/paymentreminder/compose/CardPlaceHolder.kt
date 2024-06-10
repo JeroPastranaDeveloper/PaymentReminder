@@ -22,10 +22,13 @@ import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.emptyString
 import com.pr.paymentreminder.ui.theme.spacing4
 import com.pr.paymentreminder.ui.theme.spacing8
+import kotlin.random.Random
 
 @Composable
 fun CardPlaceHolder() {
     val image = rememberAsyncImagePainter(model = emptyString())
+    fun randomString(length: Int) = Random.nextBytes(length).joinToString("") { "%02x".format(it) }.substring(0, length)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,7 +42,7 @@ fun CardPlaceHolder() {
                 contentDescription = null,
                 modifier = Modifier
                     .size(dimen100)
-                    .padding(start = spacing4)
+                    .padding(start = spacing8, top = spacing4, bottom = spacing4)
                     .align(Alignment.CenterVertically)
                     .placeholder(true),
                 contentScale = ContentScale.Fit,
@@ -52,19 +55,19 @@ fun CardPlaceHolder() {
                     .weight(1f)
             ) {
                 Text(
-                    text = "ahdfkafdhai",
+                    text = randomString(10),
                     modifier = Modifier.padding(spacing4).placeholder(visible = true),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(dimen8))
                 Text(
-                    text = "ahdfkafdhaikaf",
+                    text = randomString(15),
                     modifier = Modifier.padding(spacing4).placeholder(visible = true),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(dimen8))
                 Text(
-                    text = "ahdfk",
+                    text = randomString(5),
                     modifier = Modifier.padding(spacing4).placeholder(visible = true),
                     style = MaterialTheme.typography.bodyMedium
                 )

@@ -42,6 +42,7 @@ class HomeViewModel @Inject constructor(
         when (intent) {
             is UiIntent.AddEditService -> dispatchAction(UiAction.AddEditService(intent.serviceId.orEmpty(), intent.action))
             UiIntent.CheckSnackBarConfig -> checkSnackBarConfig()
+            UiIntent.OnDismissSnackBar -> setState { copy(showSnackBar = false) }
             is UiIntent.RemoveService -> removeService(intent.service)
             is UiIntent.RestoreDeletedService -> restoreService(intent.service)
         }
@@ -102,11 +103,7 @@ class HomeViewModel @Inject constructor(
             )
         }
 
-        /**
-         * The second of wait is to complete the login process.
-         */
         viewModelScope.launch {
-            delay(1000)
             getServicesUseCase().collect { services ->
                 val servicesCopy = services.toList()
 
@@ -136,12 +133,9 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun removeService(service: Service) {
-        setState { copy(showSnackBar = false) }
         viewModelScope.launch {
-            setState { copy(serviceToRemove = service, showSnackBar = true, showSnackBarType = CustomSnackBarType.DELETE) }
             removeServiceUseCase(service.id)
-            delay(2000)
-            setState { copy(showSnackBar = false) }
+            setState { copy(serviceToRemove = service, showSnackBar = true, showSnackBarType = CustomSnackBarType.DELETE) }
         }
     }
 }
