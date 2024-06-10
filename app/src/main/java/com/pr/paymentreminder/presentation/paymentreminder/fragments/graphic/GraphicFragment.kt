@@ -13,15 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
-import com.pr.paymentreminder.data.consts.Constants
-import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.presentation.paymentreminder.compose.DonutChart
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServicesChip
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiIntent
@@ -32,20 +27,7 @@ import com.pr.paymentreminder.ui.theme.spacing16
 
 @Composable
 fun GraphicFragment(viewModel: GraphicViewModel) {
-
     val state by viewModel.state.collectAsState(UiState())
-    var selectedChip by remember { mutableStateOf(Constants.ALL_SERVICES) }
-
-    val paymentWeekly = PaymentType.WEEKLY.type
-    val paymentMonthly = PaymentType.MONTHLY.type
-    val paymentYearly = PaymentType.YEARLY.type
-
-    val serviceTypes = listOf(
-        Pair(R.string.all_services, Constants.ALL_SERVICES),
-        Pair(R.string.weekly_services, paymentWeekly),
-        Pair(R.string.monthly_services, paymentMonthly),
-        Pair(R.string.yearly_services, paymentYearly)
-    )
 
     Column(
         modifier = Modifier
@@ -54,12 +36,13 @@ fun GraphicFragment(viewModel: GraphicViewModel) {
     ) {
         Spacer(modifier = Modifier.height(dimen64))
         Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-            serviceTypes.forEach { (stringId, serviceType) ->
+            state.serviceTypes.forEach { (stringId, serviceType) ->
                 ServicesChip(
                     title = stringResource(id = stringId),
-                    onClick = { viewModel.sendIntent(UiIntent.GetFilteredServices(serviceType)) },
-                    selected = selectedChip == serviceType,
-                    onSelectedChange = { selectedChip = it }
+                    onClick = {
+                        viewModel.sendIntent(UiIntent.GetFilteredServices(serviceType))
+                    },
+                    selected = state.selectedChip == serviceType
                 )
             }
         }

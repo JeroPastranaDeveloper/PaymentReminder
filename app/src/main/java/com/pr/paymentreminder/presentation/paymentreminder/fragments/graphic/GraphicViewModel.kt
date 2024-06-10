@@ -30,9 +30,12 @@ class GraphicViewModel @Inject constructor(
     }
 
     private fun calculateExpenditure(services: List<Service>) {
-        val weeklyServices = services.filter { it.type == Constants.WEEKLY }.sumOf { it.price.toDouble() }
-        val monthlyServices = services.filter { it.type == Constants.MONTHLY }.sumOf { it.price.toDouble() }
-        val yearlyServices = services.filter { it.type == Constants.YEARLY }.sumOf { it.price.toDouble() }
+        val weeklyServices =
+            services.filter { it.type == Constants.WEEKLY }.sumOf { it.price.toDouble() }
+        val monthlyServices =
+            services.filter { it.type == Constants.MONTHLY }.sumOf { it.price.toDouble() }
+        val yearlyServices =
+            services.filter { it.type == Constants.YEARLY }.sumOf { it.price.toDouble() }
 
         val monthlyExpenditure = (weeklyServices * 4.5) + monthlyServices
         val yearlyExpenditure = (monthlyExpenditure * 12) + yearlyServices
@@ -57,7 +60,7 @@ class GraphicViewModel @Inject constructor(
                         services
                     } else {
                         services.filter { it.type.contains(filter) }
-                    })
+                    }, selectedChip = filter)
                 }
             }
         }

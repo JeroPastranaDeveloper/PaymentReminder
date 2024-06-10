@@ -27,8 +27,6 @@ fun Float.scaledSp(): TextUnit {
 
 fun emptyString(): String = ""
 
-fun emptyTextField(): TextFieldValue = TextFieldValue("")
-
 fun TextFieldValue?.orEmpty(): TextFieldValue = this ?: TextFieldValue("")
 
 fun <T> T?.orElse(result: () -> T): T = this ?: result()

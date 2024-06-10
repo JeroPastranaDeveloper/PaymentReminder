@@ -152,7 +152,7 @@ class AddServiceActivity : BaseActivity() {
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(spacing16),
+                            .padding(start = spacing16, end = spacing16, bottom = spacing16),
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
                         OutlinedTextField(
@@ -168,7 +168,6 @@ class AddServiceActivity : BaseActivity() {
                         Visible(state.nameHelperText.orFalse()) {
                             HelperText(stringResource(R.string.invalid_service_name))
                         }
-                        Spacer(modifier = Modifier.height(dimen16))
 
                         OutlinedTextField(
                             value = servicePrice,
@@ -236,8 +235,6 @@ class AddServiceActivity : BaseActivity() {
                                 HelperText(stringResource(id = R.string.invalid_service_type))
                             }
 
-                            Spacer(modifier = Modifier.height(dimen16))
-
                             DropdownMenu(
                                 expanded = typesExpanded,
                                 onDismissRequest = {
@@ -266,6 +263,8 @@ class AddServiceActivity : BaseActivity() {
                                     )
                                 }
                             }
+
+                            Spacer(modifier = Modifier.height(dimen16))
                         }
 
                         Visible(visible = state.action != ButtonActions.EDIT_PAID.name) {
@@ -285,8 +284,6 @@ class AddServiceActivity : BaseActivity() {
                                     Spacer(modifier = Modifier.height(dimen4))
                                     HelperText(stringResource(R.string.invalid_service_remember))
                                 }
-
-                                Spacer(modifier = Modifier.height(dimen16))
 
                                 DropdownMenu(
                                     expanded = daysExpanded,
@@ -316,6 +313,8 @@ class AddServiceActivity : BaseActivity() {
                                         )
                                     }
                                 }
+
+                                Spacer(modifier = Modifier.height(dimen16))
                             }
                         }
 
@@ -334,7 +333,7 @@ class AddServiceActivity : BaseActivity() {
                                 HelperText(stringResource(R.string.invalid_service_category))
                             }
 
-                            Spacer(modifier = Modifier.height(dimen16))
+                            // Spacer(modifier = Modifier.height(dimen16))
 
                             DropdownMenu(
                                 expanded = categoryExpanded,
@@ -413,7 +412,6 @@ class AddServiceActivity : BaseActivity() {
                             comments,
                             serviceUrl
                         )
-
 
                         SaveButton(newServiceData)
                     }

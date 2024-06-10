@@ -20,8 +20,7 @@ import com.pr.paymentreminder.ui.theme.white
 fun ServicesChip(
     title: String,
     onClick: () -> Unit,
-    selected: Boolean,
-    onSelectedChange: (String) -> Unit
+    selected: Boolean
 ) {
     val colors = if (selected) semiBlack else white
     val contentColors = if (selected) white else semiBlack
@@ -35,10 +34,7 @@ fun ServicesChip(
         contentColor = contentColors
     ) {
         Text(title, modifier = Modifier
-            .clickable {
-                onClick()
-                onSelectedChange(title)
-            }
-            .padding(spacing8))
+            .padding(spacing8)
+            .clickable { onClick() })
     }
 }
