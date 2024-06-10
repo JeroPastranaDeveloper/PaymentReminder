@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +24,6 @@ import com.pr.paymentreminder.data.consts.Constants
 import com.pr.paymentreminder.data.model.PaymentType
 import com.pr.paymentreminder.presentation.paymentreminder.compose.DonutChart
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServicesChip
-import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiState
 import com.pr.paymentreminder.ui.theme.dimen56
@@ -41,18 +39,6 @@ fun GraphicFragment(viewModel: GraphicViewModel) {
     val paymentWeekly = PaymentType.WEEKLY.type
     val paymentMonthly = PaymentType.MONTHLY.type
     val paymentYearly = PaymentType.YEARLY.type
-
-    fun handleAction(action: UiAction) {
-        when (action) {
-            else -> {}
-        }
-    }
-
-    LaunchedEffect(viewModel) {
-        viewModel.actions.collect { action ->
-            handleAction(action)
-        }
-    }
 
     val serviceTypes = listOf(
         Pair(R.string.all_services, Constants.ALL_SERVICES),
