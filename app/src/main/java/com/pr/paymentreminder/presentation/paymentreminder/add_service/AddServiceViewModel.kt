@@ -144,7 +144,7 @@ class AddServiceViewModel @Inject constructor(
     ) {
         val isEmpty = value.isEmpty()
         val today = LocalDate.now()
-        val isDateAfter = if(state.value.action == ButtonActions.EDIT_PAID.name) {
+        val isDateAfter = if (state.value.action == ButtonActions.EDIT_PAID.name) {
             service.getDate().isAfter(today)
         } else false
 

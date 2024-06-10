@@ -1,6 +1,5 @@
 package com.pr.paymentreminder.notifications
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.Application
 import android.app.PendingIntent
@@ -21,7 +20,6 @@ class AlarmSchedulerImpl @Inject constructor(
     private val application: Application,
     private val preferencesHandler: PreferencesHandler
 ) : AlarmScheduler {
-    @SuppressLint("ScheduleExactAlarm")
     override suspend fun scheduleAlarm(service: Service) {
         val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 

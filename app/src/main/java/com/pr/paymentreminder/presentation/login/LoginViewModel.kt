@@ -1,6 +1,5 @@
 package com.pr.paymentreminder.presentation.login
 
-import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
@@ -15,17 +14,34 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val preferencesHandler: PreferencesHandler
+    private val preferencesHandler: PreferencesHandler,
+    private val emailValidator: EmailValidator
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
 
     override val initialViewState = UiState()
 
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
+            is UiIntent.CheckIsValidInput -> checkIsValidInput(intent.email, intent.password)
             is UiIntent.DoLogin -> login(intent.email, intent.password)
             UiIntent.GoRegister -> dispatchAction(UiAction.GoRegister)
             is UiIntent.ValidateEmail -> validateEmail(intent.email)
             is UiIntent.ValidatePassword -> validatePassword(intent.password)
+        }
+    }
+
+    init {
+        checkLogin()
+    }
+
+    private fun checkIsValidInput(email: String, password: String) {
+        validateEmail(email)
+        validatePassword(password)
+        if (!state.value.hasEmailHelperText && !state.value.hasPasswordHelperText) {
+            setState { copy(isValidInput = true) }
+            login(email, password)
+        } else {
+            setState { copy(isValidInput = false) }
         }
     }
 
@@ -34,19 +50,16 @@ class LoginViewModel @Inject constructor(
         val loginPassword = password.ifEmpty { preferencesHandler.password.orEmpty() }
 
         viewModelScope.launch {
-            loginUseCase(loginEmail, loginPassword)
-            if (email.isNotEmpty() && password.isNotEmpty()) {
+            val isLoginSuccessful = loginUseCase(loginEmail, loginPassword)
+
+            if (isLoginSuccessful && email.isNotEmpty() && password.isNotEmpty()) {
                 preferencesHandler.hasToLogin = true
                 preferencesHandler.email = loginEmail
                 preferencesHandler.password = loginPassword
-            }
+
+                dispatchAction(UiAction.Login)
+            } else setState { copy(isValidInput = false) }
         }
-        dispatchAction(UiAction.Login)
-    }
-
-
-    init {
-        checkLogin()
     }
 
     private fun checkLogin() {
@@ -56,7 +69,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun validateEmail(email: String) {
-        val isEmailInvalid = !Patterns.EMAIL_ADDRESS.matcher(email).matches() || email.isEmpty()
+        val isEmailInvalid = emailValidator.validate(email)
         setState {
             copy(hasEmailHelperText = isEmailInvalid)
         }

@@ -7,8 +7,8 @@ import com.pr.paymentreminder.data.model.Service
 class HomeViewContract : BaseViewContract() {
     data class UiState(
         val isLoading: Boolean = false,
-        val serviceToRemove: Service = Service(),
         val services: List<Service> = emptyList(),
+        val serviceToRemove: Service = Service(),
         val showSnackBarType: CustomSnackBarType = CustomSnackBarType.NONE,
         val showSnackBar: Boolean = false
     )
@@ -16,6 +16,7 @@ class HomeViewContract : BaseViewContract() {
     sealed class UiIntent {
         data class AddEditService(val serviceId: String?, val action: String) : UiIntent()
         data object CheckSnackBarConfig : UiIntent()
+        data object OnDismissSnackBar : UiIntent()
         data class RemoveService(val service: Service) : UiIntent()
         data class RestoreDeletedService(val service: Service) : UiIntent()
     }

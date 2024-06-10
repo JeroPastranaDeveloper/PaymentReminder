@@ -21,7 +21,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -37,15 +36,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_hi
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewContract.UiState
 import com.pr.paymentreminder.ui.theme.dimen56
-import com.pr.paymentreminder.ui.theme.pastelBlue
-import com.pr.paymentreminder.ui.theme.pastelGreen
-import com.pr.paymentreminder.ui.theme.pastelGrey
-import com.pr.paymentreminder.ui.theme.pastelMint
-import com.pr.paymentreminder.ui.theme.pastelPink
-import com.pr.paymentreminder.ui.theme.pastelPurple
-import com.pr.paymentreminder.ui.theme.pastelRed
-import com.pr.paymentreminder.ui.theme.pastelSand
-import com.pr.paymentreminder.ui.theme.semiBlack
+import com.pr.paymentreminder.ui.theme.getPastelColors
 import com.pr.paymentreminder.ui.theme.spacing56
 import com.pr.paymentreminder.ui.theme.spacing64
 import com.pr.paymentreminder.ui.theme.spacing8
@@ -126,14 +117,13 @@ private fun ServicesFlowRow(
     services: List<Service>,
     viewModel: PaymentsHistoryViewModel
 ) {
-    val colors: List<Color> = listOf(pastelRed, pastelPink, pastelBlue, pastelGrey, pastelGreen, pastelSand, pastelPurple, semiBlack, pastelMint)
     FlowRow(
         modifier = Modifier.fillMaxSize(),
         maxItemsInEachRow = 2,
         verticalArrangement = Arrangement.spacedBy(spacing8)
     ) {
         services.forEachIndexed { index, service ->
-            val color = colors[index % colors.size]
+            val color = getPastelColors()[index % getPastelColors().size]
             SmallServiceCard(service, color,
                 onClick = {
                     viewModel.sendIntent(UiIntent.EditService(service.id))

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,6 +51,12 @@ class LoginActivity : BaseActivity() {
 
         addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect(::handleAction) }
         val state by viewModel.state.collectAsState(UiState())
+
+        LaunchedEffect(state.isValidInput) {
+            if (!state.isValidInput) {
+                Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
+            }
+        }
 
         Content(state)
     }
@@ -120,12 +127,7 @@ class LoginActivity : BaseActivity() {
             }
 
             RegisterLoginButton(R.string.login) {
-                initialValidations(emailText, passText)
-                if (isValidInput(state)) {
-                    viewModel.sendIntent(UiIntent.DoLogin(emailText.value.text, passText.value.text))
-                } else {
-                    Toast.makeText(this@LoginActivity, R.string.invalid_data, Toast.LENGTH_SHORT).show()
-                }
+                viewModel.sendIntent(UiIntent.CheckIsValidInput(emailText.value.text, passText.value.text))
             }
         }
     }
@@ -136,13 +138,6 @@ class LoginActivity : BaseActivity() {
     ) {
         viewModel.sendIntent(UiIntent.ValidateEmail(emailText.value.text))
         viewModel.sendIntent(UiIntent.ValidatePassword(passText.value.text))
-    }
-
-    private fun isValidInput(state: UiState): Boolean {
-        val isEmailValid = !state.hasEmailHelperText
-        val isPasswordValid = !state.hasPasswordHelperText
-
-        return isEmailValid && isPasswordValid
     }
 
     private fun goRegister() {

@@ -1,10 +1,10 @@
 package com.pr.paymentreminder.presentation.register
 
-import android.util.Patterns
 import androidx.lifecycle.viewModelScope
 import com.pr.paymentreminder.base.BaseComposeViewModelWithActions
 import com.pr.paymentreminder.data.preferences.PreferencesHandler
 import com.pr.paymentreminder.domain.usecase.register.RegisterUseCase
+import com.pr.paymentreminder.presentation.login.EmailValidator
 import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiAction
 import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiIntent
 import com.pr.paymentreminder.presentation.register.RegisterViewContract.UiState
@@ -17,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
-    private val preferencesHandler: PreferencesHandler
+    private val preferencesHandler: PreferencesHandler,
+    private val emailValidator: EmailValidator
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
 
@@ -63,8 +64,7 @@ class RegisterViewModel @Inject constructor(
     }
 
     private fun validateEmail(email: String?) {
-        val isEmailInvalid =
-            !Patterns.EMAIL_ADDRESS.matcher(email.orEmpty()).matches() || email?.isEmpty() == true
+        val isEmailInvalid = emailValidator.validate(email.orEmpty())
         setState {
             copy(
                 hasEmailHelperText = isEmailInvalid,

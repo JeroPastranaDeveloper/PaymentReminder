@@ -3,7 +3,6 @@ package com.pr.paymentreminder.presentation.paymentreminder.add_service
 import android.app.DatePickerDialog
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,20 +14,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,12 +53,11 @@ import com.pr.paymentreminder.data.model.categoryItem
 import com.pr.paymentreminder.data.model.dateItem
 import com.pr.paymentreminder.data.model.rememberItem
 import com.pr.paymentreminder.data.model.typeItem
-import com.pr.paymentreminder.presentation.paymentreminder.compose.HelperText
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.add_service.AddServiceViewContract.UiState
+import com.pr.paymentreminder.presentation.paymentreminder.compose.HelperText
 import com.pr.paymentreminder.ui.theme.Visible
-import com.pr.paymentreminder.ui.theme.dimen1
 import com.pr.paymentreminder.ui.theme.dimen16
 import com.pr.paymentreminder.ui.theme.dimen4
 import com.pr.paymentreminder.ui.theme.emptyString
@@ -159,15 +155,13 @@ class AddServiceActivity : BaseActivity() {
                             .padding(spacing16),
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
-
-                        TextField(
+                        OutlinedTextField(
                             value = serviceName,
                             onValueChange = { serviceName = it },
                             label = { Text(stringResource(id = R.string.service_name)) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = spacing8)
-                                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                                .padding(vertical = spacing8),
                             singleLine = false
                         )
 
@@ -176,14 +170,13 @@ class AddServiceActivity : BaseActivity() {
                         }
                         Spacer(modifier = Modifier.height(dimen16))
 
-                        TextField(
+                        OutlinedTextField(
                             value = servicePrice,
                             onValueChange = { servicePrice = it },
                             label = { Text(stringResource(id = R.string.service_price)) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = spacing8)
-                                .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                                .padding(vertical = spacing8),
                             singleLine = false
                         )
 
@@ -258,18 +251,19 @@ class AddServiceActivity : BaseActivity() {
                                 }
                             ) {
                                 types.forEach { type ->
-                                    DropdownMenuItem(onClick = {
-                                        selectedType = type.type
-                                        typesExpanded = false
-                                        viewModel.sendIntent(
-                                            UiIntent.ValidateService(
-                                                typeItem,
-                                                selectedType
+                                    DropdownMenuItem(
+                                        text = { Text(text = type.type) },
+                                        onClick = {
+                                            selectedType = type.type
+                                            typesExpanded = false
+                                            viewModel.sendIntent(
+                                                UiIntent.ValidateService(
+                                                    typeItem,
+                                                    selectedType
+                                                )
                                             )
-                                        )
-                                    }) {
-                                        Text(text = type.type)
-                                    }
+                                        }
+                                    )
                                 }
                             }
                         }
@@ -307,18 +301,19 @@ class AddServiceActivity : BaseActivity() {
                                     }
                                 ) {
                                     rememberDays.forEach { day ->
-                                        DropdownMenuItem(onClick = {
-                                            selectedRemember = day.toString()
-                                            daysExpanded = false
-                                            viewModel.sendIntent(
-                                                UiIntent.ValidateService(
-                                                    rememberItem,
-                                                    selectedRemember
+                                        DropdownMenuItem(
+                                            text = { Text(text = day.toString()) },
+                                            onClick = {
+                                                selectedRemember = day.toString()
+                                                daysExpanded = false
+                                                viewModel.sendIntent(
+                                                    UiIntent.ValidateService(
+                                                        rememberItem,
+                                                        selectedRemember
+                                                    )
                                                 )
-                                            )
-                                        }) {
-                                            Text(text = day.toString())
-                                        }
+                                            }
+                                        )
                                     }
                                 }
                             }
@@ -354,46 +349,46 @@ class AddServiceActivity : BaseActivity() {
                                 }
                             ) {
                                 categories.forEach { category ->
-                                    DropdownMenuItem(onClick = {
-                                        selectedCategory = category.category
-                                        categoryExpanded = false
-                                        viewModel.sendIntent(
-                                            UiIntent.ValidateService(
-                                                categoryItem,
-                                                selectedCategory
+                                    DropdownMenuItem(
+                                        text = { Text(text = category.category) },
+                                        onClick = {
+                                            selectedCategory = category.category
+                                            categoryExpanded = false
+                                            viewModel.sendIntent(
+                                                UiIntent.ValidateService(
+                                                    categoryItem,
+                                                    selectedCategory
+                                                )
                                             )
-                                        )
-                                    }) {
-                                        Text(text = category.category)
-                                    }
+                                        }
+                                    )
                                 }
                             }
                         }
+
                         Visible(visible = state.action != ButtonActions.EDIT_PAID.name) {
-                            TextField(
+                            OutlinedTextField(
                                 value = imageUrl,
                                 onValueChange = { imageUrl = it },
                                 label = { Text(stringResource(id = R.string.service_image_url)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = spacing8)
-                                    .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                                    .padding(vertical = spacing8),
                                 singleLine = true
                             )
 
-                            TextField(
+                            OutlinedTextField(
                                 value = serviceUrl,
                                 onValueChange = { serviceUrl = it },
                                 label = { Text(stringResource(id = R.string.service_url)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = spacing8)
-                                    .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                                    .padding(vertical = spacing8),
                                 singleLine = true
                             )
                         }
 
-                        TextField(
+                        OutlinedTextField(
                             value = comments,
                             onValueChange = { comments = it },
                             label = { Text(stringResource(id = R.string.service_comments)) },
@@ -419,6 +414,7 @@ class AddServiceActivity : BaseActivity() {
                             serviceUrl
                         )
 
+
                         SaveButton(newServiceData)
                     }
                 }
@@ -430,9 +426,10 @@ class AddServiceActivity : BaseActivity() {
     private fun SaveButton(
         service: Service
     ) {
-        Button(
+        OutlinedButton(
             onClick = { viewModel.sendIntent(UiIntent.ValidateAndSave(service)) },
-            modifier = Modifier.fillMaxWidth()) {
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text(text = stringResource(id = R.string.btn_save))
         }
     }
@@ -458,25 +455,23 @@ class AddServiceActivity : BaseActivity() {
                     .padding(horizontal = spacing16),
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                TextField(
+                OutlinedTextField(
                     value = emptyString(),
                     onValueChange = {},
                     label = { Text(stringResource(id = R.string.service_name)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = spacing8)
-                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                        .padding(vertical = spacing8),
                     singleLine = false
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = emptyString(),
                     onValueChange = {},
                     label = { Text(stringResource(id = R.string.service_price)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = spacing8)
-                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                        .padding(vertical = spacing8),
                     singleLine = false
                 )
 
@@ -497,42 +492,39 @@ class AddServiceActivity : BaseActivity() {
                     text = stringResource(id = R.string.category, "Amazon")
                 )
                 Spacer(modifier = Modifier.height(dimen16))
-                TextField(
+                OutlinedTextField(
                     value = "Comentarios jeje",
                     onValueChange = {},
                     label = { Text(stringResource(id = R.string.service_comments)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = spacing8)
-                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                        .padding(vertical = spacing8),
                     singleLine = true
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = "URL de la imagen",
                     onValueChange = {},
                     label = { Text(stringResource(id = R.string.service_image_url)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = spacing8)
-                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                        .padding(vertical = spacing8),
                     singleLine = true
                 )
 
-                TextField(
+                OutlinedTextField(
                     value = "URL del servicio",
                     onValueChange = {},
                     label = { Text(stringResource(id = R.string.service_url)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = spacing8)
-                        .border(dimen1, Color.Gray, RoundedCornerShape(dimen4)),
+                        .padding(vertical = spacing8),
                     singleLine = true
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick = {}, modifier = Modifier.fillMaxWidth()) {
                     Text(text = stringResource(id = R.string.btn_save))
                 }
             }
