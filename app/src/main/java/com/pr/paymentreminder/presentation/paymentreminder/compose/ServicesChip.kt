@@ -9,7 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.pr.paymentreminder.ui.theme.dimen1
-import com.pr.paymentreminder.ui.theme.dimen4
+import com.pr.paymentreminder.ui.theme.dimen8
 import com.pr.paymentreminder.ui.theme.pastelGrey
 import com.pr.paymentreminder.ui.theme.semiBlack
 import com.pr.paymentreminder.ui.theme.spacing4
@@ -28,8 +28,8 @@ fun ServicesChip(
     Surface(
         modifier = Modifier
             .padding(end = spacing4)
-            .border(dimen1, pastelGrey, RoundedCornerShape(dimen4)),
-        shape = RoundedCornerShape(spacing4),
+            .border(dimen1, pastelGrey, RoundedCornerShape(dimen8)),
+        shape = RoundedCornerShape(spacing8),
         color = colors,
         contentColor = semiBlack
     ) {
