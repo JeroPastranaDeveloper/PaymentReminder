@@ -23,7 +23,8 @@ fun ServicesChip(
     selected: Boolean,
     onSelectedChange: (String) -> Unit
 ) {
-    val colors = if (selected) pastelGrey else white
+    val colors = if (selected) semiBlack else white
+    val contentColors = if (selected) white else semiBlack
 
     Surface(
         modifier = Modifier
@@ -31,7 +32,7 @@ fun ServicesChip(
             .border(dimen1, pastelGrey, RoundedCornerShape(dimen8)),
         shape = RoundedCornerShape(spacing8),
         color = colors,
-        contentColor = semiBlack
+        contentColor = contentColors
     ) {
         Text(title, modifier = Modifier
             .clickable {
