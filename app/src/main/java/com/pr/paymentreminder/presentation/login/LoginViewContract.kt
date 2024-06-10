@@ -8,7 +8,6 @@ class LoginViewContract : BaseViewContract() {
         val email: String = emptyString(),
         val hasEmailHelperText: Boolean = false,
         val hasPasswordHelperText: Boolean = false,
-        val isLoginSuccessful: Boolean = false,
         val isValidInput: Boolean = true,
         val password: String = emptyString()
     )
