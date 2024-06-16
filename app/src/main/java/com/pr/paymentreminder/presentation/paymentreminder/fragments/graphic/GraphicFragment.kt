@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.presentation.paymentreminder.compose.DonutChart
-import com.pr.paymentreminder.presentation.paymentreminder.compose.ServicesChip
+import com.pr.paymentreminder.presentation.paymentreminder.compose.CustomChip
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.GraphicViewContract.UiState
 import com.pr.paymentreminder.ui.theme.dimen56
@@ -37,7 +37,7 @@ fun GraphicFragment(viewModel: GraphicViewModel) {
         Spacer(modifier = Modifier.height(dimen64))
         Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
             state.serviceTypes.forEach { (stringId, serviceType) ->
-                ServicesChip(
+                CustomChip(
                     title = stringResource(id = stringId),
                     onClick = {
                         viewModel.sendIntent(UiIntent.GetFilteredServices(serviceType))

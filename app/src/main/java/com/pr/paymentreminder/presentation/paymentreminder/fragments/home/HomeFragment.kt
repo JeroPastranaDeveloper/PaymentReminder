@@ -3,15 +3,19 @@ package com.pr.paymentreminder.presentation.paymentreminder.fragments.home
 import android.content.Context
 import android.content.Intent
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -32,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.pr.paymentreminder.R
+import com.pr.paymentreminder.data.model.ALL_CATEGORIES
 import com.pr.paymentreminder.data.model.ButtonActions
 import com.pr.paymentreminder.data.model.CustomSnackBarConfig
 import com.pr.paymentreminder.data.model.CustomSnackBarType
@@ -41,6 +46,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.compose.CardPlaceHold
 import com.pr.paymentreminder.presentation.paymentreminder.compose.CustomSnackBar
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceCard
 import com.pr.paymentreminder.presentation.paymentreminder.compose.ServiceDialog
+import com.pr.paymentreminder.presentation.paymentreminder.compose.CustomChip
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.home.HomeViewContract.UiState
@@ -53,9 +59,11 @@ import com.pr.paymentreminder.ui.theme.getPastelColors
 import com.pr.paymentreminder.ui.theme.spacing0
 import com.pr.paymentreminder.ui.theme.spacing144
 import com.pr.paymentreminder.ui.theme.spacing16
+import com.pr.paymentreminder.ui.theme.spacing40
 import com.pr.paymentreminder.ui.theme.spacing56
 import com.pr.paymentreminder.ui.theme.spacing64
 import com.pr.paymentreminder.ui.theme.spacing72
+import com.pr.paymentreminder.ui.theme.spacing8
 
 @Composable
 fun HomeFragment(viewModel: HomeViewModel) {
@@ -113,13 +121,31 @@ fun HomeFragment(viewModel: HomeViewModel) {
                 CreateCardPlaceHolder()
             }
         } else {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(top = spacing64)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = spacing64)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(start = spacing8, end = spacing8)
+                ) {
+                    CustomChip(title = stringResource(id = R.string.all_categories), onClick = {
+                        viewModel.sendIntent(UiIntent.FilterCategory(ALL_CATEGORIES))
+                    }, selected = state.selectedCategory == ALL_CATEGORIES)
+                    state.categories.forEach { category ->
+                        CustomChip(title = category.name, onClick = {
+                            viewModel.sendIntent(UiIntent.FilterCategory(category.name))
+                        }, selected = state.selectedCategory == category.name)
+                    }
+                }
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = spacing56)
+                        .padding(top = spacing40, bottom = spacing56)
                 ) {
                     itemsIndexed(state.services) { index, service ->
                         val color = getPastelColors()[index % getPastelColors().size]

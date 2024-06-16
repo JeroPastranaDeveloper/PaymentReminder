@@ -65,4 +65,5 @@
     <string name="notifications_enabled">Notifications enabled</string>
     <string name="exact_alarm_enabled">Set alarms enabled</string>
     <string name="cannot_notificate">Notifications cannot be published</string>
+    <string name="all_categories">All</string>
 </resources>

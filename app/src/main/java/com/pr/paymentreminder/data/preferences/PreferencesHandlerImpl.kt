@@ -2,6 +2,7 @@ package com.pr.paymentreminder.data.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.pr.paymentreminder.ui.theme.emptyString
 
 class PreferencesHandlerImpl(context: Context) : PreferencesHandler {
 
@@ -10,11 +11,12 @@ class PreferencesHandlerImpl(context: Context) : PreferencesHandler {
 
     private val edit = sharedPreferences.edit()
 
-    fun clear() {
+    override fun clear() {
         edit.clear().apply()
     }
 
     companion object {
+        private const val CATEGORIES = "categories"
         private const val EMAIL = "email"
         private const val EXACT_ALARM_GRANTED = "exactAlarmGranted"
         private const val FIRST_TIME = "firstTime"
@@ -23,8 +25,14 @@ class PreferencesHandlerImpl(context: Context) : PreferencesHandler {
         private const val PASSWORD = "password"
     }
 
+    override var createCategories: Boolean
+        get() = sharedPreferences.getBoolean(CATEGORIES, false)
+        set(value) {
+            this.edit.putBoolean(CATEGORIES, value)?.apply()
+        }
+
     override var email: String?
-        get() = sharedPreferences.getString(EMAIL, null)
+        get() = sharedPreferences.getString(EMAIL, emptyString())
         set(value) {
             this.edit.putString(EMAIL, value)?.apply()
         }
@@ -54,7 +62,7 @@ class PreferencesHandlerImpl(context: Context) : PreferencesHandler {
         }
 
     override var password: String?
-        get() = sharedPreferences.getString(PASSWORD, null)
+        get() = sharedPreferences.getString(PASSWORD, emptyString())
         set(value) {
             this.edit.putString(PASSWORD, value)?.apply()
         }

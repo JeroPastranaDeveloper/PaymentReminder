@@ -6,3 +6,5 @@ data class Category(
     val id: Int = 0,
     val name: String = emptyString()
 )
+
+const val ALL_CATEGORIES = "allCategories"

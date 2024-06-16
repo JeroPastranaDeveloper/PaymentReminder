@@ -7,6 +7,7 @@ import com.pr.paymentreminder.domain.usecase.login.LoginUseCase
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiAction
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiIntent
 import com.pr.paymentreminder.presentation.login.LoginViewContract.UiState
+import com.pr.paymentreminder.ui.theme.emptyString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,6 +32,7 @@ class LoginViewModel @Inject constructor(
     }
 
     init {
+        preferencesHandler.createCategories = true
         checkLogin()
     }
 
@@ -50,15 +52,20 @@ class LoginViewModel @Inject constructor(
         val loginPassword = password.ifEmpty { preferencesHandler.password.orEmpty() }
 
         viewModelScope.launch {
-            val isLoginSuccessful = loginUseCase(loginEmail, loginPassword)
+            if (loginEmail.isEmpty() || (preferencesHandler.email.orEmpty().isNotEmpty() && loginEmail != preferencesHandler.email)) {
+                setState { copy(isValidInput = false) }
+            } else {
+                val isLoginSuccessful = loginUseCase(loginEmail, loginPassword)
 
-            if (isLoginSuccessful && loginEmail.isNotEmpty() && loginPassword.isNotEmpty()) {
-                preferencesHandler.hasToLogin = true
-                preferencesHandler.email = loginEmail
-                preferencesHandler.password = loginPassword
+                if (isLoginSuccessful && loginEmail.isNotEmpty() && loginPassword.isNotEmpty()) {
+                    preferencesHandler.hasToLogin = true
+                    preferencesHandler.email = loginEmail
+                    preferencesHandler.password = loginPassword
 
-                dispatchAction(UiAction.Login)
-            } else setState { copy(isValidInput = false) }
+                    dispatchAction(UiAction.Login)
+
+                } else setState { copy(isValidInput = false) }
+            }
         }
     }
 
@@ -76,7 +83,8 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun validatePassword(password: String) {
-        val isPasswordInvalid = password.isEmpty() || password.length < 8 || !password.matches(".*[0-9].*".toRegex())
+        val isPasswordInvalid =
+            password.isEmpty() || password.length < 8 || !password.matches(".*[0-9].*".toRegex())
         setState {
             copy(hasPasswordHelperText = isPasswordInvalid)
         }

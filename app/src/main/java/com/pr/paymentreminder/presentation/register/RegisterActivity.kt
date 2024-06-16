@@ -77,11 +77,11 @@ class RegisterActivity : BaseActivity() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            val emailText = remember { mutableStateOf(TextFieldValue()) }
+            val emailText = remember { mutableStateOf(TextFieldValue("aaa@gmail.com")) }
 
-            val passText = remember { mutableStateOf(TextFieldValue()) }
+            val passText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
 
-            val repeatPassText = remember { mutableStateOf(TextFieldValue()) }
+            val repeatPassText = remember { mutableStateOf(TextFieldValue("123456Aa.")) }
 
             Spacer(modifier = Modifier.height(dimen16))
 

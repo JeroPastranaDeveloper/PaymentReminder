@@ -55,7 +55,7 @@ class RegisterViewModel @Inject constructor(
 
             jobsGroup.awaitAll()
 
-            if (state.value.email.isNotEmpty() && state.value.password.isNotEmpty() && state.value.passwordValidation.isNotEmpty()
+            if (preferencesHandler.email.orEmpty().isEmpty() && state.value.email.isNotEmpty() && state.value.password.isNotEmpty() && state.value.passwordValidation.isNotEmpty()
                 && !state.value.hasEmailHelperText && !state.value.hasPasswordHelperText && !state.value.hasPasswordValidationHelperText
             ) {
                 register(email, password)

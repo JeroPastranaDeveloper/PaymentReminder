@@ -91,6 +91,7 @@ fun SettingsFragment(viewModel: SettingsViewModel) {
             onAccept = {
                 viewModel.sendIntent(UiIntent.SignOut)
                 closeActivity(context)
+
             },
             onCancel = { viewModel.sendIntent(UiIntent.ShowSignOutDialog(false)) }
         )

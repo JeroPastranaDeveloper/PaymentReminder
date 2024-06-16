@@ -1,7 +1,8 @@
 package com.pr.paymentreminder.presentation.paymentreminder.edit_categories
 
 import androidx.activity.viewModels
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,8 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
 import com.pr.paymentreminder.R
 import com.pr.paymentreminder.base.BaseActivity
+import com.pr.paymentreminder.base.addRepeatingJob
+import com.pr.paymentreminder.presentation.paymentreminder.compose.CustomDialog
+import com.pr.paymentreminder.presentation.paymentreminder.edit_categories.EditCategoriesViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.edit_categories.EditCategoriesViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.edit_categories.EditCategoriesViewContract.UiState
 import com.pr.paymentreminder.ui.theme.spacing16
@@ -47,18 +52,20 @@ class EditCategoriesActivity : BaseActivity() {
 
     @Composable
     override fun ComposableContent() {
-        // addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect { ::handleAction } }
+        addRepeatingJob(Lifecycle.State.STARTED) { viewModel.actions.collect { ::handleAction } }
         val state by viewModel.state.collectAsState(UiState())
         Content(state)
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     private fun Content(state: UiState) {
         var categories by remember { mutableStateOf(state.categories) }
+        var selectedCategory by remember { mutableStateOf(state.selectedCategory.name) }
 
-        LaunchedEffect(key1 = state.showDialog, key2 = state.categories) {
+        LaunchedEffect(key1 = state.showDialog, key2 = state.categories, key3 = state.showEditDialog) {
             categories = state.categories
+            selectedCategory = state.selectedCategory.name
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -84,11 +91,18 @@ class EditCategoriesActivity : BaseActivity() {
                     categories.forEach {
                         Text(
                             it.name,
-                            modifier = Modifier.clickable {
-                                viewModel.sendIntent(
-                                    UiIntent.OnCategoryClick(it.id)
-                                )
-                            }
+                            modifier = Modifier.combinedClickable (
+                                onClick = {
+                                    viewModel.sendIntent(
+                                        UiIntent.OnCategoryClick(it.id)
+                                    )
+                                },
+                                onLongClick = {
+                                    viewModel.sendIntent(
+                                        UiIntent.OnDeleteCategory(it.id)
+                                    )
+                                }
+                            )
                         )
                         Spacer(modifier = Modifier.height(spacing16))
                     }
@@ -96,7 +110,11 @@ class EditCategoriesActivity : BaseActivity() {
             }
 
             if (state.showDialog) {
-                ShowDialog(state.selectedCategory.name)
+                ShowDialog(selectedCategory)
+            }
+
+            if (state.showEditDialog) {
+                ShowEditDialog()
             }
 
             FloatingActionButton(
@@ -113,6 +131,16 @@ class EditCategoriesActivity : BaseActivity() {
                 )
             }
         }
+    }
+
+    @Composable
+    private fun ShowEditDialog() {
+        CustomDialog(
+            titleText = "** ¿Eliminar categoría?",
+            bodyText = "** La acción no se podrá deshacer",
+            onAccept = { viewModel.sendIntent(UiIntent.DeleteCategory) },
+            onCancel = { viewModel.sendIntent(UiIntent.OnDismissDialog) }
+        )
     }
 
     @Composable
@@ -140,7 +168,7 @@ class EditCategoriesActivity : BaseActivity() {
                         else viewModel.sendIntent(UiIntent.EditCategory(text))
                     }
                 ) {
-                    Text("** Guardar")
+                    Text(stringResource(id = R.string.btn_save))
                 }
             },
             dismissButton = {
@@ -149,9 +177,14 @@ class EditCategoriesActivity : BaseActivity() {
                         viewModel.sendIntent(UiIntent.OnDismissDialog)
                     }
                 ) {
-                    Text("** Cancelar")
+                    Text(stringResource(id = R.string.cancel_button))
                 }
             }
         )
+    }
+
+    private fun handleAction(action: UiAction) {
+        /*when (action) {
+        }*/
     }
 }
