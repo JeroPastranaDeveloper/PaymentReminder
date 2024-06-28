@@ -46,6 +46,7 @@ class HomeViewModel @Inject constructor(
 ) : BaseComposeViewModelWithActions<UiState, UiIntent, UiAction>() {
     override val initialViewState = UiState()
     private val sharedSnackBarType = SharedShowSnackBarType.sharedSnackBarTypeFlow
+    private val updateServicesFlow = UpdateServices.sharedUpdateServicesFlow
 
     override fun manageIntent(intent: UiIntent) {
         when (intent) {
@@ -55,7 +56,6 @@ class HomeViewModel @Inject constructor(
                     intent.action
                 )
             )
-
             UiIntent.CheckSnackBarConfig -> checkSnackBarConfig()
             is UiIntent.FilterCategory -> filterByCategory(intent.category)
             UiIntent.OnDismissSnackBar -> setState { copy(showSnackBar = false) }
@@ -77,6 +77,10 @@ class HomeViewModel @Inject constructor(
 
     private fun checkSnackBarConfig() {
         viewModelScope.launch {
+            if (updateServicesFlow.firstOrNull() == true) {
+                getServices()
+                UpdateServices.resetSharedUpdateServices()
+            }
             getCategories()
             val snackBarType = sharedSnackBarType.firstOrNull() ?: CustomSnackBarType.NONE
             val showSnackBar =

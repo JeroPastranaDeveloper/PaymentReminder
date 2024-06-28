@@ -12,6 +12,16 @@ val red @Composable get() = colorResource(id = R.color.red)
 val blue @Composable get() = colorResource(id = R.color.blue)
 val snackBarColor @Composable get() = colorResource(id = R.color.snack_bar)
 
+// Backgrounds
+val backGroundColor @Composable get() = colorResource(id = R.color.background_color)
+val chai @Composable get() = colorResource(id = R.color.chai)
+val vanilla @Composable get() = colorResource(id = R.color.vanilla)
+val almond @Composable get() = colorResource(id = R.color.almond)
+val matcha @Composable get() = colorResource(id = R.color.matcha)
+val pistacho @Composable get() = colorResource(id = R.color.pistacho)
+val carob @Composable get() = colorResource(id = R.color.carob)
+val brokenWhite @Composable get() = colorResource(id = R.color.broken_white)
+
 // Pastel colors
 val pastelBlue @Composable get() = colorResource(id = R.color.pastel_blue)
 val pastelGreen @Composable get() = colorResource(id = R.color.pastel_green)
@@ -33,4 +43,14 @@ fun getPastelColors(): List<Color> = listOf(
     pastelPurple,
     semiBlack,
     pastelMint
+)
+
+@Composable
+fun getBackgroundColors(): List<Color> = listOf(
+    matcha,
+    almond,
+    pistacho,
+    chai,
+    carob,
+    vanilla
 )

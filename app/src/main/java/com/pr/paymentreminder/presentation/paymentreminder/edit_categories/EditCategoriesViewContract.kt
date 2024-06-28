@@ -2,10 +2,12 @@ package com.pr.paymentreminder.presentation.paymentreminder.edit_categories
 
 import com.pr.paymentreminder.base.BaseViewContract
 import com.pr.paymentreminder.data.model.Category
+import com.pr.paymentreminder.ui.theme.emptyString
 
 class EditCategoriesViewContract : BaseViewContract() {
     data class UiState(
         val categories: List<Category> = emptyList(),
+        val editedCategory: String = emptyString(),
         val selectedCategory: Category = Category(),
         val showDialog: Boolean = false,
         val showEditDialog: Boolean = false

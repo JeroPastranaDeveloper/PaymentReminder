@@ -25,6 +25,19 @@ abstract class BaseViewModel<UiState, UiIntent> : ViewModel() {
         }
     }
 
+    object UpdateServices {
+        private val _updateServices = MutableStateFlow(false)
+        val sharedUpdateServicesFlow: StateFlow<Boolean> get() = _updateServices
+
+        fun updateSharedUpdateServices(newValue: Boolean) {
+            _updateServices.value = newValue
+        }
+
+        fun resetSharedUpdateServices() {
+            _updateServices.value = false
+        }
+    }
+
     fun sendIntent(intent: UiIntent) {
         manageIntent(intent)
     }

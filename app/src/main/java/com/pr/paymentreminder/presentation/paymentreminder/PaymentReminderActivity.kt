@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -55,6 +54,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_hi
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.payments_history.PaymentsHistoryViewModel
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsFragment
 import com.pr.paymentreminder.presentation.paymentreminder.fragments.settings.SettingsViewModel
+import com.pr.paymentreminder.ui.theme.white
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -96,17 +96,27 @@ class PaymentReminderActivity : AppCompatActivity() {
                 paymentReminderViewModel.sendIntent(
                     UiIntent.NotificationsGranted(Permissions.EXACT_ALARM)
                 )
-                Toast.makeText(context, context.getString(R.string.notifications_enabled), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.notifications_enabled),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                Toast.makeText(context, context.getString(R.string.cannot_notificate), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.cannot_notificate),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
         LaunchedEffect(Unit) {
-            permissionLauncher.launch(arrayOf(
-                Manifest.permission.POST_NOTIFICATIONS,
-                Manifest.permission.SCHEDULE_EXACT_ALARM
-            ))
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.SCHEDULE_EXACT_ALARM
+                )
+            )
         }
     }
 
@@ -130,14 +140,13 @@ class PaymentReminderActivity : AppCompatActivity() {
                 onCancel = { paymentReminderViewModel.sendIntent(UiIntent.ShowCloseApp(false)) }
             )
         }
-        
+
         Scaffold(
             topBar = {
                 Surface {
                     TopAppBar(
                         title = { Text(stringResource(id = R.string.app_name)) }
                     )
-
                 }
             },
             bottomBar = {
@@ -189,7 +198,7 @@ class PaymentReminderActivity : AppCompatActivity() {
         navController: NavHostController,
         screens: List<CurrentScreen>
     ) {
-        BottomNavigation(backgroundColor = Color.White) {
+        BottomNavigation(backgroundColor = white) {
             val currentBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = currentBackStackEntry?.destination?.route
 

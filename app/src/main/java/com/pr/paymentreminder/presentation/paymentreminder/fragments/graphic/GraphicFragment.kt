@@ -24,6 +24,7 @@ import com.pr.paymentreminder.presentation.paymentreminder.fragments.graphic.Gra
 import com.pr.paymentreminder.ui.theme.dimen56
 import com.pr.paymentreminder.ui.theme.dimen64
 import com.pr.paymentreminder.ui.theme.spacing16
+import com.pr.paymentreminder.ui.theme.spacing8
 
 @Composable
 fun GraphicFragment(viewModel: GraphicViewModel) {
@@ -31,7 +32,7 @@ fun GraphicFragment(viewModel: GraphicViewModel) {
 
     Column(
         modifier = Modifier
-            .padding(start = spacing16, end = spacing16, bottom = spacing16)
+            .padding(start = spacing8, end = spacing8, bottom = spacing16)
             .fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(dimen64))

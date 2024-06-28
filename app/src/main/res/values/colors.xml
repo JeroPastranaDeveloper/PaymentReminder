@@ -15,6 +15,16 @@
     <color name="blue">#0000FF</color>
     <color name="snack_bar">#eadefe</color>
 
+    <!-- Backgrounds -->
+    <color name="background_color">#ffe9e7</color>
+    <color name="chai">#d2ab80</color>
+    <color name="vanilla">#F3E5AB</color>
+    <color name="almond">#E5E0D8</color>
+    <color name="matcha">#809671</color>
+    <color name="pistacho">#B3B792</color>
+    <color name="carob">#725C3A</color>
+    <color name="broken_white">#B8AEA4</color>
+
     <!-- Pastel colors -->
     <color name="pastel_blue">#B2DAFA</color>
     <color name="pastel_green">#BDECB6</color>

@@ -13,6 +13,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.TextStyle
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
@@ -68,3 +69,9 @@ fun PaymentReminderTheme(
         content = content
     )
 }
+
+val BaseText @Composable get() =
+    TextStyle(color = semiBlack, fontSize = textSize16)
+
+val BigBaseText @Composable get() =
+    BaseText.copy(fontSize = textSize16)

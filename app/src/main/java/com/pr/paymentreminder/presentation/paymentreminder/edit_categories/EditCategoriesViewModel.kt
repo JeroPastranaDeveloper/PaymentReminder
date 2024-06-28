@@ -13,9 +13,9 @@ import com.pr.paymentreminder.domain.usecase.service.UpdateServiceUseCase
 import com.pr.paymentreminder.presentation.paymentreminder.edit_categories.EditCategoriesViewContract.UiAction
 import com.pr.paymentreminder.presentation.paymentreminder.edit_categories.EditCategoriesViewContract.UiIntent
 import com.pr.paymentreminder.presentation.paymentreminder.edit_categories.EditCategoriesViewContract.UiState
-import com.pr.paymentreminder.ui.theme.awaitAllAsyncJobs
 import com.pr.paymentreminder.ui.theme.emptyString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -78,35 +78,33 @@ class EditCategoriesViewModel @Inject constructor(
     }
 
     private fun editCategory(categoryName: String) {
+        setState { copy(editedCategory = categoryName) }
         viewModelScope.launch {
-            awaitAllAsyncJobs(
-                { updateServicesCategory(categoryName) },
-                { updateCategoryForm(categoryName) },
-                { getCategories() }
-            )
+            updateCategoryForm()
+            updateServicesCategory()
+            getCategories()
+            UpdateServices.updateSharedUpdateServices(true)
+            onDismissDialog()
         }
+
         setState { copy(showDialog = false) }
     }
 
-
-    private fun updateCategoryForm(categoryName: String) {
+    private fun updateCategoryForm() {
         viewModelScope.launch {
-            editCategoryForm(Category(id = state.value.selectedCategory.id, name = categoryName))
-            getCategories()
-            onDismissDialog()
+            editCategoryForm(Category(id = state.value.selectedCategory.id, name = state.value.editedCategory))
         }
     }
 
-    private fun updateServicesCategory(categoryName: String) {
+    private fun updateServicesCategory() {
         viewModelScope.launch {
-            getServices().collect { services ->
-                services.forEach { service ->
-                    if (state.value.selectedCategory.name == service.category)
-                        updateService(
-                            service.id,
-                            service.copy(category = categoryName)
-                        )
-                }
+            val services = getServices().firstOrNull()
+            val servicesToUpdate = services?.filter { it.category == state.value.selectedCategory.name }
+            servicesToUpdate?.forEach { service ->
+                updateService(
+                    service.id,
+                    service.copy(category = state.value.editedCategory)
+                )
             }
         }
     }
